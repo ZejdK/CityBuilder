@@ -4,11 +4,12 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include "RoadNetwork.hpp"
+#include "RoadPlacementTool.hpp"
 
 
 
 void processEvent(std::optional<sf::Event> event, sf::RenderWindow& window, sf::CircleShape &pointer);
-sf::Text createText(const sf::Font &font);
 
 
 
@@ -27,24 +28,15 @@ int main()
     window.setFramerateLimit(60); // call it once after creating the window // these two don't mix
     // window.setKeyRepeatEnabled(false); smooth movement with events - boolean set on KeyPressed and clear on KeyReleased, easier solution is sf::Keyboard
 
-    sf::Font font("assetstemp/arial.ttf");
-    sf::Text text = createText(font);
-    text.setString("Editor mode: add roads");
-    bool addingRoad { false };
-    sf::Vector2f firstNode{ 0.0f, 0.0f };
-    sf::Vector2f secondNode{ 0.0f, 0.0f };
-    
-    sf::CircleShape pointer(5.0f);
-    pointer.setFillColor(sf::Color::Red);
-
     std::array testline =
     {
         sf::Vertex{sf::Vector2f(10.f, 10.f)},
         sf::Vertex{sf::Vector2f(150.f, 150.f)}
     };
 
-    using RoadElement = std::pair<sf::Vector2f, sf::Vector2f>;
-    std::vector<RoadElement> roads{};
+    RoadNetwork roadNetwork{};
+    RoadPlacementTool roadPlacementTool{};
+
 
 
     while (window.isOpen())
@@ -69,25 +61,19 @@ int main()
             {
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left)
                 {
-                    auto pressedPosition{ sf::Vector2f(mouseButtonPressed->position) };
-                    if (!addingRoad) {
-
-                        firstNode = pressedPosition;
-                        text.setString("Editor mode: adding a road");
-                        addingRoad = true;
-                    }
+                    sf::Vector2f selectedPos{ sf::Vector2f(mouseButtonPressed->position) };
+                    
+                    if (!roadPlacementTool.selected())
+                        roadPlacementTool.selectNode(selectedPos);
                     else {
-
-                        roads.push_back({ firstNode, pressedPosition });
-                        text.setString("Editor mode: add roads");
-                        addingRoad = false;
+                        auto road = roadPlacementTool.commitRoad(selectedPos);
+                        roadNetwork.add(road);
                     }
                 }
             }
             else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
             {
-                secondNode = sf::Vector2f(mouseMoved->position);
-                pointer.setPosition(sf::Vector2f(mouseMoved->position));
+                roadPlacementTool.setHoverPointer(sf::Vector2f(mouseMoved->position));
             }
             else if (const auto* joystickButtonPressed = event->getIf<sf::Event::JoystickButtonPressed>())
             {
@@ -119,35 +105,13 @@ int main()
         }
 
         window.clear();
-        window.draw(text);
-        window.draw(pointer);
+
         window.draw(testline.data(), testline.size(), sf::PrimitiveType::Lines);
-
-        if (addingRoad) {
-
-            std::array temp = { sf::Vertex{firstNode}, sf::Vertex{secondNode} };
-            window.draw(temp.data(), temp.size(), sf::PrimitiveType::Lines);
-        }
-        for (const auto& road : roads) {
-
-            std::array temp = { sf::Vertex{road.first}, sf::Vertex{road.second} };
-            window.draw(temp.data(), temp.size(), sf::PrimitiveType::Lines);
-        }
+        roadNetwork.draw(window);
+        roadPlacementTool.draw(window);
 
         window.display();
     }
-}
-
-
-
-sf::Text createText(const sf::Font &font) {
-
-    sf::Text text(font);
-    text.setCharacterSize(24);
-    text.setFillColor(sf::Color::Cyan);
-    text.setStyle(sf::Text::Bold | sf::Text::Underlined);
-
-    return text;
 }
 
 
