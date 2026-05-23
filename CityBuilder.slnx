@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="CityBuilder.vcxproj" Id="b2d8b7be-78f7-4fcc-8fb4-ec1f60abef75" />
+</Solution>
