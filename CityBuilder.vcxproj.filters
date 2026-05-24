@@ -24,18 +24,24 @@
     <ClCompile Include="RoadPlacementTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RoadPlacementTool.hpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="RoadNetwork.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RoadNetwork.hpp">
-      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RoadTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadNetwork.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadPlacementTool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlacementState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

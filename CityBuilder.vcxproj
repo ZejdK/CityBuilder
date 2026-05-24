@@ -150,11 +150,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="RoadPlacementTool.cpp" />
-    <ClCompile Include="RoadPlacementTool.hpp" />
+    <ClInclude Include="PlacementState.hpp" />
+    <ClInclude Include="RoadPlacementTool.hpp" />
     <ClCompile Include="RoadNetwork.cpp" />
-    <ClCompile Include="RoadNetwork.hpp" />
+    <ClInclude Include="RoadNetwork.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Math.hpp" />
     <ClInclude Include="RoadTypes.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

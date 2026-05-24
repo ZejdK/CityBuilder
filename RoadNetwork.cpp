@@ -2,12 +2,15 @@
 
 
 #include "RoadNetwork.hpp"
+#include <array>
+#include "SFML/Graphics/Vertex.hpp"
+#include "SFML/Graphics/PrimitiveType.hpp"
 
 
 
 void RoadNetwork::draw(sf::RenderWindow& window) const {
 
-    // duplicated code, TODO: RoadRenderer
+    // duplicated code for rendering lines/roads
     for (const auto& road : roads) {
 
         std::array temp = { sf::Vertex{road.start}, sf::Vertex{road.end} };

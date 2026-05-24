@@ -9,10 +9,6 @@
 
 
 
-void processEvent(std::optional<sf::Event> event, sf::RenderWindow& window, sf::CircleShape &pointer);
-
-
-
 int main()
 {
     boost::adjacency_list<> graph(5);
@@ -35,7 +31,7 @@ int main()
     };
 
     RoadNetwork roadNetwork{};
-    RoadPlacementTool roadPlacementTool{};
+    RoadPlacementTool roadPlacementTool{roadNetwork};
 
 
 
@@ -59,22 +55,18 @@ int main()
             }
             else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
             {
-                if (mouseButtonPressed->button == sf::Mouse::Button::Left)
-                {
-                    sf::Vector2f selectedPos{ sf::Vector2f(mouseButtonPressed->position) };
-                    
+                if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
+
                     if (!roadPlacementTool.selected())
-                        roadPlacementTool.selectNode(selectedPos);
+                        roadPlacementTool.selectOriginPos();
                     else {
-                        auto road = roadPlacementTool.commitRoad(selectedPos);
+                        auto road = roadPlacementTool.commitRoad();
                         roadNetwork.add(road);
                     }
                 }
             }
             else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
-            {
-                roadPlacementTool.setHoverPointer(sf::Vector2f(mouseMoved->position));
-            }
+                roadPlacementTool.setCursorPos(sf::Vector2f(mouseMoved->position));
             else if (const auto* joystickButtonPressed = event->getIf<sf::Event::JoystickButtonPressed>())
             {
                 std::cout << "joystick button pressed!" << std::endl;
