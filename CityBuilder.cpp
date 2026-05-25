@@ -6,18 +6,17 @@
 #include <boost/graph/adjacency_list.hpp>
 #include "RoadNetwork.hpp"
 #include "RoadPlacementTool.hpp"
+#include "CityBuilderTypes.hpp"
 
 
 
-int main()
-{
-    boost::adjacency_list<> graph(5);
-    add_edge(0, 1, graph);
-    add_edge(1, 2, graph);
 
+int main() {
+    
     sf::Texture textureTest("assetstemp/test.png");
     const sf::Texture textureTest2("assetstemp/test.gif");
 
+    CityView cityView { CityView::Line };
     
 
     sf::RenderWindow window(sf::VideoMode({ 800, 800 }), "SFML works!"); // , sf::Style::Default, sf::State::Fullscreen);
@@ -52,6 +51,12 @@ int main()
             {
                 if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
                     window.close();
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::Num1)
+                    std::cout << "Switched to line view of the city!\n",
+                    cityView = CityView::Line;
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::Num2)
+                    std::cout << "Switched to graph view of the city!\n",
+                    cityView = CityView::Graph;
             }
             else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
             {
@@ -99,7 +104,12 @@ int main()
         window.clear();
 
         window.draw(testline.data(), testline.size(), sf::PrimitiveType::Lines);
+        
+        if (cityView == CityView::Line)
         roadNetwork.draw(window);
+        else
+            roadNetwork.drawGraph(window);
+
         roadPlacementTool.draw(window);
 
         window.display();

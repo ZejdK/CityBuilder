@@ -44,5 +44,11 @@
     <ClInclude Include="PlacementState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RoadGraphTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CityBuilderTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
