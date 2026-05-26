@@ -24,4 +24,6 @@ using RoadGraph = boost::adjacency_list<boost::vecS, boost::vecS, boost::directe
 // There are several selector types that are used to specify the choice of container for OutEdgeList and VertexList.
 //		vecS selects std::vector.
 
+using RoadVertexDescriptor = boost::graph_traits<RoadGraph>::vertex_descriptor;
+
 

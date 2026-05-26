@@ -150,6 +150,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="RoadPlacementTool.cpp" />
+    <ClCompile Include="RoadRenderer.cpp" />
     <ClInclude Include="CityBuilderTypes.hpp" />
     <ClInclude Include="PlacementState.hpp" />
     <ClInclude Include="RoadGraphTypes.hpp" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp" />
+    <ClInclude Include="RoadRenderer.hpp" />
     <ClInclude Include="RoadTypes.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
