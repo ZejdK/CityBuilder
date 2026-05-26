@@ -1,0 +1,15 @@
+
+
+
+Short outline of encountered problems
+
+
+
+1) setting up SFML project and going through a tutorial for rough reference
+2) drawing lines and making sure they snap
+3) setting up underlying graph structure for the roads and intersections
+4) visually represent the graph with circles and lines
+5) make sure existing nodes connect to each other instead of creating new ones
+6) draw the roads
+
+
