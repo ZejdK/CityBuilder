@@ -7,8 +7,10 @@
 
 enum class CityView {
 
+    Road,
     Line,
-    Graph
+    Graph,
+    RoadLineGraph
 };
 
 

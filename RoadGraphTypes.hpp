@@ -25,5 +25,6 @@ using RoadGraph = boost::adjacency_list<boost::vecS, boost::vecS, boost::directe
 //		vecS selects std::vector.
 
 using RoadVertexDescriptor = boost::graph_traits<RoadGraph>::vertex_descriptor;
+using EdgeVertexDescriptor = boost::graph_traits<RoadGraph>::edge_descriptor;
 
 

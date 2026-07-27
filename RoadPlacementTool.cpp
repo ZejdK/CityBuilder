@@ -77,7 +77,7 @@ void RoadPlacementTool::draw(sf::RenderWindow& window) {
     window.draw(currentModeText);
 
     currentModeText.setPosition(sf::Vector2f(10.0f, 40.0f));
-    currentModeText.setString(std::string("Road count: ") + std::to_string(roadNetwork.roads.size()));
+    currentModeText.setString(std::string("Road count: ") + std::to_string(roadNetwork.getRoads().size()));
     window.draw(currentModeText);
 
     if (selectedOriginPos.has_value())
@@ -163,7 +163,7 @@ std::optional<sf::Vector2f> RoadPlacementTool::GetClosestSnapPoint() {
     std::optional<sf::Vector2f> closest;
     std::optional<float> dist_closest;
 
-    for (const auto& road : roadNetwork.roads) {
+    for (const auto& road : roadNetwork.getRoads()) {
 
         float dist_start { CB::Math::distance(cursorPos, road.start) };
         float dist_end { CB::Math::distance(cursorPos, road.end) };
@@ -188,7 +188,7 @@ std::optional<RoadPlacementTool::IntersectionResult> RoadPlacementTool::GetInter
 
     std::optional<IntersectionResult> closestResult;
 
-    for (const auto& road : roadNetwork.roads) {
+    for (const auto& road : roadNetwork.getRoads()) {
 
         std::optional<sf::Vector2f> intersection = CB::Math::intersect(road.start, road.end, *selectedOriginPos, cursorPos);
         

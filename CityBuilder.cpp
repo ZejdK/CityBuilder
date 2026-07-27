@@ -6,6 +6,7 @@
 #include "RoadNetwork.hpp"
 #include "RoadPlacementTool.hpp"
 #include "CityBuilderTypes.hpp"
+#include "RoadRenderer.hpp"
 
 
 
@@ -16,9 +17,11 @@ int main() {
     // window.setKeyRepeatEnabled(false); smooth movement with events - boolean set on KeyPressed and clear on KeyReleased, easier solution is sf::Keyboard
 
 
+
     RoadNetwork roadNetwork {};
     RoadPlacementTool roadPlacementTool {roadNetwork};
-    CityView cityView { CityView::Line };
+    RoadRenderer roadRenderer {};
+    CityView cityView { CityView::Road };
 
     while (window.isOpen())
     {
@@ -33,11 +36,17 @@ int main() {
                 if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
                     window.close();
                 else if (keyPressed->scancode == sf::Keyboard::Scancode::Num1)
-                    std::cout << "Switched to line view of the city!\n",
-                    cityView = CityView::Line;
+                    std::cout << "Switched to road view of the city!\n",
+                    cityView = CityView::Road;
                 else if (keyPressed->scancode == sf::Keyboard::Scancode::Num2)
-                    std::cout << "Switched to graph view of the city!\n",
+                    std::cout << "Switched to graph only view of the city!\n",
                     cityView = CityView::Graph;
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::Num3)
+                    std::cout << "Switched to line only view of the city!\n",
+                    cityView = CityView::Line;
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::Num4)
+                    std::cout << "Switched to all view of the city!\n",
+                    cityView = CityView::RoadLineGraph;
             }
             else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
 
@@ -59,12 +68,25 @@ int main() {
 
 
 
-        window.clear();
+        window.clear(sf::Color(0, 40, 0));
         
-        if (cityView == CityView::Line)
-            roadNetwork.draw(window);
-        else
-            roadNetwork.drawGraph(window);
+        switch (cityView) {
+        
+        case CityView::Road:
+            roadRenderer.renderRoads(window, roadNetwork);
+            roadRenderer.renderIntersections(window, roadNetwork);
+            break;
+        case CityView::Graph:
+            roadRenderer.renderGraph(window, roadNetwork);
+            break;
+        case CityView::Line:
+            // roadPlacementTool.draw(window); // (window, roadNetwork) // I should probably pass the roads vector ideally
+            break;
+        case CityView::RoadLineGraph:
+            roadRenderer.renderRoads(window, roadNetwork);
+            roadRenderer.renderIntersections(window, roadNetwork);
+            roadRenderer.renderGraph(window, roadNetwork);
+        }
 
         roadPlacementTool.draw(window);
 

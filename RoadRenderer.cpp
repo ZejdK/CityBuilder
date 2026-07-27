@@ -6,18 +6,95 @@
 
 
 
-
 RoadRenderer::RoadRenderer()
-        : vertices(sf::PrimitiveType::Triangles, 6), states() {
+        : graphNodeShape(15.f), font("assetstemp/arial.ttf"), text(font), vertices(sf::PrimitiveType::Triangles, 6), states() {
 
     if (!texture.loadFromFile("assets/road_dotted.png"))
         throw "Unable to load the texture";
 
+    if (!texturePlain.loadFromFile("assets/road_plain.png"))
+        throw "Unable to load the texture: road_plain.png";
+
     texture.setRepeated(true);
     states.texture = &texture;
+
+    text.setPosition(sf::Vector2f(10.f, 10.f));
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color(220, 170, 180));
+
+    graphNodeShape.setOrigin(sf::Vector2f(15.f, 15.f));
+    graphNodeShape.setFillColor(sf::Color(140, 0, 50));
 }
 
-void RoadRenderer::render(sf::RenderWindow& window, sf::Vector2f origin, sf::Vector2f dest) {
+
+
+void RoadRenderer::renderGraph(sf::RenderWindow& window, const RoadNetwork &roadNetwork) {
+
+    auto roadGraph = roadNetwork.getGraph();
+    
+    auto [ it, end ] = boost::edges(roadGraph);
+
+    for (; it != end; ++it)
+        renderEdge(window, *it, roadGraph);
+}
+
+void RoadRenderer::renderEdge(sf::RenderWindow& window, EdgeVertexDescriptor edge, const RoadGraph& roadGraph) {
+
+    auto sourceVertex = boost::source(edge, roadGraph);
+    auto targetVertex = boost::target(edge, roadGraph);
+    const RoadNode& sourceNode = roadGraph[sourceVertex];
+    const RoadNode& targetNode = roadGraph[targetVertex];
+    const auto sourceDegree = boost::out_degree(sourceVertex, roadGraph);
+    const auto targetDegree = boost::out_degree(targetVertex, roadGraph);
+
+    graphNodeShape.setPosition(sourceNode.position);
+    text.setPosition(sourceNode.position);
+    text.setString(std::to_string(sourceDegree));
+    window.draw(graphNodeShape);
+    window.draw(text);
+
+    text.setPosition(targetNode.position);
+    text.setString(std::to_string(targetDegree));
+    graphNodeShape.setPosition(targetNode.position);
+    window.draw(graphNodeShape);
+    window.draw(text);
+
+    renderLine(window, sourceNode.position, targetNode.position);
+
+    const RoadEdge& edgeData = roadGraph[edge];
+    sf::Vector2f middle { (sourceNode.position + targetNode.position) / 2.f };
+
+    text.setPosition(middle);
+    text.setString(std::to_string(edgeData.length));
+    window.draw(text);
+}
+
+void RoadRenderer::renderLine(sf::RenderWindow& window, sf::Vector2f origin, sf::Vector2f destination) {
+
+    std::array temp = { sf::Vertex{origin}, sf::Vertex{destination} };
+    window.draw(temp.data(), temp.size(), sf::PrimitiveType::Lines);
+}
+
+
+
+void RoadRenderer::renderRoads(sf::RenderWindow& window, const RoadNetwork& roadNetwork) {
+
+    auto roadGraph = roadNetwork.getGraph();
+    auto [ it, end ] = boost::edges(roadGraph);
+
+    states.texture = &texture;
+
+    for (; it != end; ++it) {
+
+        auto edge = *it;
+        auto sourceVertex = boost::source(edge, roadGraph);
+        auto targetVertex = boost::target(edge, roadGraph);
+
+        renderRoad(window, roadGraph[sourceVertex].position, roadGraph[targetVertex].position);
+}
+}
+
+void RoadRenderer::renderRoad(sf::RenderWindow& window, sf::Vector2f origin, sf::Vector2f dest) {
 
     sf::Vector2f direction { (dest - origin).normalized() };
     sf::Vector2f perpendicular { -direction.y, direction.x }; // multiplied with rotation matrix for pi/2
@@ -44,6 +121,65 @@ void RoadRenderer::render(sf::RenderWindow& window, sf::Vector2f origin, sf::Vec
     vertices[5].texCoords = { 256.f, 0.f };
 
     window.draw(vertices, states);
+}
+
+
+
+void RoadRenderer::renderIntersections(sf::RenderWindow& window, const RoadNetwork& roadNetwork) {
+
+    auto roadGraph = roadNetwork.getGraph();
+    auto [ begin, end ] = boost::vertices(roadGraph);
+
+    states.texture = &texturePlain;
+    for (auto it { begin }; it != end; ++it)
+        processIntersectionVertex(window, roadGraph, *it);
+}
+
+void RoadRenderer::processIntersectionVertex(sf::RenderWindow& window, const RoadGraph &roadGraph, RoadVertexDescriptor vertex) { 
+
+    auto [ begin, end ] = boost::out_edges(vertex, roadGraph);
+
+
+
+    for (auto it { begin }; it != end; ++it) {
+
+        EdgeVertexDescriptor edge = *it;
+        auto targetVertex = boost::target(edge, roadGraph);
+        
+        auto sourcePos = roadGraph[vertex].position;
+        auto targetPos = roadGraph[targetVertex].position;
+        
+        std::array<sf::Vector2f, 4> road { getRoadVertices(sourcePos, targetPos) };
+
+        for (int i { 0 }; i < 4; ++i)
+        {
+            vertices[0].position = road[0];
+            vertices[1].position = road[1];
+            vertices[2].position = road[2];
+            vertices[3].position = road[0];
+            vertices[4].position = road[2];
+            vertices[5].position = road[3];
+
+            graphNodeShape.setPosition(road[i]);
+            window.draw(graphNodeShape);
+            // window.draw(vertices, states);
+        }
+    }
+}
+
+std::array<sf::Vector2f, 4> RoadRenderer::getRoadVertices(sf::Vector2f source, sf::Vector2f dest) {
+
+    sf::Vector2f direction{ (dest - source).normalized() };
+    sf::Vector2f perpendicular{ -direction.y, direction.x }; // multiplied with rotation matrix for pi/2
+
+    sf::Vector2f offset{ perpendicular * ROAD_WIDTH };
+
+    sf::Vector2f v0 = source + offset;
+    sf::Vector2f v1 = dest + offset;
+    sf::Vector2f v2 = dest - offset;
+    sf::Vector2f v3 = source - offset;
+
+    return { v0, v1, v2, v3 };
 }
 
 

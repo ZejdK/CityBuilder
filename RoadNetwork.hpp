@@ -3,43 +3,30 @@
 
 #pragma once
 #include <vector>
-#include <SFML/Graphics/RenderWindow.hpp>
 #include "RoadTypes.hpp"
-#include "boost/graph/adjacency_list.hpp"
 #include "RoadGraphTypes.hpp"
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include "RoadRenderer.hpp"
 
 
 
-// class RoadNetwork // TODO: turn this into a class again
-struct RoadNetwork {
+class RoadNetwork {
 
 	RoadGraph roadGraph;
 	std::vector<RoadElement> roads{};
 
-	sf::CircleShape graphNodeShape;
-	sf::Font font;
-	sf::Text text;
-
-	void debugDrawLine(sf::RenderWindow& window, sf::Vector2f origin, sf::Vector2f destination);
 	RoadVertexDescriptor findOrCreateVertex(sf::Vector2f pos);
 	std::optional<RoadVertexDescriptor> findVertexAtPosition(sf::Vector2f pos);
-
-	RoadRenderer roadRenderer {};
 
 	// TODO: clean up added extra nodes, see line below
 	//			if i connect an edge to "middle of another edge". i would need to split edge into two edges to create a node to connect to the newly added edge. If i remove this newly added edge, I would then be left with a "trivial" node, ie node with only two edges and is also in the middle of a geometric line. periodically go through all the nodes to clean these up
 
-// public:
+public:
 	
 	RoadNetwork();
 
+	const RoadGraph& getGraph() const;
+	const std::vector<RoadElement>& getRoads() const;
+
 	void add(const RoadElement& road);
-	void draw(sf::RenderWindow& window);
-	void drawGraph(sf::RenderWindow& window);
 };
 
 
