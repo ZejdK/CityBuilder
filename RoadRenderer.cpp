@@ -42,8 +42,8 @@ void RoadRenderer::renderEdge(sf::RenderWindow& window, EdgeVertexDescriptor edg
 
     auto sourceVertex = boost::source(edge, roadGraph);
     auto targetVertex = boost::target(edge, roadGraph);
-    const RoadNode& sourceNode = roadGraph[sourceVertex];
-    const RoadNode& targetNode = roadGraph[targetVertex];
+    const RoadNodeData& sourceNode = roadGraph[sourceVertex];
+    const RoadNodeData& targetNode = roadGraph[targetVertex];
     const auto sourceDegree = boost::out_degree(sourceVertex, roadGraph);
     const auto targetDegree = boost::out_degree(targetVertex, roadGraph);
 
@@ -61,7 +61,7 @@ void RoadRenderer::renderEdge(sf::RenderWindow& window, EdgeVertexDescriptor edg
 
     renderLine(window, sourceNode.position, targetNode.position);
 
-    const RoadEdge& edgeData = roadGraph[edge];
+    const RoadEdgeData& edgeData = roadGraph[edge];
     sf::Vector2f middle { (sourceNode.position + targetNode.position) / 2.f };
 
     text.setPosition(middle);
