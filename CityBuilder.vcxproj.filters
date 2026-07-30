@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\types">
+      <UniqueIdentifier>{d4c08757-39ae-42e9-8fd8-aec9fc76e9f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CityBuilderSFMLold.cpp">
@@ -32,9 +35,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RoadTypes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Math.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -47,14 +47,17 @@
     <ClInclude Include="PlacementState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RoadGraphTypes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CityBuilderTypes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RoadRenderer.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadTypes.hpp">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="CityBuilderTypes.hpp">
+      <Filter>Header Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadGraphTypes.hpp">
+      <Filter>Header Files\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
