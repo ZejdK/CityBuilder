@@ -18,7 +18,7 @@ struct RoadEdge {
 	float speedLimit;
 };
 
-using RoadGraph = boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS, RoadNode, RoadEdge>;
+using RoadGraph = boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS, RoadNode, RoadEdge>;
 //									    edge container, vertex container, graph direction, vertex payload, edge payload
 // BGL uses STL containers to represent the set of vertices and the adjacency structure(out - edges and in - edges) of the graph.
 // There are several selector types that are used to specify the choice of container for OutEdgeList and VertexList.
