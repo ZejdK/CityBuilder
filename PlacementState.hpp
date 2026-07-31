@@ -2,7 +2,7 @@
 
 
 #pragma once
-enum PlacementState {
+enum class PlacementState {
 
 	Idle,
 	Placing
