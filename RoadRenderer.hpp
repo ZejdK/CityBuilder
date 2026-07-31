@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "RoadGraphTypes.hpp"
 #include "RoadNetwork.hpp"
+#include "CityBuilderTypes.hpp"
 
 
 
@@ -35,6 +36,8 @@ public:
     void renderGraph(sf::RenderWindow& window, const RoadNetwork& roadNetwork);
     void renderRoads(sf::RenderWindow& window, const RoadNetwork& roadNetwork);
     void renderIntersections(sf::RenderWindow& window, const RoadNetwork& roadNetwork);
+
+    void render(sf::RenderWindow& window, const RoadNetwork& roadNetwork, CityView cityView);
 };
 
 

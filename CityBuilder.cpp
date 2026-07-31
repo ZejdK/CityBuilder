@@ -70,23 +70,7 @@ int main() {
 
         window.clear(sf::Color(0, 40, 0));
         
-        switch (cityView) {
-        
-        case CityView::Road:
-            roadRenderer.renderRoads(window, roadNetwork);
-            roadRenderer.renderIntersections(window, roadNetwork);
-            break;
-        case CityView::Graph:
-            roadRenderer.renderGraph(window, roadNetwork);
-            break;
-        case CityView::Line:
-            // roadPlacementTool.draw(window); // (window, roadNetwork) // I should probably pass the roads vector ideally
-            break;
-        case CityView::RoadLineGraph:
-            roadRenderer.renderRoads(window, roadNetwork);
-            roadRenderer.renderIntersections(window, roadNetwork);
-            roadRenderer.renderGraph(window, roadNetwork);
-        }
+        roadRenderer.render(window, roadNetwork, cityView);
 
         roadPlacementTool.draw(window);
 

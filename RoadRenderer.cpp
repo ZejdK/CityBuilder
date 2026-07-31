@@ -26,6 +26,28 @@ RoadRenderer::RoadRenderer()
     graphNodeShape.setFillColor(sf::Color(140, 0, 50));
 }
 
+void RoadRenderer::render(sf::RenderWindow& window, const RoadNetwork& roadNetwork, CityView cityView) {
+
+    switch (cityView) {
+
+    case CityView::Road:
+        renderRoads(window, roadNetwork);
+        renderIntersections(window, roadNetwork);
+        break;
+    case CityView::Graph:
+        renderGraph(window, roadNetwork);
+        break;
+    case CityView::Line:
+        // Intentionally left empty: line-only view handled elsewhere if needed
+        break;
+    case CityView::RoadLineGraph:
+        renderRoads(window, roadNetwork);
+        renderIntersections(window, roadNetwork);
+        renderGraph(window, roadNetwork);
+        break;
+    }
+}
+
 
 
 void RoadRenderer::renderGraph(sf::RenderWindow& window, const RoadNetwork &roadNetwork) {
