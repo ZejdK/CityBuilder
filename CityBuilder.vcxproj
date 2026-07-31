@@ -151,7 +151,7 @@
     </ClCompile>
     <ClCompile Include="RoadPlacementTool.cpp" />
     <ClCompile Include="RoadRenderer.cpp" />
-    <ClInclude Include="CityBuilderTypes.hpp" />
+    <ClInclude Include="CityView.hpp" />
     <ClInclude Include="PlacementState.hpp" />
     <ClInclude Include="RoadGraphTypes.hpp" />
     <ClInclude Include="RoadPlacementTool.hpp" />

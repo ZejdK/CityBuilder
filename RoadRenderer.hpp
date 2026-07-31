@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "RoadGraphTypes.hpp"
 #include "RoadNetwork.hpp"
-#include "CityBuilderTypes.hpp"
+#include "CityView.hpp"
 
 
 
