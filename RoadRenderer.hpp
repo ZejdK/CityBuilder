@@ -21,14 +21,12 @@ class RoadRenderer {
     sf::RenderStates states;
     static constexpr float ROAD_WIDTH{ 40.f };
 
-    std::array<sf::Vector2f, 4> getRoadVertices(sf::Vector2f source, sf::Vector2f dest);
-
     void renderLine(sf::RenderWindow& window, sf::Vector2f origin, sf::Vector2f destination);
     void renderEdge(sf::RenderWindow& window, EdgeVertexDescriptor edge, const RoadGraph& roadGraph);
 
-    void renderRoad(sf::RenderWindow& window, sf::Vector2f origin, sf::Vector2f dest);
+    void renderRoad(sf::RenderWindow& window, const RoadElement& re);
     
-    void processIntersectionVertex(sf::RenderWindow& window, const RoadGraph& roadGraph, RoadVertexDescriptor vertex);
+    void renderIntersection(sf::RenderWindow& window, const RoadGraph& roadGraph, RoadVertexDescriptor vertex);
 
 public:
     RoadRenderer();

@@ -112,29 +112,22 @@ void RoadRenderer::renderRoads(sf::RenderWindow& window, const RoadNetwork& road
         auto sourceVertex = boost::source(edge, roadGraph);
         auto targetVertex = boost::target(edge, roadGraph);
 
-        renderRoad(window, roadGraph[sourceVertex].position, roadGraph[targetVertex].position);
+        const RoadElement re { roadGraph[sourceVertex].position, roadGraph[targetVertex].position };
+        renderRoad(window, re);
 }
 }
 
-void RoadRenderer::renderRoad(sf::RenderWindow& window, sf::Vector2f origin, sf::Vector2f dest) {
+void RoadRenderer::renderRoad(sf::RenderWindow& window, const RoadElement &re) {
 
-    sf::Vector2f direction { (dest - origin).normalized() };
-    sf::Vector2f perpendicular { -direction.y, direction.x }; // multiplied with rotation matrix for pi/2
+    auto len = re.length();
+    auto v = re.getVertices(ROAD_WIDTH);
 
-    sf::Vector2f offset { perpendicular * ROAD_WIDTH };
-
-    sf::Vector2f v0 = origin + offset;
-    sf::Vector2f v1 = dest + offset;
-    sf::Vector2f v2 = dest - offset;
-    sf::Vector2f v3 = origin - offset;
-    
-    const float len { (dest - origin).length() };
-    vertices[0].position = v0;
-    vertices[1].position = v1;
-    vertices[2].position = v2;
-    vertices[3].position = v0;
-    vertices[4].position = v2;
-    vertices[5].position = v3;
+    vertices[0].position = v[0];
+    vertices[1].position = v[1];
+    vertices[2].position = v[2];
+    vertices[3].position = v[0];
+    vertices[4].position = v[2];
+    vertices[5].position = v[3];
     vertices[0].texCoords = { 0.f, 0.f };
     vertices[1].texCoords = { 0.f, len };
     vertices[2].texCoords = { 256.f, len };
@@ -154,25 +147,21 @@ void RoadRenderer::renderIntersections(sf::RenderWindow& window, const RoadNetwo
 
     states.texture = &texturePlain;
     for (auto it { begin }; it != end; ++it)
-        processIntersectionVertex(window, roadGraph, *it);
+        renderIntersection(window, roadGraph, *it);
 }
 
-void RoadRenderer::processIntersectionVertex(sf::RenderWindow& window, const RoadGraph &roadGraph, RoadVertexDescriptor vertex) { 
+void RoadRenderer::renderIntersection(sf::RenderWindow& window, const RoadGraph &roadGraph, RoadVertexDescriptor vertex) { 
 
     auto [ begin, end ] = boost::out_edges(vertex, roadGraph);
-
-
 
     for (auto it { begin }; it != end; ++it) {
 
         EdgeVertexDescriptor edge = *it;
         auto targetVertex = boost::target(edge, roadGraph);
         
-        auto sourcePos = roadGraph[vertex].position;
-        auto targetPos = roadGraph[targetVertex].position;
+        const RoadElement re { roadGraph[vertex].position, roadGraph[targetVertex].position };
+        std::array<sf::Vector2f, 4> road { re.getVertices(ROAD_WIDTH) };
         
-        std::array<sf::Vector2f, 4> road { getRoadVertices(sourcePos, targetPos) };
-
         for (int i { 0 }; i < 4; ++i)
         {
             vertices[0].position = road[0];
@@ -187,21 +176,6 @@ void RoadRenderer::processIntersectionVertex(sf::RenderWindow& window, const Roa
             // window.draw(vertices, states);
         }
     }
-}
-
-std::array<sf::Vector2f, 4> RoadRenderer::getRoadVertices(sf::Vector2f source, sf::Vector2f dest) {
-
-    sf::Vector2f direction{ (dest - source).normalized() };
-    sf::Vector2f perpendicular{ -direction.y, direction.x }; // multiplied with rotation matrix for pi/2
-
-    sf::Vector2f offset{ perpendicular * ROAD_WIDTH };
-
-    sf::Vector2f v0 = source + offset;
-    sf::Vector2f v1 = dest + offset;
-    sf::Vector2f v2 = dest - offset;
-    sf::Vector2f v3 = source - offset;
-
-    return { v0, v1, v2, v3 };
 }
 
 
