@@ -52,7 +52,7 @@ public:
 	void selectOriginPos();
 	void deselectNode();
 
-	RoadElement commitRoad();
+	RoadSegmentGeometry commitRoad();
 	
 	void setCursorPos(const sf::Vector2f& pos);
 

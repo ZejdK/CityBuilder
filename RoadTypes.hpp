@@ -8,7 +8,7 @@
 
 
 
-struct RoadElement {
+struct RoadSegmentGeometry {
 
 	sf::Vector2f start;
 	sf::Vector2f end;
@@ -28,7 +28,7 @@ struct RoadElement {
 		};
 	}
 
-	std::array<std::optional<sf::Vector2f>, 4> getSideIntersectionPoints(float roadWidth, const RoadElement& other) const {
+	std::array<std::optional<sf::Vector2f>, 4> getSideIntersectionPoints(float roadWidth, const RoadSegmentGeometry& other) const {
 
 		// idea here is to get lines parallel to the road segments, offset for roadWidth in both directions
 		// and then find their intersections
@@ -45,7 +45,7 @@ struct RoadElement {
 		};
 	}
 
-	std::optional<sf::Vector2f> getClosestSideIntersection(float roadWidth, const RoadElement& other, sf::Vector2f roadJunctionPoint) const {
+	std::optional<sf::Vector2f> getClosestSideIntersection(float roadWidth, const RoadSegmentGeometry& other, sf::Vector2f roadJunctionPoint) const {
 
 		auto lineIntersections = getSideIntersectionPoints(roadWidth, other);
 		
@@ -57,7 +57,7 @@ struct RoadElement {
 		return closestIntersection;
 	}
 
-	std::optional<sf::Vector2f> getFurthestSideIntersection(float roadWidth, const RoadElement& other, sf::Vector2f roadJunctionPoint) const {
+	std::optional<sf::Vector2f> getFurthestSideIntersection(float roadWidth, const RoadSegmentGeometry& other, sf::Vector2f roadJunctionPoint) const {
 
 		auto lineIntersections = getSideIntersectionPoints(roadWidth, other);
 
@@ -117,7 +117,7 @@ struct RoadElement {
 struct RoadJunctionGeometry {
 private:
 
-	std::optional<sf::Vector2f> getFurthestClosestIntersection(const RoadElement& road, const RoadElement& roadBefore, const RoadElement& roadAfter, float roadWidth, bool &isBefore) const {
+	std::optional<sf::Vector2f> getFurthestClosestIntersection(const RoadSegmentGeometry& road, const RoadSegmentGeometry& roadBefore, const RoadSegmentGeometry& roadAfter, float roadWidth, bool &isBefore) const {
 
 		auto closestLineIntersectionBefore = road.getClosestSideIntersection(roadWidth, roadBefore, position);
 		auto closestLineIntersectionAfter = road.getClosestSideIntersection(roadWidth, roadAfter, position);
@@ -144,7 +144,7 @@ private:
 		return std::nullopt;
 	}
 public:
-	std::vector<RoadElement> roads;
+	std::vector<RoadSegmentGeometry> roads;
 	sf::Vector2f position;
 
 	// returns vector packed with these four points: side intersection point, side intersection mirror point, road crossing point 1, road crossing point 2

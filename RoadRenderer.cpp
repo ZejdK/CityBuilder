@@ -123,12 +123,12 @@ void RoadRenderer::renderRoads(sf::RenderWindow& window, const RoadNetwork& road
         auto sourceVertex = boost::source(edge, roadGraph);
         auto targetVertex = boost::target(edge, roadGraph);
 
-        const RoadElement re { roadGraph[sourceVertex].position, roadGraph[targetVertex].position };
+        const RoadSegmentGeometry re { roadGraph[sourceVertex].position, roadGraph[targetVertex].position };
         renderRoad(window, re);
     }
 }
 
-void RoadRenderer::renderRoad(sf::RenderWindow& window, const RoadElement &re) {
+void RoadRenderer::renderRoad(sf::RenderWindow& window, const RoadSegmentGeometry &re) {
 
     auto len = re.length();
     auto v = re.getVertices(ROAD_WIDTH);

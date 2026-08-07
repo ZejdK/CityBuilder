@@ -14,7 +14,7 @@ const RoadGraph& RoadNetwork::getGraph() const {
 	return roadGraph;
 }
 
-const std::vector<RoadElement>& RoadNetwork::getRoads() const {
+const std::vector<RoadSegmentGeometry>& RoadNetwork::getRoads() const {
 
 const std::optional<RoadVertexDescriptor> RoadNetwork::findJunctionNear(float radius, sf::Vector2f position) const {
 
@@ -43,9 +43,9 @@ std::optional<sf::Vector2f> RoadNetwork::findJunctionPosNear(float radius, sf::V
 
 
 
-std::vector<RoadElement> RoadNetwork::getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const
+std::vector<RoadSegmentGeometry> RoadNetwork::getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const
 {
-	std::vector<RoadElement> roads;
+	std::vector<RoadSegmentGeometry> roads;
 	sf::Vector2f junctionPos { roadGraph[junctionVertex].position };
 
 	auto [ beginOut, endOut ] = boost::out_edges(junctionVertex, roadGraph);
@@ -64,7 +64,7 @@ std::vector<RoadElement> RoadNetwork::getJunctionRoadsClockwise(RoadVertexDescri
 	//	roads.push_back({ roadGraph[junctionVertex].position, roadGraph[sourceVertex].position });
 	//}
 
-	std::sort(roads.begin(), roads.end(), [](const RoadElement& a, const RoadElement& b) {
+	std::sort(roads.begin(), roads.end(), [](const RoadSegmentGeometry& a, const RoadSegmentGeometry& b) {
 
 		float angleA = std::atan2(a.end.y - a.start.y, a.end.x - a.start.x);
 		float angleB = std::atan2(b.end.y - b.start.y, b.end.x - b.start.x);
@@ -75,7 +75,7 @@ std::vector<RoadElement> RoadNetwork::getJunctionRoadsClockwise(RoadVertexDescri
 	return roads;
 }
 
-void RoadNetwork::add(const RoadElement& road)
+void RoadNetwork::add(const RoadSegmentGeometry& road)
 {
     roads.push_back(road);
 

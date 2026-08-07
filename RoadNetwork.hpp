@@ -12,7 +12,7 @@
 class RoadNetwork {
 
 	RoadGraph roadGraph;
-	std::vector<RoadElement> roads{};
+	std::vector<RoadSegmentGeometry> roads{};
 
 	RoadVertexDescriptor findOrCreateVertex(sf::Vector2f pos);
 	std::optional<RoadVertexDescriptor> findVertexAtPosition(sf::Vector2f pos);
@@ -25,14 +25,14 @@ public:
 	RoadNetwork();
 
 	const RoadGraph& getGraph() const;
-	const std::vector<RoadElement>& getRoads() const;
+	const std::vector<RoadSegmentGeometry>& getRoads() const;
 
 	const std::optional<RoadVertexDescriptor> findJunctionNear(float snapRadius, sf::Vector2f position) const;
 	std::optional<sf::Vector2f> findJunctionPosNear(float snapRadius, sf::Vector2f position) const;
 
-	std::vector<RoadElement> getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const;
+	std::vector<RoadSegmentGeometry> getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const;
 
-	void add(const RoadElement& road);
+	void add(const RoadSegmentGeometry& road);
 };
 
 

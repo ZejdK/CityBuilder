@@ -40,13 +40,13 @@ void RoadPlacementTool::selectOriginPos() {
     placementState = PlacementState::Placing;
 }
 
-RoadElement RoadPlacementTool::commitRoad() {
+RoadSegmentGeometry RoadPlacementTool::commitRoad() {
 
     sf::Vector2f destination = cursorPos;
     if (snapPosition)
         destination = *snapPosition;
 
-    RoadElement roadSeg{ *selectedOriginPos, destination };
+    RoadSegmentGeometry roadSeg{ *selectedOriginPos, destination };
 
     selectedOriginPos = std::nullopt;
     placementState = PlacementState::Idle;

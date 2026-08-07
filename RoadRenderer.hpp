@@ -28,7 +28,7 @@ class RoadRenderer {
     void renderLine(sf::RenderWindow& window, sf::Vector2f origin, sf::Vector2f destination);
     void renderEdge(sf::RenderWindow& window, EdgeVertexDescriptor edge, const RoadGraph& roadGraph);
 
-    void renderRoad(sf::RenderWindow& window, const RoadElement& re);
+    void renderRoad(sf::RenderWindow& window, const RoadSegmentGeometry& re);
     
     void renderJunction(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction);
     void renderJunctionCrossings(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction, const std::vector<sf::Vector2f> &junctionPoints);
