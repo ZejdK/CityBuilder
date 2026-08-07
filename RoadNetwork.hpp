@@ -5,6 +5,7 @@
 #include <vector>
 #include "RoadTypes.hpp"
 #include "RoadGraphTypes.hpp"
+#include <vector>
 
 
 
@@ -25,6 +26,8 @@ public:
 
 	const RoadGraph& getGraph() const;
 	const std::vector<RoadElement>& getRoads() const;
+
+	std::vector<RoadElement> getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const;
 
 	void add(const RoadElement& road);
 };

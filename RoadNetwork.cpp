@@ -3,6 +3,7 @@
 
 #include "RoadNetwork.hpp"
 #include "Math.hpp"
+#include <algorithm>
 
 
 
@@ -14,6 +15,35 @@ const RoadGraph& RoadNetwork::getGraph() const {
 }
 
 const std::vector<RoadElement>& RoadNetwork::getRoads() const {
+
+std::vector<RoadElement> RoadNetwork::getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const
+{
+	std::vector<RoadElement> roads;
+	sf::Vector2f junctionPos { roadGraph[junctionVertex].position };
+
+	auto [ beginOut, endOut ] = boost::out_edges(junctionVertex, roadGraph);
+	for (auto it { beginOut }; it != endOut; ++it) {
+
+		EdgeVertexDescriptor edge = *it;
+		auto targetVertex = boost::target(edge, roadGraph);
+		roads.push_back({ roadGraph[junctionVertex].position, roadGraph[targetVertex].position });
+	}
+
+	//auto [beginIn, endIn] = boost::in_edges(junctionVertex, roadGraph);
+	//for (auto it { beginIn }; it != endIn; ++it) {
+
+	//	EdgeVertexDescriptor edge = *it;
+	//	auto sourceVertex = boost::source(edge, roadGraph);
+	//	roads.push_back({ roadGraph[junctionVertex].position, roadGraph[sourceVertex].position });
+	//}
+
+	std::sort(roads.begin(), roads.end(), [](const RoadElement& a, const RoadElement& b) {
+
+		float angleA = std::atan2(a.end.y - a.start.y, a.end.x - a.start.x);
+		float angleB = std::atan2(b.end.y - b.start.y, b.end.x - b.start.x);
+
+		return angleA > angleB;
+	});
 
 	return roads;
 }
