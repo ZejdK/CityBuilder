@@ -27,6 +27,9 @@ public:
 	const RoadGraph& getGraph() const;
 	const std::vector<RoadElement>& getRoads() const;
 
+	const std::optional<RoadVertexDescriptor> findJunctionNear(float snapRadius, sf::Vector2f position) const;
+	std::optional<sf::Vector2f> findJunctionPosNear(float snapRadius, sf::Vector2f position) const;
+
 	std::vector<RoadElement> getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const;
 
 	void add(const RoadElement& road);

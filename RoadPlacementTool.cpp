@@ -88,7 +88,7 @@ void RoadPlacementTool::draw(sf::RenderWindow& window) {
 
 void RoadPlacementTool::drawIdleStage(sf::RenderWindow& window)
 {
-    snapPosition = GetClosestSnapPoint();
+	snapPosition = roadNetwork.findJunctionPosNear(SNAP_RADIUS, cursorPos);
 
     if (!snapPosition)
         window.draw(pointer);
@@ -110,7 +110,7 @@ void RoadPlacementTool::drawIdleStage(sf::RenderWindow& window)
 
 void RoadPlacementTool::drawPlaceStage(sf::RenderWindow& window)
 {
-    snapPosition = GetClosestSnapPoint();
+    snapPosition = roadNetwork.findJunctionPosNear(SNAP_RADIUS, cursorPos);
 
     std::optional<IntersectionResult> intersectionResult { GetIntersection() };
 
@@ -155,29 +155,6 @@ void RoadPlacementTool::drawPlaceStage(sf::RenderWindow& window)
     sf::Vector2f selectedDestPos { snapPosition ? *snapPosition : cursorPos };
     std::array temp = { sf::Vertex{*selectedOriginPos}, sf::Vertex{selectedDestPos} };
     window.draw(temp.data(), temp.size(), sf::PrimitiveType::Lines);
-}
-
-// NOTE: input of these is the cursor position
-std::optional<sf::Vector2f> RoadPlacementTool::GetClosestSnapPoint() {
-
-    std::optional<sf::Vector2f> closest;
-    std::optional<float> dist_closest;
-
-    for (const auto& road : roadNetwork.getRoads()) {
-
-        float dist_start { CB::Math::distance(cursorPos, road.start) };
-        float dist_end { CB::Math::distance(cursorPos, road.end) };
-
-        if (dist_start < SNAP_RADIUS && (!dist_closest || dist_start < dist_closest))
-            closest = road.start,
-            dist_closest = dist_start;
-
-        else if (dist_end < SNAP_RADIUS && (!dist_closest || dist_end < dist_closest))
-            closest = road.end,
-            dist_closest = dist_end;
-    }
-
-    return closest;
 }
 
 // should I make it clearer that this is line intersection? used to snap roads primarily

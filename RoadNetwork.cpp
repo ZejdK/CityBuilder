@@ -16,6 +16,33 @@ const RoadGraph& RoadNetwork::getGraph() const {
 
 const std::vector<RoadElement>& RoadNetwork::getRoads() const {
 
+const std::optional<RoadVertexDescriptor> RoadNetwork::findJunctionNear(float radius, sf::Vector2f position) const {
+
+	auto [begin, end] = boost::vertices(roadGraph);
+
+	for (auto it{ begin }; it != end; ++it) {
+
+		RoadVertexDescriptor vertex { *it };
+
+		if (CB::Math::distance(roadGraph[vertex].position, position) < radius)
+			return vertex;
+	}
+
+	return std::nullopt;
+}
+
+std::optional<sf::Vector2f> RoadNetwork::findJunctionPosNear(float radius, sf::Vector2f position) const {
+
+	std::optional<RoadVertexDescriptor> closestVertex = findJunctionNear(radius, position);
+
+	if (closestVertex)
+		return roadGraph[*closestVertex].position;
+
+	return std::nullopt;
+}
+
+
+
 std::vector<RoadElement> RoadNetwork::getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const
 {
 	std::vector<RoadElement> roads;
