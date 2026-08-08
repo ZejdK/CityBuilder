@@ -15,7 +15,21 @@ const RoadGraph& RoadNetwork::getGraph() const {
 	return roadGraph;
 }
 
-const std::vector<RoadSegmentGeometry>& RoadNetwork::getRoads() const {
+std::vector<RoadSegmentGeometry> RoadNetwork::getRoads() const {
+
+	return roads;
+}
+
+const std::vector<RoadVertexDescriptor> RoadNetwork::getJunctions() const {
+	
+	std::vector<RoadVertexDescriptor> junctions;
+	auto [ begin, end ] = boost::vertices(roadGraph);
+
+	for (auto it { begin }; it != end; ++it)
+		junctions.push_back(*it);
+
+	return junctions;
+}
 
 const std::optional<RoadVertexDescriptor> RoadNetwork::findJunctionNear(float radius, sf::Vector2f position) const {
 
