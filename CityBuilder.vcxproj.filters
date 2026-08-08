@@ -13,8 +13,32 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\types">
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{8813d00b-75bd-43ff-9a4b-73e52133dd66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\rendering">
+      <UniqueIdentifier>{16f3225e-108b-4638-93c1-54cc76d82d4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\simulation">
+      <UniqueIdentifier>{744f58a5-e5e7-476d-8353-32aa14affe0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\roadnetwork">
       <UniqueIdentifier>{d4c08757-39ae-42e9-8fd8-aec9fc76e9f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ui">
+      <UniqueIdentifier>{ef89c5fc-bb5e-4f35-a97a-badbe309b6fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ui">
+      <UniqueIdentifier>{aa81ab66-5062-4073-b6a5-5cb767d2f969}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\roadnetwork">
+      <UniqueIdentifier>{de928b99-4675-4430-90d0-7b3fd5d1dfb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\simulation">
+      <UniqueIdentifier>{feff54fe-9f0c-4fb4-b3ff-50e2809d9b0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\rendering">
+      <UniqueIdentifier>{5243d7de-b664-4695-8f7f-596e8c843267}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -24,40 +48,61 @@
     <ClCompile Include="CityBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Citizen.hpp">
+      <Filter>Header Files\simulation</Filter>
+    </ClCompile>
     <ClCompile Include="RoadPlacementTool.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="RoadNetwork.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\roadnetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="TrafficSimulation.cpp">
+      <Filter>Source Files\simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="Citizen.cpp">
+      <Filter>Source Files\simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="RoadSegmentGeometry.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="RoadJunctionGeometry.cpp">
+      <Filter>Source Files\rendering</Filter>
     </ClCompile>
     <ClCompile Include="RoadRenderer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="RoadGraphTypes.hpp">
+      <Filter>Header Files\roadnetwork</Filter>
+    </ClInclude>
     <ClInclude Include="Math.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RoadNetwork.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RoadPlacementTool.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlacementState.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="RoadRenderer.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="PlacementState.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadPlacementTool.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CityView.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RoadTypes.hpp">
-      <Filter>Header Files\types</Filter>
+    <ClInclude Include="TrafficSimulation.hpp">
+      <Filter>Header Files\simulation</Filter>
     </ClInclude>
-    <ClInclude Include="CityBuilderTypes.hpp">
-      <Filter>Header Files\types</Filter>
+    <ClInclude Include="RoadNetwork.hpp">
+      <Filter>Header Files\roadnetwork</Filter>
     </ClInclude>
-    <ClInclude Include="RoadGraphTypes.hpp">
-      <Filter>Header Files\types</Filter>
+    <ClInclude Include="RoadSegmentGeometry.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadJunctionGeometry.hpp">
+      <Filter>Header Files\rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

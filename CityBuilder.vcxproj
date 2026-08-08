@@ -145,23 +145,30 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Citizen.cpp" />
+    <ClCompile Include="Citizen.hpp" />
     <ClCompile Include="CityBuilder.cpp" />
     <ClCompile Include="CityBuilderSFMLold.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="RoadJunctionGeometry.cpp" />
     <ClCompile Include="RoadPlacementTool.cpp" />
     <ClCompile Include="RoadRenderer.cpp" />
+    <ClCompile Include="RoadSegmentGeometry.cpp" />
+    <ClCompile Include="TrafficSimulation.cpp" />
     <ClInclude Include="CityView.hpp" />
     <ClInclude Include="PlacementState.hpp" />
     <ClInclude Include="RoadGraphTypes.hpp" />
+    <ClInclude Include="RoadJunctionGeometry.hpp" />
     <ClInclude Include="RoadPlacementTool.hpp" />
     <ClCompile Include="RoadNetwork.cpp" />
     <ClInclude Include="RoadNetwork.hpp" />
+    <ClInclude Include="RoadSegmentGeometry.hpp" />
+    <ClInclude Include="TrafficSimulation.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="RoadRenderer.hpp" />
-    <ClInclude Include="RoadTypes.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Progress log.txt" />
