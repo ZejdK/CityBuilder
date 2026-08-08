@@ -3,9 +3,8 @@
 
 #pragma once
 #include <vector>
-#include "RoadTypes.hpp"
 #include "RoadGraphTypes.hpp"
-#include <vector>
+#include "RoadSegmentGeometry.hpp"
 
 
 
@@ -25,7 +24,7 @@ public:
 	RoadNetwork();
 
 	const RoadGraph& getGraph() const;
-	const std::vector<RoadSegmentGeometry>& getRoads() const;
+	std::vector<RoadSegmentGeometry> getRoads() const;
 
 	const std::optional<RoadVertexDescriptor> findJunctionNear(float snapRadius, sf::Vector2f position) const;
 	std::optional<sf::Vector2f> findJunctionPosNear(float snapRadius, sf::Vector2f position) const;

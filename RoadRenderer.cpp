@@ -162,7 +162,7 @@ void RoadRenderer::renderJunctions(sf::RenderWindow& window, const RoadNetwork& 
         if (boost::out_degree(*it, roadGraph) > 2) {
 
 			auto clockwiseRoads = roadNetwork.getJunctionRoadsClockwise(*it);
-			RoadJunctionGeometry junction { clockwiseRoads, roadGraph[*it].position };
+			RoadJunctionGeometry junction { roadGraph[*it].position, clockwiseRoads };
             renderJunction(window, junction);
         }
 }

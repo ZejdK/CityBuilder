@@ -6,6 +6,7 @@
 #include "RoadGraphTypes.hpp"
 #include "RoadNetwork.hpp"
 #include "CityView.hpp"
+#include "RoadJunctionGeometry.hpp"
 
 
 

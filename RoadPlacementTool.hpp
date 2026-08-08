@@ -9,7 +9,6 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include "SFML/Graphics/Vertex.hpp"
 #include "RoadNetwork.hpp"
-#include "RoadTypes.hpp"
 #include "Math.hpp"
 #include "PlacementState.hpp"
 

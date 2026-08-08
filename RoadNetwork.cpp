@@ -4,6 +4,7 @@
 #include "RoadNetwork.hpp"
 #include "Math.hpp"
 #include <algorithm>
+#include "RoadSegmentGeometry.hpp"
 
 
 
