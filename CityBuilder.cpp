@@ -4,9 +4,22 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "RoadNetwork.hpp"
-#include "RoadPlacementTool.hpp"
+#include "EditorUI.hpp"
 #include "CityView.hpp"
 #include "RoadRenderer.hpp"
+#include "UIRenderer.hpp"
+#include "Config.hpp"
+#include "SFML/Graphics/Color.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
+#include "SFML/System/Vector2.hpp"
+#include "SFML/Window/Event.hpp"
+#include "SFML/Window/Keyboard.hpp"
+#include "SFML/Window/Mouse.hpp"
+#include "SFML/Window/VideoMode.hpp"
+
+
+
+void findAndSetHoveredJunction(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer);
 
 
 
@@ -18,9 +31,13 @@ int main() {
 
 
 
+    ConfigGlobal config {};
+
     RoadNetwork roadNetwork {};
-    RoadPlacementTool roadPlacementTool {roadNetwork};
+    EditorUI editorUi { roadNetwork };
+
     RoadRenderer roadRenderer {};
+    UIRenderer uiRenderer { config };
     CityView cityView { CityView::Road };
 
     while (window.isOpen())
@@ -52,18 +69,12 @@ int main() {
 
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
 
-                    if (!roadPlacementTool.selected())
-                        roadPlacementTool.selectOriginPos();
-                    else {
-                        auto road = roadPlacementTool.commitRoad();
-                        roadNetwork.add(road);
-                    }
+                    editorUi.selectJunctionOrPos(sf::Vector2f(mouseButtonPressed->position));
+                    findAndSetHoveredJunction(mouseButtonPressed->position, config, roadNetwork, editorUi, uiRenderer); // prevents no vertex being hovered after a new vertex is added and mouse is not moved
                 }
             }
-            else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>()) {
-
-                roadPlacementTool.setCursorPos(sf::Vector2f(mouseMoved->position));
-            }
+            else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>()) 
+                findAndSetHoveredJunction(mouseMoved->position, config, roadNetwork, editorUi, uiRenderer);
         }
 
 
@@ -71,11 +82,21 @@ int main() {
         window.clear(sf::Color(0, 40, 0));
         
         roadRenderer.render(window, roadNetwork, cityView);
-
-        roadPlacementTool.draw(window);
+        uiRenderer.render(window, editorUi);
 
         window.display();
     }
+}
+
+
+
+void findAndSetHoveredJunction(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer) {
+
+    sf::Vector2f cursorPos{ sf::Vector2f(cursorPos2i) };
+    auto hoveredJunction{ roadNetwork.findJunctionNear(config.snapRadius, cursorPos) };
+
+    uiRenderer.setCursorPos(cursorPos);
+    editorUi.setHoveredJunction(hoveredJunction);
 }
 
 

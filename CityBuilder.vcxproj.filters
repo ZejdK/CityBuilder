@@ -51,7 +51,7 @@
     <ClCompile Include="Citizen.hpp">
       <Filter>Header Files\simulation</Filter>
     </ClCompile>
-    <ClCompile Include="RoadPlacementTool.cpp">
+    <ClCompile Include="EditorUI.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="RoadNetwork.cpp">
@@ -72,6 +72,9 @@
     <ClCompile Include="RoadRenderer.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="UIRenderer.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RoadGraphTypes.hpp">
@@ -86,11 +89,8 @@
     <ClInclude Include="PlacementState.hpp">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="RoadPlacementTool.hpp">
+    <ClInclude Include="EditorUI.hpp">
       <Filter>Header Files\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="CityView.hpp">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TrafficSimulation.hpp">
       <Filter>Header Files\simulation</Filter>
@@ -102,6 +102,21 @@
       <Filter>Header Files\rendering</Filter>
     </ClInclude>
     <ClInclude Include="RoadJunctionGeometry.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="UIMode.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRenderer.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CityView.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageLog.hpp">
       <Filter>Header Files\rendering</Filter>
     </ClInclude>
   </ItemGroup>

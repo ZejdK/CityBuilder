@@ -152,19 +152,24 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="RoadJunctionGeometry.cpp" />
-    <ClCompile Include="RoadPlacementTool.cpp" />
+    <ClCompile Include="EditorUI.cpp" />
     <ClCompile Include="RoadRenderer.cpp" />
     <ClCompile Include="RoadSegmentGeometry.cpp" />
     <ClCompile Include="TrafficSimulation.cpp" />
+    <ClCompile Include="UIRenderer.cpp" />
     <ClInclude Include="CityView.hpp" />
+    <ClInclude Include="Config.hpp" />
+    <ClInclude Include="MessageLog.hpp" />
     <ClInclude Include="PlacementState.hpp" />
     <ClInclude Include="RoadGraphTypes.hpp" />
     <ClInclude Include="RoadJunctionGeometry.hpp" />
-    <ClInclude Include="RoadPlacementTool.hpp" />
+    <ClInclude Include="EditorUI.hpp" />
     <ClCompile Include="RoadNetwork.cpp" />
     <ClInclude Include="RoadNetwork.hpp" />
     <ClInclude Include="RoadSegmentGeometry.hpp" />
     <ClInclude Include="TrafficSimulation.hpp" />
+    <ClInclude Include="UIMode.hpp" />
+    <ClInclude Include="UIRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp" />

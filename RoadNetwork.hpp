@@ -11,20 +11,15 @@
 class RoadNetwork {
 
 	RoadGraph roadGraph;
-	std::vector<RoadSegmentGeometry> roads{};
 
-	RoadVertexDescriptor findOrCreateVertex(sf::Vector2f pos);
-	std::optional<RoadVertexDescriptor> findVertexAtPosition(sf::Vector2f pos);
-
-	// TODO: clean up added extra nodes, see line below
-	//			if i connect an edge to "middle of another edge". i would need to split edge into two edges to create a node to connect to the newly added edge. If i remove this newly added edge, I would then be left with a "trivial" node, ie node with only two edges and is also in the middle of a geometric line. periodically go through all the nodes to clean these up
+	void addEdge(RoadVertexDescriptor source, RoadVertexDescriptor target);
+	RoadVertexDescriptor addVertex(sf::Vector2f pos);
 
 public:
 	
 	RoadNetwork();
 
 	const RoadGraph& getGraph() const;
-	std::vector<RoadSegmentGeometry> getRoads() const;
 	const std::vector<RoadVertexDescriptor> getJunctions() const;
 
 	const std::optional<RoadVertexDescriptor> findJunctionNear(float snapRadius, sf::Vector2f position) const;
@@ -32,7 +27,10 @@ public:
 
 	std::vector<RoadSegmentGeometry> getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const;
 
-	void add(const RoadSegmentGeometry& road);
+	void add(RoadVertexDescriptor source, RoadVertexDescriptor target);
+	void add(sf::Vector2f sourcePos, RoadVertexDescriptor target);
+	void add(RoadVertexDescriptor source, sf::Vector2f targetPos);
+	void add(sf::Vector2f sourcePos, sf::Vector2f targetPos);
 };
 
 

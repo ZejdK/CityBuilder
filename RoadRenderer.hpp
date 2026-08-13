@@ -28,6 +28,7 @@ class RoadRenderer {
 
     void renderLine(sf::RenderWindow& window, sf::Vector2f origin, sf::Vector2f destination);
     void renderEdge(sf::RenderWindow& window, EdgeVertexDescriptor edge, const RoadGraph& roadGraph);
+    void renderVertex(sf::RenderWindow& window, RoadVertexDescriptor edge, const RoadGraph& roadGraph);
 
     void renderRoad(sf::RenderWindow& window, const RoadSegmentGeometry& re);
     

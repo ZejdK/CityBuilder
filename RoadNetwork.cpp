@@ -5,6 +5,14 @@
 #include "Math.hpp"
 #include <algorithm>
 #include "RoadSegmentGeometry.hpp"
+#include <cmath>
+#include <optional>
+#include <unordered_set>
+#include <vector>
+#include "boost/graph/adjacency_list.hpp"
+#include "boost/graph/detail/adjacency_list.hpp"
+#include "SFML/System/Vector2.hpp"
+#include "RoadGraphTypes.hpp"
 
 
 
@@ -13,11 +21,6 @@ RoadNetwork::RoadNetwork() {}
 const RoadGraph& RoadNetwork::getGraph() const {
 
 	return roadGraph;
-}
-
-std::vector<RoadSegmentGeometry> RoadNetwork::getRoads() const {
-
-	return roads;
 }
 
 const std::vector<RoadVertexDescriptor> RoadNetwork::getJunctions() const {
@@ -63,21 +66,21 @@ std::vector<RoadSegmentGeometry> RoadNetwork::getJunctionRoadsClockwise(RoadVert
 	std::vector<RoadSegmentGeometry> roads;
 	sf::Vector2f junctionPos { roadGraph[junctionVertex].position };
 
+	std::unordered_set<RoadVertexDescriptor> seen;
+
+	auto addRoad = [&](RoadVertexDescriptor otherVertex) {
+
+		if (seen.insert(otherVertex).second) // if the item was inserted into the set, .insert returns std::pair, of which the second value is bool that indicates this
+			roads.push_back({ roadGraph[junctionVertex].position, roadGraph[otherVertex].position });
+	};
+
 	auto [ beginOut, endOut ] = boost::out_edges(junctionVertex, roadGraph);
-	for (auto it { beginOut }; it != endOut; ++it) {
+	for (auto edgeIt { beginOut }; edgeIt != endOut; ++edgeIt)
+		addRoad(boost::target(*edgeIt, roadGraph));
 
-		EdgeVertexDescriptor edge = *it;
-		auto targetVertex = boost::target(edge, roadGraph);
-		roads.push_back({ roadGraph[junctionVertex].position, roadGraph[targetVertex].position });
-	}
-
-	//auto [beginIn, endIn] = boost::in_edges(junctionVertex, roadGraph);
-	//for (auto it { beginIn }; it != endIn; ++it) {
-
-	//	EdgeVertexDescriptor edge = *it;
-	//	auto sourceVertex = boost::source(edge, roadGraph);
-	//	roads.push_back({ roadGraph[junctionVertex].position, roadGraph[sourceVertex].position });
-	//}
+	auto [ beginIn, endIn ] = boost::in_edges(junctionVertex, roadGraph);
+	for (auto edgeIt { beginIn }; edgeIt != endIn; ++edgeIt)
+		addRoad(boost::source(*edgeIt, roadGraph));
 
 	std::sort(roads.begin(), roads.end(), [](const RoadSegmentGeometry& a, const RoadSegmentGeometry& b) {
 
@@ -90,46 +93,50 @@ std::vector<RoadSegmentGeometry> RoadNetwork::getJunctionRoadsClockwise(RoadVert
 	return roads;
 }
 
-void RoadNetwork::add(const RoadSegmentGeometry& road)
-{
-    roads.push_back(road);
 
-	RoadVertexDescriptor nodeOrigin = findOrCreateVertex(road.start);
-	RoadVertexDescriptor nodeDest = findOrCreateVertex(road.end);
 
-	auto [ edge1, inserted1 ] = boost::add_edge(nodeOrigin, nodeDest, roadGraph);
-	roadGraph[edge1].length = CB::Math::distance(road.start, road.end);
+void RoadNetwork::addEdge(RoadVertexDescriptor source, RoadVertexDescriptor target) {
+
+	float length{ CB::Math::distance(roadGraph[source].position, roadGraph[target].position) };
+
+	auto [ edge1, inserted1 ] = boost::add_edge(source, target, roadGraph);
+	roadGraph[edge1].length = length;
 	roadGraph[edge1].speedLimit = 50.f;
 
-	auto [ edge2, inserted2 ] = boost::add_edge(nodeDest, nodeOrigin, roadGraph);
-	roadGraph[edge2].length = roadGraph[edge1].length;
+	auto [ edge2, inserted2 ] = boost::add_edge(target, source, roadGraph);
+	roadGraph[edge2].length = length;
 	roadGraph[edge2].speedLimit = 50.f;
 }
 
-RoadVertexDescriptor RoadNetwork::findOrCreateVertex(sf::Vector2f pos) {
+RoadVertexDescriptor RoadNetwork::addVertex(sf::Vector2f pos) {
 
-	if (auto node { findVertexAtPosition(pos) })
-		return *node;
+	auto newVertex = boost::add_vertex(roadGraph);
+	roadGraph[newVertex].position = pos;
 
-	auto newNode = boost::add_vertex(roadGraph);
-	roadGraph[newNode].position = pos;
-	
-	return newNode;
+	return newVertex;
 }
 
-std::optional<RoadVertexDescriptor> RoadNetwork::findVertexAtPosition(sf::Vector2f pos) {
+void RoadNetwork::add(RoadVertexDescriptor source, RoadVertexDescriptor target) {
 
-	auto [ begin, end ] = boost::vertices(roadGraph);
+	addEdge(source, target);
+}
 
-	for (auto it { begin }; it != end; ++it) {
+void RoadNetwork::add(sf::Vector2f sourcePos, RoadVertexDescriptor target) {
 
-		RoadVertexDescriptor vertex { *it };
+	auto sourceNew = addVertex(sourcePos);
+	addEdge(sourceNew, target);
+}
+void RoadNetwork::add(RoadVertexDescriptor source, sf::Vector2f targetPos) {
 
-		if (CB::Math::equals(pos, roadGraph[vertex].position))
-			return vertex;
-	}
+	auto targetNew = addVertex(targetPos);
+	addEdge(source, targetNew);
+}
 
-	return std::nullopt;
+void RoadNetwork::add(sf::Vector2f sourcePos, sf::Vector2f targetPos) {
+
+	auto sourceNew = addVertex(sourcePos);
+	auto targetNew = addVertex(targetPos);
+	addEdge(sourceNew, targetNew);
 }
 
 

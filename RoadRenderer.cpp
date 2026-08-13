@@ -4,6 +4,19 @@
 #include "RoadRenderer.hpp"
 #include <SFML/System/Vector2.hpp>
 #include "SFML/Graphics/PrimitiveType.hpp"
+#include <array>
+#include <string>
+#include <vector>
+#include "CityView.hpp"
+#include "boost/graph/adjacency_list.hpp"
+#include "boost/graph/detail/adjacency_list.hpp"
+#include "SFML/Graphics/Color.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
+#include "SFML/Graphics/Vertex.hpp"
+#include "RoadGraphTypes.hpp"
+#include "RoadJunctionGeometry.hpp"
+#include "RoadNetwork.hpp"
+#include "RoadSegmentGeometry.hpp"
 
 
 
@@ -63,12 +76,29 @@ void RoadRenderer::render(sf::RenderWindow& window, const RoadNetwork& roadNetwo
 
 void RoadRenderer::renderGraph(sf::RenderWindow& window, const RoadNetwork &roadNetwork) {
 
-    auto roadGraph = roadNetwork.getGraph();
+    auto &roadGraph = roadNetwork.getGraph();
     
+    auto [ verticesBegin, verticesEnd ] = boost::vertices(roadGraph);
+    for (auto it{ verticesBegin }; it != verticesEnd; ++it)
+        renderVertex(window, *it, roadGraph);
+
     auto [ it, end ] = boost::edges(roadGraph);
 
     for (; it != end; ++it)
         renderEdge(window, *it, roadGraph);
+}
+
+void RoadRenderer::renderVertex(sf::RenderWindow& window, RoadVertexDescriptor vertex, const RoadGraph& roadGraph) {
+
+    auto junction = roadGraph[vertex];
+    const auto degreeIn = boost::in_degree(vertex, roadGraph);
+    const auto degreeOut = boost::out_degree(vertex, roadGraph);
+
+    text.setPosition(junction.position);
+    text.setString(std::format("i{}o{}", degreeIn, degreeOut));
+    graphNodeShape.setPosition(junction.position);
+    window.draw(graphNodeShape);
+    window.draw(text);
 }
 
 void RoadRenderer::renderEdge(sf::RenderWindow& window, EdgeVertexDescriptor edge, const RoadGraph& roadGraph) {
@@ -77,20 +107,6 @@ void RoadRenderer::renderEdge(sf::RenderWindow& window, EdgeVertexDescriptor edg
     auto targetVertex = boost::target(edge, roadGraph);
     const RoadNodeData& sourceNode = roadGraph[sourceVertex];
     const RoadNodeData& targetNode = roadGraph[targetVertex];
-    const auto sourceDegree = boost::out_degree(sourceVertex, roadGraph);
-    const auto targetDegree = boost::out_degree(targetVertex, roadGraph);
-
-    graphNodeShape.setPosition(sourceNode.position);
-    text.setPosition(sourceNode.position);
-    text.setString(std::to_string(sourceDegree));
-    window.draw(graphNodeShape);
-    window.draw(text);
-
-    text.setPosition(targetNode.position);
-    text.setString(std::to_string(targetDegree));
-    graphNodeShape.setPosition(targetNode.position);
-    window.draw(graphNodeShape);
-    window.draw(text);
 
     renderLine(window, sourceNode.position, targetNode.position);
 
@@ -112,7 +128,7 @@ void RoadRenderer::renderLine(sf::RenderWindow& window, sf::Vector2f origin, sf:
 
 void RoadRenderer::renderRoads(sf::RenderWindow& window, const RoadNetwork& roadNetwork) {
 
-    auto roadGraph = roadNetwork.getGraph();
+    auto &roadGraph = roadNetwork.getGraph();
     auto [ it, end ] = boost::edges(roadGraph);
 
     states.texture = &texture;
@@ -154,12 +170,12 @@ void RoadRenderer::renderRoad(sf::RenderWindow& window, const RoadSegmentGeometr
 // NOTE: RoadRenderer should not have direct access to the RoadNetwork's internal graph structure
 void RoadRenderer::renderJunctions(sf::RenderWindow& window, const RoadNetwork& roadNetwork) {
 
-    auto roadGraph = roadNetwork.getGraph();
+    auto &roadGraph = roadNetwork.getGraph();
     auto [ begin, end ] = boost::vertices(roadGraph);
 
     states.texture = &texturePlain;
     for (auto it { begin }; it != end; ++it)
-        if (boost::out_degree(*it, roadGraph) > 2) {
+        if (boost::in_degree(*it, roadGraph) > 2) {
 
 			auto clockwiseRoads = roadNetwork.getJunctionRoadsClockwise(*it);
 			RoadJunctionGeometry junction { roadGraph[*it].position, clockwiseRoads };

@@ -3,6 +3,10 @@
 
 #include "RoadJunctionGeometry.hpp"
 #include "Math.hpp"
+#include <optional>
+#include <vector>
+#include "SFML/System/Vector2.hpp"
+#include "RoadSegmentGeometry.hpp"
 
 
 
