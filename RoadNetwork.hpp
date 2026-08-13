@@ -5,6 +5,7 @@
 #include <vector>
 #include "RoadGraphTypes.hpp"
 #include "RoadSegmentGeometry.hpp"
+#include <string>
 
 
 
@@ -26,6 +27,8 @@ public:
 	std::optional<sf::Vector2f> findJunctionPosNear(float snapRadius, sf::Vector2f position) const;
 
 	std::vector<RoadSegmentGeometry> getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const;
+
+	std::string getInformation() const;
 
 	void add(RoadVertexDescriptor source, RoadVertexDescriptor target);
 	void add(sf::Vector2f sourcePos, RoadVertexDescriptor target);

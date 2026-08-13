@@ -13,6 +13,8 @@
 #include "boost/graph/detail/adjacency_list.hpp"
 #include "SFML/System/Vector2.hpp"
 #include "RoadGraphTypes.hpp"
+#include <string>
+#include <format>
 
 
 
@@ -91,6 +93,22 @@ std::vector<RoadSegmentGeometry> RoadNetwork::getJunctionRoadsClockwise(RoadVert
 	});
 
 	return roads;
+}
+
+std::string RoadNetwork::getInformation() const
+{
+	// this information should be stored in the class fields instead of iterating every frame
+	// roadCount will break when one way roads are introduced, but this data should be cached anyway
+	// TODO: store road network stats values into fields
+
+	int junctionCount { 0 }, roadCount { int(boost::num_edges(roadGraph)) / 2 };
+
+	auto [ begin, end ] = boost::vertices(roadGraph);
+	for (auto it { begin }; it != end; ++it)
+		if (boost::in_degree(*it, roadGraph) > 2)
+			++junctionCount;
+
+	return std::format("vertices:{}, edges:{}, junctions:{}, roads:{}", boost::num_vertices(roadGraph), boost::num_edges(roadGraph), junctionCount, roadCount);
 }
 
 

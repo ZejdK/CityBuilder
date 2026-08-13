@@ -13,6 +13,7 @@
 #include "RoadGraphTypes.hpp"
 #include "RoadNetwork.hpp"
 #include "UIMode.hpp"
+#include <string>
 
 
 
@@ -98,6 +99,11 @@ std::optional<sf::Vector2f> EditorUI::getSelectedPos() const {
         return getSelectedJunctionPos();
 
     return *selectedPos;
+}
+
+std::string EditorUI::getRoadInformation() const {
+    
+    return roadNetwork.getInformation();
 }
 
 std::optional<RoadVertexDescriptor> EditorUI::getHoveredJunction() const {

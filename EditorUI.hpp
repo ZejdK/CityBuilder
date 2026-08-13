@@ -7,6 +7,9 @@
 #include "PlacementState.hpp"
 #include "Config.hpp"
 #include "UIMode.hpp"
+#include <optional>
+#include <string>
+#include "RoadGraphTypes.hpp"
 
 
 
@@ -40,6 +43,7 @@ public:
 	std::optional<sf::Vector2f> getSelectedJunctionPos() const;
 	std::optional<sf::Vector2f> getSelectedPos() const;
 
+	std::string getRoadInformation() const;
 
 
 	UIMode getMode() const { return uiMode; }

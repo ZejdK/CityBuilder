@@ -48,6 +48,7 @@ void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi) {
     
     logger.add(std::string("UI mode: ") + std::string(to_string(editorUi.getMode())));
     logger.add(std::format("Placement state: {}", int(editorUi.getPlacementState())));
+    logger.add(std::string("Roads information: ") + editorUi.getRoadInformation());
 
     if (editorUi.getPlacementState() == PlacementState::Idle)
         renderAddRoadIdleStage(window, editorUi);
