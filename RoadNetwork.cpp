@@ -101,14 +101,23 @@ std::string RoadNetwork::getInformation() const
 	// roadCount will break when one way roads are introduced, but this data should be cached anyway
 	// TODO: store road network stats values into fields
 
-	int junctionCount { 0 }, roadCount { int(boost::num_edges(roadGraph)) / 2 };
-
-	auto [ begin, end ] = boost::vertices(roadGraph);
-	for (auto it { begin }; it != end; ++it)
-		if (boost::in_degree(*it, roadGraph) > 2)
-			++junctionCount;
+	int junctionCount { getJunctionCount() };
+	int roadCount{ int(boost::num_edges(roadGraph)) / 2 };
 
 	return std::format("vertices:{}, edges:{}, junctions:{}, roads:{}", boost::num_vertices(roadGraph), boost::num_edges(roadGraph), junctionCount, roadCount);
+}
+
+int RoadNetwork::getJunctionCount() const {
+
+	// TODO: this information should be stored in a field rather than calculated every time
+	int junctionCount { 0 };
+
+	auto [begin, end] = boost::vertices(roadGraph);
+	for (auto it{ begin }; it != end; ++it)
+		if (boost::in_degree(*it, roadGraph) > 2)
+			++junctionCount;
+	
+	return junctionCount;
 }
 
 

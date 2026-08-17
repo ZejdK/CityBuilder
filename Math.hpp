@@ -5,6 +5,8 @@
 #include <optional>
 #include <SFML/System/Vector2.hpp>
 #include <cmath>
+#include <numbers>
+#include <cstdlib>
 
 
 
@@ -53,6 +55,17 @@ namespace CB { namespace Math {
             return std::nullopt;
 
         return a1 + r * t;
+    }
+
+    inline sf::Vector2f rotateInDirection(sf::Vector2f v, sf::Vector2f dir) {
+
+        float pi = float(std::numbers::pi);
+        float angle = std::atan2(dir.y, dir.x) * 180.f / pi;
+
+        float c = std::cos(angle * pi / 180.f);
+        float s = std::sin(angle * pi / 180.f);
+
+        return sf::Vector2f(v.x * c - v.y * s, v.x * s + v.y * c);
     }
 }
 }

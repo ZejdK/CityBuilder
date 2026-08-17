@@ -16,6 +16,9 @@
 #include "SFML/Window/Keyboard.hpp"
 #include "SFML/Window/Mouse.hpp"
 #include "SFML/Window/VideoMode.hpp"
+#include "CitizenSimulation.hpp"
+#include "SFML/System/Clock.hpp"
+#include "CitizenRenderer.hpp"
 
 
 
@@ -32,16 +35,23 @@ int main() {
 
 
     ConfigGlobal config {};
+    float simulationSpeed { 1.f }; // 0 could be paused
 
     RoadNetwork roadNetwork {};
+    CitizenSimulation citizenSimulation { roadNetwork };
     EditorUI editorUi { roadNetwork };
 
     RoadRenderer roadRenderer {};
+    CitizenRenderer citizenRenderer {};
     UIRenderer uiRenderer { config };
     CityView cityView { CityView::Road };
 
+    sf::Clock clock;
+
     while (window.isOpen())
     {
+        float dt = clock.restart().asSeconds();
+
         while (const std::optional event = window.pollEvent()) {
 
             if (event->is<sf::Event::Closed>()) {
@@ -79,11 +89,12 @@ int main() {
 
 
 
+        citizenSimulation.update(dt * simulationSpeed);
+
         window.clear(sf::Color(0, 40, 0));
-        
         roadRenderer.render(window, roadNetwork, cityView);
         uiRenderer.render(window, editorUi);
-
+        citizenRenderer.render(window, citizenSimulation);
         window.display();
     }
 }

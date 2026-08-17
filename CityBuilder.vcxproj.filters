@@ -48,16 +48,13 @@
     <ClCompile Include="CityBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Citizen.hpp">
-      <Filter>Header Files\simulation</Filter>
-    </ClCompile>
     <ClCompile Include="EditorUI.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="RoadNetwork.cpp">
       <Filter>Source Files\roadnetwork</Filter>
     </ClCompile>
-    <ClCompile Include="TrafficSimulation.cpp">
+    <ClCompile Include="CitizenSimulation.cpp">
       <Filter>Source Files\simulation</Filter>
     </ClCompile>
     <ClCompile Include="Citizen.cpp">
@@ -73,6 +70,9 @@
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
     <ClCompile Include="UIRenderer.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="CitizenRenderer.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,7 +92,7 @@
     <ClInclude Include="EditorUI.hpp">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
-    <ClInclude Include="TrafficSimulation.hpp">
+    <ClInclude Include="CitizenSimulation.hpp">
       <Filter>Header Files\simulation</Filter>
     </ClInclude>
     <ClInclude Include="RoadNetwork.hpp">
@@ -118,6 +118,18 @@
     </ClInclude>
     <ClInclude Include="MessageLog.hpp">
       <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="CitizenRenderer.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Citizen.hpp">
+      <Filter>Header Files\simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="CitizenPosition.hpp">
+      <Filter>Header Files\simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomCycleFinder.hpp">
+      <Filter>Header Files\roadnetwork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,9 @@
 #include "RoadGraphTypes.hpp"
 #include "RoadSegmentGeometry.hpp"
 #include <string>
+#include <optional>
+#include "SFML/System/Vector2.hpp"
+#include "RandomCycleFinder.hpp"
 
 
 
@@ -29,11 +32,17 @@ public:
 	std::vector<RoadSegmentGeometry> getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const;
 
 	std::string getInformation() const;
+	int getJunctionCount() const;
 
 	void add(RoadVertexDescriptor source, RoadVertexDescriptor target);
 	void add(sf::Vector2f sourcePos, RoadVertexDescriptor target);
 	void add(RoadVertexDescriptor source, sf::Vector2f targetPos);
 	void add(sf::Vector2f sourcePos, sf::Vector2f targetPos);
+
+	std::vector<RoadVertexDescriptor> getRandomCycle() const {
+
+		return RandomCycleFinder::getRandomCycle(roadGraph);
+	}
 };
 
 
