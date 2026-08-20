@@ -27,6 +27,8 @@ public: // TODO: members should be private
 	sf::Vector2f getProjectedPoint(const sf::Vector2f& point) const;
 	sf::Vector2f getMirroredPoint(sf::Vector2f point) const;
 
+	bool isPointOnRoad(float roadWidth, const sf::Vector2f& point) const;
+
 	float length() const;
 };
 

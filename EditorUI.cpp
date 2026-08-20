@@ -14,6 +14,7 @@
 #include "RoadNetwork.hpp"
 #include "UIMode.hpp"
 #include <string>
+#include "RoadSegmentGeometry.hpp"
 
 
 
@@ -22,9 +23,10 @@ EditorUI::EditorUI(RoadNetwork& roadNetwork)
 
 
 
-void EditorUI::setHoveredJunction(std::optional<RoadVertexDescriptor> junction) {
+void EditorUI::setHoveredRoadElement(std::optional<RoadVertexDescriptor> junction, std::optional<EdgeVertexDescriptor> road) {
 
     hoveredVertex = junction;
+    hoveredEdge = road;
 }
 
 void EditorUI::selectJunctionOrPos(sf::Vector2f cursorPos) {
@@ -58,7 +60,7 @@ void EditorUI::selectJunctionOrPos(sf::Vector2f cursorPos) {
                     roadNetwork.add(*selectedVertex, cursorPos);
             }
 
-            deselectJunction();
+            deselectRoadElement();
             roadPlacementState = PlacementState::Idle;
         }
         break;
@@ -73,10 +75,12 @@ void EditorUI::selectJunctionOrPos(sf::Vector2f cursorPos) {
     }
 }
 
-void EditorUI::deselectJunction() {
+void EditorUI::deselectRoadElement() {
 
     selectedVertex.reset();
     selectedPos.reset();
+    hoveredVertex.reset();
+    hoveredEdge.reset();
 }
 
 // assumes EditorUI will be in UIMode::AddRoad and PlacementState::Placing
@@ -121,6 +125,20 @@ std::optional<sf::Vector2f> EditorUI::getHoveredJunctionPos() const {
     return G[*hoveredVertex].position;
 }
 
+std::optional<RoadSegmentGeometry> EditorUI::getHoveredRoad() const {
+
+    if (!hoveredEdge)
+        return std::nullopt;
+
+    auto &G = roadNetwork.getGraph();
+
+    auto sourceVertex = boost::source(*hoveredEdge, G);
+    auto targetVertex = boost::target(*hoveredEdge, G);
+
+    return RoadSegmentGeometry{ G[sourceVertex].position, G[targetVertex].position };
+}
+
+
 
 void EditorUI::setMode(UIMode newMode) {
 
@@ -131,7 +149,7 @@ void EditorUI::setMode(UIMode newMode) {
     case UIMode::AddRoad:
 
         roadPlacementState = PlacementState::Idle;
-        deselectJunction();
+        deselectRoadElement();
         break;
     case UIMode::Select:
         //

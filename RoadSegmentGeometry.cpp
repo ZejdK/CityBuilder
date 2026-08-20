@@ -108,6 +108,29 @@ sf::Vector2f RoadSegmentGeometry::getMirroredPoint(sf::Vector2f point) const {
 	return 2.0f * closestPoint - point;
 }
 
+// check if point is inside quad represented by road segment
+bool RoadSegmentGeometry::isPointOnRoad(float roadWidth, const sf::Vector2f& point) const {
+
+	auto vertices = getVertices(roadWidth);
+
+	sf::Vector2f e0 = vertices[1] - vertices[0];
+	sf::Vector2f e1 = vertices[2] - vertices[1];
+	sf::Vector2f e2 = vertices[3] - vertices[2];
+	sf::Vector2f e3 = vertices[0] - vertices[3];
+
+	sf::Vector2f p0 = point - vertices[0];
+	sf::Vector2f p1 = point - vertices[1];
+	sf::Vector2f p2 = point - vertices[2];
+	sf::Vector2f p3 = point - vertices[3];
+
+	bool c0 = e0.cross(p0) >= 0.0f;
+	bool c1 = e1.cross(p1) >= 0.0f;
+	bool c2 = e2.cross(p2) >= 0.0f;
+	bool c3 = e3.cross(p3) >= 0.0f;
+
+	return (c0 == c1) && (c1 == c2) && (c2 == c3);
+}
+
 float RoadSegmentGeometry::length() const {
 
 	return std::sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y));

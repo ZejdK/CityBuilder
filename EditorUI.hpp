@@ -10,6 +10,13 @@
 #include <optional>
 #include <string>
 #include "RoadGraphTypes.hpp"
+#include "RoadSegmentGeometry.hpp"
+
+
+
+// EditorUI returns RoadJunctionGeometry and RoadSegmentGeometry
+//		This one is layer between the road network and the UI renderer
+//		RoadNetwork  ->  CityBuilder  ->  EditorUI  ->  UIRenderer
 
 
 
@@ -19,6 +26,7 @@ class EditorUI {
 
 	std::optional<RoadVertexDescriptor> hoveredVertex;
 	std::optional<RoadVertexDescriptor> selectedVertex;
+	std::optional<EdgeVertexDescriptor> hoveredEdge;
 
 	UIMode uiMode = UIMode::AddRoad; // default mode should be View
 
@@ -35,12 +43,13 @@ public:
 	void setMode(UIMode newMode);
 	void cycleMode();
 
-	void setHoveredJunction(std::optional<RoadVertexDescriptor> junction);
+	void setHoveredRoadElement(std::optional<RoadVertexDescriptor> junction, std::optional<EdgeVertexDescriptor> road);
 	std::optional<RoadVertexDescriptor> getHoveredJunction() const;
 	std::optional<sf::Vector2f> getHoveredJunctionPos() const;
+	std::optional<RoadSegmentGeometry> getHoveredRoad() const;
 	
 	void selectJunctionOrPos(sf::Vector2f cursorPos);
-	void deselectJunction();
+	void deselectRoadElement();
 	std::optional<sf::Vector2f> getSelectedJunctionPos() const;
 	std::optional<sf::Vector2f> getSelectedPos() const;
 

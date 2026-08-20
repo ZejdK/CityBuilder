@@ -16,11 +16,13 @@
 #include "SFML/Graphics/PrimitiveType.hpp"
 #include "PlacementState.hpp"
 #include "UIMode.hpp"
+#include "RoadSegmentGeometry.hpp"
 
 
 
 UIRenderer::UIRenderer(ConfigGlobal config)
-	: config(config), logger(10.f, 10.f, 30.f), pointer(10.0f), intesersectPointer(10.0f), snapPointer(config.snapRadius) {
+	: config(config), logger(10.f, 10.f, 30.f), pointer(10.0f), intesersectPointer(10.0f), snapPointer(config.snapRadius),
+    roadSelector(sf::PrimitiveType::Triangles, 6), junctionSelector(config.roadWidth) {
 
     // pointer follows the mouse
     pointer.setFillColor(sf::Color::Blue);
@@ -35,6 +37,10 @@ UIRenderer::UIRenderer(ConfigGlobal config)
     // shows up if there's a line intersection with an existing road
     intesersectPointer.setFillColor(sf::Color::Red);
     intesersectPointer.setOrigin(sf::Vector2f(10.f, 10.f));
+
+    // shows the hovered junction in View UI mode
+	junctionSelector.setFillColor(sf::Color(0, 255, 0, 100));
+	junctionSelector.setOrigin(sf::Vector2f(config.roadWidth, config.roadWidth));
 }
 
 void UIRenderer::setCursorPos(const sf::Vector2f& pos) {
@@ -46,17 +52,38 @@ void UIRenderer::setCursorPos(const sf::Vector2f& pos) {
 
 void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi) {
     
-    logger.add(std::string("UI mode: ") + std::string(to_string(editorUi.getMode())));
-    logger.add(std::format("Placement state: {}", int(editorUi.getPlacementState())));
     logger.add(std::string("Roads information: ") + editorUi.getRoadInformation());
+    logger.add(std::string("UI mode: ") + std::string(to_string(editorUi.getMode())) + " (Press Q)");
+
+    switch (editorUi.getMode()) {
+	case UIMode::AddRoad:
+		renderAddRoad(window, editorUi);
+		break;
+	case UIMode::Select:
+        renderRoadSelector(window, editorUi);
+		break;
+	case UIMode::AddLocation:
+		// render add location UI
+		break;
+	case UIMode::View:
+		// render view UI
+		break;
+    }
+
+    logger.render(window);
+    logger.clear();
+}
+
+
+
+void UIRenderer::renderAddRoad(sf::RenderWindow& window, const EditorUI& editorUi) {
+
+    logger.add(std::format("Add road - Placement state: {}", int(editorUi.getPlacementState())));
 
     if (editorUi.getPlacementState() == PlacementState::Idle)
         renderAddRoadIdleStage(window, editorUi);
     else
         renderAddRoadPlaceStage(window, editorUi);
-
-    logger.render(window);
-    logger.clear();
 }
 
 void UIRenderer::renderAddRoadIdleStage(sf::RenderWindow& window, const EditorUI& editorUi)
@@ -115,6 +142,41 @@ void UIRenderer::renderAddRoadPlaceStage(sf::RenderWindow& window, const EditorU
     sf::Vertex v2 { sf::Vector2f { snapPosition ? *snapPosition : cursorPos } };
     std::array temp = { v1, v2 };
     window.draw(temp.data(), temp.size(), sf::PrimitiveType::Lines);
+}
+
+
+
+void UIRenderer::renderRoadSelector(sf::RenderWindow& window, const EditorUI& editorUi) {
+
+    auto roadJunction { editorUi.getHoveredJunction() };
+    auto roadSegment { editorUi.getHoveredRoad() };
+    
+	if (roadJunction) {
+
+		auto junctionPos = editorUi.getHoveredJunctionPos();
+		junctionSelector.setPosition(*junctionPos);
+		window.draw(junctionSelector);
+
+		logger.add("Road selector - Hovered junction: " + std::to_string(junctionPos->x) + std::string(", ") + std::to_string(junctionPos->y));
+	}
+    else if (roadSegment) {
+
+        auto vertices = roadSegment->getVertices(config.roadWidth);
+
+        roadSelector[0].position = vertices[0];
+        roadSelector[1].position = vertices[1];
+        roadSelector[2].position = vertices[2];
+        roadSelector[3].position = vertices[0];
+        roadSelector[4].position = vertices[2];
+        roadSelector[5].position = vertices[3];
+
+		for (int i { 0 }; i < 6; ++i)
+			roadSelector[i].color = sf::Color(0, 255, 0, 100);
+
+        window.draw(roadSelector);
+
+		logger.add("Road selector - Hovered road segment ");
+    }
 }
 
 

@@ -22,7 +22,7 @@
 
 
 
-void findAndSetHoveredJunction(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer);
+void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer);
 
 
 
@@ -83,11 +83,11 @@ int main() {
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
 
                     editorUi.selectJunctionOrPos(sf::Vector2f(mouseButtonPressed->position));
-                    findAndSetHoveredJunction(mouseButtonPressed->position, config, roadNetwork, editorUi, uiRenderer); // prevents no vertex being hovered after a new vertex is added and mouse is not moved
+                    findAndSetHoveredRoadElement(mouseButtonPressed->position, config, roadNetwork, editorUi, uiRenderer); // prevents no vertex being hovered after a new vertex is added and mouse is not moved
                 }
             }
             else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>()) 
-                findAndSetHoveredJunction(mouseMoved->position, config, roadNetwork, editorUi, uiRenderer);
+                findAndSetHoveredRoadElement(mouseMoved->position, config, roadNetwork, editorUi, uiRenderer);
         }
 
 
@@ -104,13 +104,14 @@ int main() {
 
 
 
-void findAndSetHoveredJunction(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer) {
+void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer) {
 
     sf::Vector2f cursorPos{ sf::Vector2f(cursorPos2i) };
     auto hoveredJunction{ roadNetwork.findJunctionNear(config.snapRadius, cursorPos) };
+    auto hoveredEdge { roadNetwork.findHoveredRoad(config.roadWidth, cursorPos) };
 
     uiRenderer.setCursorPos(cursorPos);
-    editorUi.setHoveredJunction(hoveredJunction);
+    editorUi.setHoveredRoadElement(hoveredJunction, hoveredEdge);
 }
 
 
