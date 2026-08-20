@@ -26,7 +26,7 @@ public:
 	const RoadGraph& getGraph() const;
 	const std::vector<RoadVertexDescriptor> getJunctions() const;
 
-	const std::optional<EdgeVertexDescriptor> findHoveredRoad(float roadWidth, sf::Vector2f cursorPos) const;
+	const std::optional<RoadEdgeDescriptor> findHoveredRoad(float roadWidth, sf::Vector2f cursorPos) const;
 	const std::optional<RoadVertexDescriptor> findJunctionNear(float snapRadius, sf::Vector2f position) const;
 	std::optional<sf::Vector2f> findJunctionPosNear(float snapRadius, sf::Vector2f position) const;
 

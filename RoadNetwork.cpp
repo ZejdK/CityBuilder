@@ -51,13 +51,13 @@ const std::optional<RoadVertexDescriptor> RoadNetwork::findJunctionNear(float ra
 	return std::nullopt;
 }
 
-const std::optional<EdgeVertexDescriptor> RoadNetwork::findHoveredRoad(float roadWidth, sf::Vector2f cursorPos) const {
+const std::optional<RoadEdgeDescriptor> RoadNetwork::findHoveredRoad(float roadWidth, sf::Vector2f cursorPos) const {
 
 	auto [ begin, end ] = boost::edges(roadGraph);
 	
 	for (auto it { begin }; it != end; ++it) {
 		
-		EdgeVertexDescriptor edge { *it };
+		RoadEdgeDescriptor edge { *it };
 
 		RoadVertexDescriptor sourceVertex { boost::source(edge, roadGraph) };
 		RoadVertexDescriptor targetVertex { boost::target(edge, roadGraph) };

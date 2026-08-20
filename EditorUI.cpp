@@ -23,7 +23,7 @@ EditorUI::EditorUI(RoadNetwork& roadNetwork)
 
 
 
-void EditorUI::setHoveredRoadElement(std::optional<RoadVertexDescriptor> junction, std::optional<EdgeVertexDescriptor> road) {
+void EditorUI::setHoveredRoadElement(std::optional<RoadVertexDescriptor> junction, std::optional<RoadEdgeDescriptor> road) {
 
     hoveredVertex = junction;
     hoveredEdge = road;
@@ -191,7 +191,7 @@ std::optional<EditorUI::IntersectionResult> EditorUI::getRoadIntersection(sf::Ve
 
     for (auto it { begin }; it != end; ++it) {
 
-        EdgeVertexDescriptor edge = *it;
+        RoadEdgeDescriptor edge = *it;
 
         auto sourceVertex = boost::source(edge, G);
         auto targetVertex = boost::target(edge, G);

@@ -101,7 +101,7 @@ void RoadRenderer::renderVertex(sf::RenderWindow& window, RoadVertexDescriptor v
     window.draw(text);
 }
 
-void RoadRenderer::renderEdge(sf::RenderWindow& window, EdgeVertexDescriptor edge, const RoadGraph& roadGraph) {
+void RoadRenderer::renderEdge(sf::RenderWindow& window, RoadEdgeDescriptor edge, const RoadGraph& roadGraph) {
 
     auto sourceVertex = boost::source(edge, roadGraph);
     auto targetVertex = boost::target(edge, roadGraph);

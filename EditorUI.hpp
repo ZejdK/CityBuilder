@@ -26,7 +26,7 @@ class EditorUI {
 
 	std::optional<RoadVertexDescriptor> hoveredVertex;
 	std::optional<RoadVertexDescriptor> selectedVertex;
-	std::optional<EdgeVertexDescriptor> hoveredEdge;
+	std::optional<RoadEdgeDescriptor> hoveredEdge;
 
 	UIMode uiMode = UIMode::AddRoad; // default mode should be View
 
@@ -43,7 +43,7 @@ public:
 	void setMode(UIMode newMode);
 	void cycleMode();
 
-	void setHoveredRoadElement(std::optional<RoadVertexDescriptor> junction, std::optional<EdgeVertexDescriptor> road);
+	void setHoveredRoadElement(std::optional<RoadVertexDescriptor> junction, std::optional<RoadEdgeDescriptor> road);
 	std::optional<RoadVertexDescriptor> getHoveredJunction() const;
 	std::optional<sf::Vector2f> getHoveredJunctionPos() const;
 	std::optional<RoadSegmentGeometry> getHoveredRoad() const;

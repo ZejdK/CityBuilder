@@ -26,7 +26,7 @@ struct RandomCycleFinder {
 		CycleVisitor(std::vector<RoadVertexDescriptor>& parent, std::vector<RoadVertexDescriptor>& cycle)
 			: parent(parent), cycle(cycle) {}
 
-		void tree_edge(EdgeVertexDescriptor e, const RoadGraph& graph) const {
+		void tree_edge(RoadEdgeDescriptor e, const RoadGraph& graph) const {
 
 			RoadVertexDescriptor from = boost::source(e, graph);
 			RoadVertexDescriptor to = boost::target(e, graph);
@@ -34,7 +34,7 @@ struct RandomCycleFinder {
 			parent[to] = from;
 		}
 
-		void back_edge(EdgeVertexDescriptor e, const RoadGraph& graph) const {
+		void back_edge(RoadEdgeDescriptor e, const RoadGraph& graph) const {
 
 			RoadVertexDescriptor from = boost::source(e, graph);
 			RoadVertexDescriptor to = boost::target(e, graph);
