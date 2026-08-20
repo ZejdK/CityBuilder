@@ -24,4 +24,15 @@ constexpr std::string_view to_string(UIMode uiMode) {
     }
 }
 
+inline UIMode getNextMode(UIMode uiMode) {
+
+    switch (uiMode) {
+    case UIMode::AddRoad:       return UIMode::Select;
+    case UIMode::Select:        return UIMode::View;
+    case UIMode::View:          return UIMode::AddRoad;
+    }
+
+    return UIMode::View;
+}
+
 

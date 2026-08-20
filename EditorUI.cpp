@@ -144,6 +144,11 @@ void EditorUI::setMode(UIMode newMode) {
     uiMode = newMode;
 }
 
+void EditorUI::cycleMode() {
+
+    setMode(getNextMode(uiMode));
+}
+
 
 
 // where should this function live?

@@ -62,6 +62,9 @@ int main() {
 
                 if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
                     window.close();
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::Q)
+                    std::cout << "Cycling to next editor mode!",
+                    editorUi.cycleMode();
                 else if (keyPressed->scancode == sf::Keyboard::Scancode::Num1)
                     std::cout << "Switched to road view of the city!\n",
                     cityView = CityView::Road;

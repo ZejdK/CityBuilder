@@ -33,6 +33,7 @@ public:
 	EditorUI(RoadNetwork &roadNetwork);
 	
 	void setMode(UIMode newMode);
+	void cycleMode();
 
 	void setHoveredJunction(std::optional<RoadVertexDescriptor> junction);
 	std::optional<RoadVertexDescriptor> getHoveredJunction() const;
