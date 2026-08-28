@@ -22,6 +22,7 @@
 
 
 
+void debugCreateSampleRoadNetwork(RoadNetwork &roadNetwork);
 void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer);
 
 
@@ -47,6 +48,8 @@ int main() {
     CityView cityView { CityView::Road };
 
     sf::Clock clock;
+
+	debugCreateSampleRoadNetwork(roadNetwork);
 
     while (window.isOpen())
     {
@@ -103,6 +106,28 @@ int main() {
 }
 
 
+
+void debugCreateSampleRoadNetwork(RoadNetwork& roadNetwork) {
+
+    auto [ v1, v2 ] = roadNetwork.add(sf::Vector2f(100, 390), sf::Vector2f(261.f, 213.f));
+    auto v3 = roadNetwork.add(v2, sf::Vector2f(500, 100)).second;
+    auto v4 = roadNetwork.add(v3, sf::Vector2f(500, 450)).second;
+    auto v5 = roadNetwork.add(v4, sf::Vector2f(500, 900)).second;
+    auto v6 = roadNetwork.add(v5, sf::Vector2f(100, 900)).second;
+    roadNetwork.add(v6, v1);
+
+    auto [ v7, v8 ] = roadNetwork.add(sf::Vector2f(1700, 450), sf::Vector2f(1500, 900));
+    auto v9 = roadNetwork.add(v8, sf::Vector2f(1100, 900)).second;
+    auto v10 = roadNetwork.add(v9, sf::Vector2f(1100, 450)).second;
+    auto v11 = roadNetwork.add(v10, sf::Vector2f(1100, 100)).second;
+    auto v12 = roadNetwork.add(v11, sf::Vector2f(1600, 100)).second;
+    roadNetwork.add(v12, v7);
+
+    roadNetwork.add(v3, v11);
+    roadNetwork.add(v4, v10);
+    roadNetwork.add(v5, v9);
+    roadNetwork.add(v10, v7);
+}
 
 void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer) {
 
