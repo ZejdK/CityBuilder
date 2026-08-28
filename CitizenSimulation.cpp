@@ -19,9 +19,9 @@ CitizenSimulation::CitizenSimulation(const RoadNetwork& roadNetwork)
 	enabled = false;
 }
 
-void CitizenSimulation::addCitizen(std::string name, std::string surname, std::vector<RoadVertexDescriptor> path, std::string colour) {
+void CitizenSimulation::addCitizen(int id, std::string name, std::string surname, std::vector<RoadVertexDescriptor> path, std::string colour) {
 
-	citizens.push_back(Citizen(name, surname, path, colour));
+	citizens.push_back(Citizen(id, name, surname, path, colour));
 }
 
 const std::vector<Citizen>& CitizenSimulation::getCitizens() const {
@@ -40,8 +40,8 @@ void CitizenSimulation::enableTest() {
 
 	std::array<std::string, 5> colours { "b", "g", "w", "r", "o" };
 
-	for (int i { 0 }; i < 20; ++i)
-		addCitizen("John", "Doe", roadNetwork.getRandomCycle(), colours[i % 5]);
+	for (int i { 0 }; i < 50; ++i)
+		addCitizen(i, "John", "Doe", roadNetwork.getRandomCycle(), colours[i % 5]);
 }
 
 void CitizenSimulation::update(float dt) {
@@ -66,7 +66,7 @@ void CitizenSimulation::update(float dt) {
 			sf::Vector2f fromPos { getVertexPos(posData.from) };
 			sf::Vector2f toPos { getVertexPos(posData.to) };
 
-			bool finished { citizen.update(dt, (toPos - fromPos).length()) };
+			bool finished { citizen.update(dt, (toPos - fromPos).length(), citizens) };
 			if (finished) {
 
 				enabled = false;

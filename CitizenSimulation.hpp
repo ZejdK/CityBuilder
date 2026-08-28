@@ -21,7 +21,7 @@ public:
 
     CitizenSimulation(const RoadNetwork& roadNetwork);
 
-    void addCitizen(std::string name, std::string surname, std::vector<RoadVertexDescriptor> path, std::string colour);
+    void addCitizen(int id, std::string name, std::string surname, std::vector<RoadVertexDescriptor> path, std::string colour);
 
     const std::vector<Citizen> &getCitizens() const;
     sf::Vector2f getVertexPos(RoadVertexDescriptor vertex) const;
