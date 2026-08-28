@@ -9,6 +9,7 @@
 #include <optional>
 #include "SFML/System/Vector2.hpp"
 #include "RandomCycleFinder.hpp"
+#include <utility>
 
 
 
@@ -35,10 +36,10 @@ public:
 	std::string getInformation() const;
 	int getJunctionCount() const;
 
-	void add(RoadVertexDescriptor source, RoadVertexDescriptor target);
-	void add(sf::Vector2f sourcePos, RoadVertexDescriptor target);
-	void add(RoadVertexDescriptor source, sf::Vector2f targetPos);
-	void add(sf::Vector2f sourcePos, sf::Vector2f targetPos);
+	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(RoadVertexDescriptor source, RoadVertexDescriptor target);
+	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(sf::Vector2f sourcePos, RoadVertexDescriptor target);
+	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(RoadVertexDescriptor source, sf::Vector2f targetPos);
+	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(sf::Vector2f sourcePos, sf::Vector2f targetPos);
 
 	std::vector<RoadVertexDescriptor> getRandomCycle() const {
 

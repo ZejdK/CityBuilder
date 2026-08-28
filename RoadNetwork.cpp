@@ -15,6 +15,7 @@
 #include "RoadGraphTypes.hpp"
 #include <string>
 #include <format>
+#include <utility>
 
 
 
@@ -161,27 +162,35 @@ RoadVertexDescriptor RoadNetwork::addVertex(sf::Vector2f pos) {
 	return newVertex;
 }
 
-void RoadNetwork::add(RoadVertexDescriptor source, RoadVertexDescriptor target) {
+std::pair<RoadVertexDescriptor, RoadVertexDescriptor> RoadNetwork::add(RoadVertexDescriptor source, RoadVertexDescriptor target) {
 
 	addEdge(source, target);
+	
+	return { source, target };
 }
 
-void RoadNetwork::add(sf::Vector2f sourcePos, RoadVertexDescriptor target) {
+std::pair<RoadVertexDescriptor, RoadVertexDescriptor> RoadNetwork::add(sf::Vector2f sourcePos, RoadVertexDescriptor target) {
 
 	auto sourceNew = addVertex(sourcePos);
 	addEdge(sourceNew, target);
+	
+	return { sourceNew, target };
 }
-void RoadNetwork::add(RoadVertexDescriptor source, sf::Vector2f targetPos) {
+std::pair<RoadVertexDescriptor, RoadVertexDescriptor> RoadNetwork::add(RoadVertexDescriptor source, sf::Vector2f targetPos) {
 
 	auto targetNew = addVertex(targetPos);
 	addEdge(source, targetNew);
+	
+	return { source, targetNew };
 }
 
-void RoadNetwork::add(sf::Vector2f sourcePos, sf::Vector2f targetPos) {
+std::pair<RoadVertexDescriptor, RoadVertexDescriptor> RoadNetwork::add(sf::Vector2f sourcePos, sf::Vector2f targetPos) {
 
 	auto sourceNew = addVertex(sourcePos);
 	auto targetNew = addVertex(targetPos);
 	addEdge(sourceNew, targetNew);
+	
+	return { sourceNew, targetNew };
 }
 
 
