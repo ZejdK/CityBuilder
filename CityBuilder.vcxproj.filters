@@ -40,6 +40,12 @@
     <Filter Include="Source Files\rendering">
       <UniqueIdentifier>{5243d7de-b664-4695-8f7f-596e8c843267}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\roadlayout">
+      <UniqueIdentifier>{d38bc7df-a7b8-4388-a7a6-e502e8127a5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\roadlayout">
+      <UniqueIdentifier>{ccc65d6c-8212-46a4-af87-30ac285fda78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CityBuilderSFMLold.cpp">
@@ -60,12 +66,6 @@
     <ClCompile Include="Citizen.cpp">
       <Filter>Source Files\simulation</Filter>
     </ClCompile>
-    <ClCompile Include="RoadSegmentGeometry.cpp">
-      <Filter>Source Files\rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="RoadJunctionGeometry.cpp">
-      <Filter>Source Files\rendering</Filter>
-    </ClCompile>
     <ClCompile Include="RoadRenderer.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
@@ -74,6 +74,15 @@
     </ClCompile>
     <ClCompile Include="CitizenRenderer.cpp">
       <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="RoadNetworkLayout.cpp">
+      <Filter>Source Files\roadlayout</Filter>
+    </ClCompile>
+    <ClCompile Include="RoadSegmentGeometry.cpp">
+      <Filter>Source Files\roadlayout</Filter>
+    </ClCompile>
+    <ClCompile Include="RoadJunctionGeometry.cpp">
+      <Filter>Source Files\roadlayout</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,12 +106,6 @@
     </ClInclude>
     <ClInclude Include="RoadNetwork.hpp">
       <Filter>Header Files\roadnetwork</Filter>
-    </ClInclude>
-    <ClInclude Include="RoadSegmentGeometry.hpp">
-      <Filter>Header Files\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="RoadJunctionGeometry.hpp">
-      <Filter>Header Files\rendering</Filter>
     </ClInclude>
     <ClInclude Include="UIMode.hpp">
       <Filter>Header Files\ui</Filter>
@@ -130,6 +133,15 @@
     </ClInclude>
     <ClInclude Include="RandomCycleFinder.hpp">
       <Filter>Header Files\roadnetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadNetworkLayout.hpp">
+      <Filter>Header Files\roadlayout</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadJunctionGeometry.hpp">
+      <Filter>Header Files\roadlayout</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadSegmentGeometry.hpp">
+      <Filter>Header Files\roadlayout</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -67,6 +67,8 @@ namespace CB { namespace Math {
 
         return sf::Vector2f(v.x * c - v.y * s, v.x * s + v.y * c);
     }
+
+	constexpr float epsilon = 1e-5f;
 }
 }
 

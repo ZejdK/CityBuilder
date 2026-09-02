@@ -16,7 +16,7 @@
 #include "SFML/Graphics/PrimitiveType.hpp"
 #include "PlacementState.hpp"
 #include "UIMode.hpp"
-#include "RoadSegmentGeometry.hpp"
+#include "RoadNetworkLayout.hpp"
 
 
 
@@ -50,14 +50,14 @@ void UIRenderer::setCursorPos(const sf::Vector2f& pos) {
 
 
 
-void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi) {
+void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout) {
     
-    logger.add(std::string("Roads information: ") + editorUi.getRoadInformation());
+    logger.add(std::string("Roads information: ") + editorUi.getRoadInfoDisplay());
     logger.add(std::string("UI mode: ") + std::string(to_string(editorUi.getMode())) + " (Press Q)");
 
     switch (editorUi.getMode()) {
 	case UIMode::AddRoad:
-		renderAddRoad(window, editorUi);
+		renderAddRoad(window, editorUi, roadLayout);
 		break;
 	case UIMode::Select:
         renderRoadSelector(window, editorUi);
@@ -76,43 +76,47 @@ void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi) {
 
 
 
-void UIRenderer::renderAddRoad(sf::RenderWindow& window, const EditorUI& editorUi) {
+void UIRenderer::renderAddRoad(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout) {
 
     logger.add(std::format("Add road - Placement state: {}", int(editorUi.getPlacementState())));
 
     if (editorUi.getPlacementState() == PlacementState::Idle)
         renderAddRoadIdleStage(window, editorUi);
     else
-        renderAddRoadPlaceStage(window, editorUi);
+        renderAddRoadPlaceStage(window, editorUi, roadLayout);
 }
 
 void UIRenderer::renderAddRoadIdleStage(sf::RenderWindow& window, const EditorUI& editorUi)
 {
-    auto snapPosition = editorUi.getHoveredJunctionPos();
+    auto hoveredJunction = editorUi.getHoveredJunction();
 
-    if (!snapPosition) {
+    if (!hoveredJunction) {
 
-        logger.add("snap pos: none");
+        logger.add("add road snap pos: none");
         pointer.setPosition(cursorPos);
         window.draw(pointer);
     }
     else {
 
-        logger.add("snap pos: " + std::to_string(snapPosition->x) + std::string(", ") + std::to_string(snapPosition->y));
-        snapPointer.setPosition(*snapPosition);
+        auto snapPosition { hoveredJunction->getPosition() };
+
+        logger.add("add road snap pos: " + std::to_string(snapPosition.x) + std::string(", ") + std::to_string(snapPosition.y));
+        snapPointer.setPosition(snapPosition);
         window.draw(snapPointer);
     }
 }
 
-void UIRenderer::renderAddRoadPlaceStage(sf::RenderWindow& window, const EditorUI& editorUi) {
+// this function assumes that selectedPos actually exists, otherwise it wouldn't be in this state
+void UIRenderer::renderAddRoadPlaceStage(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout) {
+    
+    std::optional<sf::Vector2f> snapPosition{ std::nullopt };
+    auto intersectionResult { roadLayout.doesLineIntersectAnyRoad(*editorUi.getSelectedPos(), cursorPos, config.snapRadius)};
 
-    std::optional<EditorUI::IntersectionResult> intersectionResult { editorUi.getRoadIntersection(cursorPos, config) };
+    if (editorUi.getHoveredJunction() != nullptr)
+        snapPosition = editorUi.getHoveredJunction()->getPosition();
 
-    auto selectedPosition = editorUi.getSelectedPos();
-    auto snapPosition = editorUi.getHoveredJunctionPos();
-
-    if (!snapPosition && intersectionResult && intersectionResult->snapped)
-        snapPosition = intersectionResult->point;
+    if (!snapPosition && intersectionResult.exists && intersectionResult.snapped)
+        snapPosition = intersectionResult.point;
 
     if (snapPosition) {
 
@@ -121,24 +125,24 @@ void UIRenderer::renderAddRoadPlaceStage(sf::RenderWindow& window, const EditorU
         window.draw(snapPointer);
     }
 
-    if (intersectionResult && !intersectionResult->snapped) {
+    if (intersectionResult.exists && !intersectionResult.snapped) {
 
-        if (CB::Math::equals(intersectionResult->point, *selectedPosition)) {
+        if (CB::Math::equals(intersectionResult.point, *editorUi.getSelectedPos())) {
 
             logger.add("Place state - Equal points"); // they snap at the same points in their ends
         }
         else {
 
             logger.add("Place state - Error: roads intersecting");
-            snapPosition = intersectionResult->point;
-            intesersectPointer.setPosition(intersectionResult->point);
+            snapPosition = intersectionResult.point;
+            intesersectPointer.setPosition(intersectionResult.point);
             window.draw(intesersectPointer);
         }
     }
 
+
     
-    
-    sf::Vertex v1 { sf::Vector2f { *selectedPosition } };
+    sf::Vertex v1 { sf::Vector2f { *editorUi.getSelectedPos() } };
     sf::Vertex v2 { sf::Vector2f { snapPosition ? *snapPosition : cursorPos } };
     std::array temp = { v1, v2 };
     window.draw(temp.data(), temp.size(), sf::PrimitiveType::Lines);
@@ -153,15 +157,15 @@ void UIRenderer::renderRoadSelector(sf::RenderWindow& window, const EditorUI& ed
     
 	if (roadJunction) {
 
-		auto junctionPos = editorUi.getHoveredJunctionPos();
-		junctionSelector.setPosition(*junctionPos);
+		auto junctionPos { roadJunction->getPosition() };
+		junctionSelector.setPosition(junctionPos);
 		window.draw(junctionSelector);
 
-		logger.add("Road selector - Hovered junction: " + std::to_string(junctionPos->x) + std::string(", ") + std::to_string(junctionPos->y));
+		logger.add("Road selector - Hovered junction: " + std::to_string(junctionPos.x) + std::string(", ") + std::to_string(junctionPos.y));
 	}
     else if (roadSegment) {
 
-        auto vertices = roadSegment->getVertices(config.roadWidth);
+        auto vertices = roadSegment->getVertices(config.roadWidth, roadSegment->getStart());
 
         roadSelector[0].position = vertices[0];
         roadSelector[1].position = vertices[1];

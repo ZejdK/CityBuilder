@@ -3,16 +3,13 @@
 
 #pragma once
 #include <SFML/System/Vector2.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
-#include "SFML/Graphics/Vertex.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "EditorUI.hpp"
 #include "MessageLog.hpp"
 #include "Config.hpp"
 #include "SFML/Graphics/VertexArray.hpp"
+#include "RoadNetworkLayout.hpp"
 
 
 
@@ -31,9 +28,9 @@ class UIRenderer {
 
 	sf::Vector2f cursorPos;
 
-	void renderAddRoad(sf::RenderWindow& window, const EditorUI& editorUi);
+	void renderAddRoad(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout);
 	void renderAddRoadIdleStage(sf::RenderWindow &window, const EditorUI& editorUi);
-	void renderAddRoadPlaceStage(sf::RenderWindow &window, const EditorUI& editorUi);
+	void renderAddRoadPlaceStage(sf::RenderWindow &window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout);
 
 	void renderRoadSelector(sf::RenderWindow& window, const EditorUI& editorUi);
 
@@ -43,7 +40,7 @@ public:
 
 	void setCursorPos(const sf::Vector2f& pos);
 
-	void render(sf::RenderWindow& window, const EditorUI &editorUi);
+	void render(sf::RenderWindow& window, const EditorUI &editorUi, const RoadNetworkLayout &roadLayout);
 };
 
 

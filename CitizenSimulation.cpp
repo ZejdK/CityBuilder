@@ -47,7 +47,7 @@ void CitizenSimulation::enableTest() {
 void CitizenSimulation::update(float dt) {
 
 	// temporary check for debugging/designing
-	if (roadNetwork.getJunctionCount() < 5)
+	if (roadNetwork.getLayout().getInformation().junctionCount < 5)
 		return;
 
 	if (!enabled) {

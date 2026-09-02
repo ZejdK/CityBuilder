@@ -5,22 +5,32 @@
 #include <array>
 #include <optional>
 #include "Math.hpp"
+#include "SFML/System/Vector2.hpp"
+#include "RoadGraphTypes.hpp"
 
 
 
-RoadSegmentGeometry::RoadSegmentGeometry(sf::Vector2f start, sf::Vector2f end)
-	: start(start), end(end) {}
+RoadSegmentGeometry::RoadSegmentGeometry(int id, RoadVertexDescriptor vertexA, RoadVertexDescriptor vertexB, sf::Vector2f start, sf::Vector2f end)
+	: id(id), vertexA(vertexA), vertexB(vertexB),  start(start), end(end) {}
 
 
 
-std::array<sf::Vector2f, 4> RoadSegmentGeometry::getVertices(float roadWidth) const {
+// since there's no order which segment point is start or end, endpoint argument helps determine the vertices orientation
+std::array<sf::Vector2f, 4> RoadSegmentGeometry::getVertices(float roadWidth, sf::Vector2f endpoint) const {
 
+	if (CB::Math::distance(end, endpoint) < CB::Math::epsilon)
+		return getVerticesInternal(end, start, roadWidth);
+	else
+		return getVerticesInternal(start, end, roadWidth);
+}
+
+std::array<sf::Vector2f, 4> RoadSegmentGeometry::getVerticesInternal(sf::Vector2f start, sf::Vector2f end, float roadWidth) const {
+	
 	sf::Vector2f direction{ (end - start).normalized() };
 	sf::Vector2f normal{ -direction.y, direction.x }; // rotation matrix for pi/2
 	sf::Vector2f offset{ normal * roadWidth };
 
 	return {
-
 		start + offset, // left start
 		end + offset,   // left end
 		end - offset,   // right start
@@ -28,13 +38,13 @@ std::array<sf::Vector2f, 4> RoadSegmentGeometry::getVertices(float roadWidth) co
 	};
 }
 
-std::array<std::optional<sf::Vector2f>, 4> RoadSegmentGeometry::getSideIntersectionPoints(float roadWidth, const RoadSegmentGeometry& other) const {
+std::array<std::optional<sf::Vector2f>, 4> RoadSegmentGeometry::getSideIntersectionPoints(float roadWidth, const RoadSegmentGeometry& other, sf::Vector2f endpoint) const {
 
 	// idea here is to get lines parallel to the road segments, offset for roadWidth in both directions
 	// and then find their intersections
 
-	auto vertices = getVertices(roadWidth);
-	auto otherVertices = other.getVertices(roadWidth);
+	auto vertices = getVertices(roadWidth, endpoint);
+	auto otherVertices = other.getVertices(roadWidth, endpoint);
 
 	return {
 
@@ -47,7 +57,7 @@ std::array<std::optional<sf::Vector2f>, 4> RoadSegmentGeometry::getSideIntersect
 
 std::optional<sf::Vector2f> RoadSegmentGeometry::getClosestSideIntersection(float roadWidth, const RoadSegmentGeometry& other, sf::Vector2f roadJunctionPoint) const {
 
-	auto lineIntersections = getSideIntersectionPoints(roadWidth, other);
+	auto lineIntersections = getSideIntersectionPoints(roadWidth, other, roadJunctionPoint);
 
 	std::optional<sf::Vector2f> closestIntersection = std::nullopt;
 	for (const auto& lineIntersection : lineIntersections)
@@ -59,7 +69,7 @@ std::optional<sf::Vector2f> RoadSegmentGeometry::getClosestSideIntersection(floa
 
 std::optional<sf::Vector2f> RoadSegmentGeometry::getFurthestSideIntersection(float roadWidth, const RoadSegmentGeometry& other, sf::Vector2f roadJunctionPoint) const {
 
-	auto lineIntersections = getSideIntersectionPoints(roadWidth, other);
+	auto lineIntersections = getSideIntersectionPoints(roadWidth, other, roadJunctionPoint);
 
 	std::optional<sf::Vector2f> closestIntersection = std::nullopt;
 	for (const auto& lineIntersection : lineIntersections)
@@ -69,9 +79,9 @@ std::optional<sf::Vector2f> RoadSegmentGeometry::getFurthestSideIntersection(flo
 	return closestIntersection;
 }
 
-sf::Vector2f RoadSegmentGeometry::getPointAlongSide(float roadWidth, float distance, bool leftSide) const {
+sf::Vector2f RoadSegmentGeometry::getPointOnShoulder(float roadWidth, float distance, bool leftSide, sf::Vector2f endpoint) const {
 
-	auto vertices = getVertices(roadWidth);
+	auto vertices = getVertices(roadWidth, endpoint);
 
 	int i1 = 0, i2 = 1; // right side
 	if (!leftSide)
@@ -101,17 +111,16 @@ sf::Vector2f RoadSegmentGeometry::getMirroredPoint(sf::Vector2f point) const {
 	float dotProduct = segment.x * toPoint.x + segment.y * toPoint.y;
 	float segmentLengthSq = segment.x * segment.x + segment.y * segment.y;
 
-	if (segmentLengthSq < 1e-6f)
+	if (segmentLengthSq < CB::Math::epsilon)
 		return start * 2.0f - point; // Mirrors point across a single spot
 
 	sf::Vector2f closestPoint = start + (dotProduct / segmentLengthSq) * segment;
 	return 2.0f * closestPoint - point;
 }
 
-// check if point is inside quad represented by road segment
 bool RoadSegmentGeometry::isPointOnRoad(float roadWidth, const sf::Vector2f& point) const {
 
-	auto vertices = getVertices(roadWidth);
+	auto vertices = getVertices(roadWidth, getStart());
 
 	sf::Vector2f e0 = vertices[1] - vertices[0];
 	sf::Vector2f e1 = vertices[2] - vertices[1];
@@ -129,11 +138,6 @@ bool RoadSegmentGeometry::isPointOnRoad(float roadWidth, const sf::Vector2f& poi
 	bool c3 = e3.cross(p3) >= 0.0f;
 
 	return (c0 == c1) && (c1 == c2) && (c2 == c3);
-}
-
-float RoadSegmentGeometry::length() const {
-
-	return std::sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y));
 }
 
 

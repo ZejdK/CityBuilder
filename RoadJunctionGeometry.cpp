@@ -7,6 +7,10 @@
 #include <vector>
 #include "SFML/System/Vector2.hpp"
 #include "RoadSegmentGeometry.hpp"
+#include "RoadGraphTypes.hpp"
+#include "Config.hpp"
+#include <cmath>
+#include <algorithm>
 
 
 
@@ -37,30 +41,35 @@ std::optional<sf::Vector2f> RoadJunctionGeometry::getFurthestClosestIntersection
 	return std::nullopt;
 }
 
-RoadJunctionGeometry::RoadJunctionGeometry(sf::Vector2f position, const std::vector<RoadSegmentGeometry>& roads)
-	: position(position), roads(roads) {}
+RoadJunctionGeometry::RoadJunctionGeometry(int id, RoadVertexDescriptor vertex, sf::Vector2f position, const std::vector<const RoadSegmentGeometry *> junctionRoads, const ConfigGlobal &config)
+	: id(id), vertex(vertex), position(position), roads(junctionRoads) {
 
-// returns vector packed with these four points: side intersection point, side intersection mirror point, road crossing point 1, road crossing point 2
-std::vector<sf::Vector2f> RoadJunctionGeometry::getJunctionPoints(float roadWidth, float roadCrossingSegmentLength) const {
+	sortJunctionRoadsClockwise(roads, position);
+	calculateJunctionPoints(config);
+}
 
-	std::vector<sf::Vector2f> junctionPoints;
+// calculates its road shoulders intersection points and road crossing points
+// also calculates what value of 's' parameter on the road the junction begins
+void RoadJunctionGeometry::calculateJunctionPoints(const ConfigGlobal &config) {
 
-	for (int i{ 0 }; i < roads.size(); ++i) {
+	junctionPoints.clear();
 
-		const auto& road = roads[i];
-		const auto& roadBefore = roads[(i - 1 + roads.size()) % roads.size()];
-		const auto& roadAfter = roads[(i + 1) % roads.size()];
+	for (int i{ 0 }; i < roads.size() ; ++i) {
+
+		const auto road = roads[i];
+		const auto roadBefore = roads[(i - 1 + roads.size()) % roads.size()];
+		const auto roadAfter = roads[(i + 1) % roads.size()];
 		bool isBefore = false;
 
-		std::optional<sf::Vector2f> closestLineIntersection = getFurthestClosestIntersection(road, roadBefore, roadAfter, roadWidth, isBefore);
+		std::optional<sf::Vector2f> closestLineIntersection = getFurthestClosestIntersection(*road, *roadBefore, *roadAfter, config.roadWidth, isBefore);
 		if (closestLineIntersection) {
 
-			auto mirroredPoint = road.getMirroredPoint(*closestLineIntersection);
+			auto mirroredPoint = road->getMirroredPoint(*closestLineIntersection);
 
 			float offset = (position - ((*closestLineIntersection + mirroredPoint) / 2.f)).length();
 
-			auto crossingPoint1 = road.getPointAlongSide(roadWidth, roadCrossingSegmentLength / 2 + offset, false);
-			auto crossingPoint2 = road.getPointAlongSide(roadWidth, roadCrossingSegmentLength / 2 + offset, true);
+			auto crossingPoint1 = road->getPointOnShoulder(config.roadWidth, config.roadCrossingSegmentLength / 2 + offset, true, position);
+			auto crossingPoint2 = road->getPointOnShoulder(config.roadWidth, config.roadCrossingSegmentLength / 2 + offset, false, position);
 
 			junctionPoints.push_back(isBefore ? mirroredPoint : *closestLineIntersection);
 			junctionPoints.push_back(isBefore ? *closestLineIntersection : mirroredPoint);
@@ -68,13 +77,25 @@ std::vector<sf::Vector2f> RoadJunctionGeometry::getJunctionPoints(float roadWidt
 			junctionPoints.push_back(crossingPoint1);
 		}
 	}
-
-	return junctionPoints;
 }
 
-sf::Vector2f RoadJunctionGeometry::getPosition() const {
+void RoadJunctionGeometry::sortJunctionRoadsClockwise(std::vector<const RoadSegmentGeometry *> &roads, sf::Vector2f junctionPos) {
 
-	return position;
+	auto getAngle = [&](const RoadSegmentGeometry *road) {
+
+		sf::Vector2f A{ road->getStart() }, B{ road->getEnd() };
+		sf::Vector2f otherPos{ A };
+
+		if (CB::Math::distance(A, junctionPos) < CB::Math::distance(B, junctionPos))
+			otherPos = B;
+		
+		return std::atan2(otherPos.y - junctionPos.y, otherPos.x - junctionPos.x);
+	};
+
+	std::sort(roads.begin(), roads.end(), [&](const RoadSegmentGeometry *a, const RoadSegmentGeometry *b) {
+
+		return getAngle(a) < getAngle(b);
+	});
 }
 
 

@@ -26,9 +26,7 @@ class CitizenRenderer {
 	std::unordered_map<std::string, sf::Texture> vehicleTextures;
     sf::RenderStates states;
 
-    // probably should move these into globalConfig
-    // static constexpr float ROAD_WIDTH{ 40.f };
-    // static constexpr float ROAD_CROSSING_SEGMENT_LENGTH{ 128.f };
+
 
 	void loadVehicleTextures();
 

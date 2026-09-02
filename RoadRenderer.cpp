@@ -15,13 +15,14 @@
 #include "SFML/Graphics/Vertex.hpp"
 #include "RoadGraphTypes.hpp"
 #include "RoadJunctionGeometry.hpp"
-#include "RoadNetwork.hpp"
 #include "RoadSegmentGeometry.hpp"
+#include "Config.hpp"
+#include "RoadNetworkLayout.hpp"
 
 
 
-RoadRenderer::RoadRenderer()
-        : graphNodeShape(15.f), debugShape(10.f), font("assetstemp/arial.ttf"), text(font), vertices(sf::PrimitiveType::Triangles, 6), states() {
+RoadRenderer::RoadRenderer(const ConfigGlobal &config)
+        : config(config), graphNodeShape(15.f), debugShape(10.f), font("assetstemp/arial.ttf"), text(font), vertices(sf::PrimitiveType::Triangles, 6), states() {
 
     if (!texture.loadFromFile("assets/road_dotted.png"))
         throw "Unable to load the texture";
@@ -50,34 +51,32 @@ RoadRenderer::RoadRenderer()
     junctionTriangle.setFillColor(sf::Color(91, 91, 91)); // textures are (71, 71, 71)
 }
 
-void RoadRenderer::render(sf::RenderWindow& window, const RoadNetwork& roadNetwork, CityView cityView) {
+void RoadRenderer::render(sf::RenderWindow& window, const RoadNetworkLayout &roadLayout, const RoadGraph &roadGraph, CityView cityView) {
 
     switch (cityView) {
 
     case CityView::Road:
-        renderRoads(window, roadNetwork);
-        renderJunctions(window, roadNetwork);
+        renderRoads(window, roadLayout);
+        renderJunctions(window, roadLayout);
         break;
     case CityView::Graph:
-        renderGraph(window, roadNetwork);
+        renderGraph(window, roadGraph);
         break;
     case CityView::Line:
         // Intentionally left empty: line-only view handled elsewhere if needed
         break;
     case CityView::RoadLineGraph:
-        renderRoads(window, roadNetwork);
-        renderJunctions(window, roadNetwork);
-        renderGraph(window, roadNetwork);
+        renderRoads(window, roadLayout);
+        renderJunctions(window, roadLayout);
+        renderGraph(window, roadGraph);
         break;
     }
 }
 
 
 
-void RoadRenderer::renderGraph(sf::RenderWindow& window, const RoadNetwork &roadNetwork) {
+void RoadRenderer::renderGraph(sf::RenderWindow& window, const RoadGraph &roadGraph) {
 
-    auto &roadGraph = roadNetwork.getGraph();
-    
     auto [ verticesBegin, verticesEnd ] = boost::vertices(roadGraph);
     for (auto it{ verticesBegin }; it != verticesEnd; ++it)
         renderVertex(window, *it, roadGraph);
@@ -126,28 +125,18 @@ void RoadRenderer::renderLine(sf::RenderWindow& window, sf::Vector2f origin, sf:
 
 
 
-void RoadRenderer::renderRoads(sf::RenderWindow& window, const RoadNetwork& roadNetwork) {
-
-    auto &roadGraph = roadNetwork.getGraph();
-    auto [ it, end ] = boost::edges(roadGraph);
+void RoadRenderer::renderRoads(sf::RenderWindow& window, const RoadNetworkLayout& roadLayout) {
 
     states.texture = &texture;
-
-    for (; it != end; ++it) {
-
-        auto edge = *it;
-        auto sourceVertex = boost::source(edge, roadGraph);
-        auto targetVertex = boost::target(edge, roadGraph);
-
-        const RoadSegmentGeometry re { roadGraph[sourceVertex].position, roadGraph[targetVertex].position };
-        renderRoad(window, re);
-    }
+    
+    for (const auto &roadSegment : roadLayout.getRoads())
+        renderRoad(window, roadSegment);
 }
 
 void RoadRenderer::renderRoad(sf::RenderWindow& window, const RoadSegmentGeometry &re) {
 
     auto len = re.length();
-    auto v = re.getVertices(ROAD_WIDTH);
+    auto v = re.getVertices(config.roadWidth, re.getStart());
     
     vertices[0].position = v[0];
     vertices[1].position = v[1];
@@ -167,33 +156,22 @@ void RoadRenderer::renderRoad(sf::RenderWindow& window, const RoadSegmentGeometr
 
 
 
-// NOTE: RoadRenderer should not have direct access to the RoadNetwork's internal graph structure
-void RoadRenderer::renderJunctions(sf::RenderWindow& window, const RoadNetwork& roadNetwork) {
-
-    auto &roadGraph = roadNetwork.getGraph();
-    auto [ begin, end ] = boost::vertices(roadGraph);
+void RoadRenderer::renderJunctions(sf::RenderWindow& window, const RoadNetworkLayout& roadLayout) {
 
     states.texture = &texturePlain;
-    for (auto it { begin }; it != end; ++it)
-        if (boost::in_degree(*it, roadGraph) > 2) {
 
-			auto clockwiseRoads = roadNetwork.getJunctionRoadsClockwise(*it);
-			RoadJunctionGeometry junction { roadGraph[*it].position, clockwiseRoads };
-            renderJunction(window, junction);
+	for (const auto &[ id, junction ] : roadLayout.getJunctions())
+        if (junction.getConnectedCount() > 2) {
+
+            renderJunctionCenter(window, junction);
+            renderJunctionCrossings(window, junction);
         }
 }
 
-void RoadRenderer::renderJunction(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction) {
+void RoadRenderer::renderJunctionCenter(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction) {
 
-    std::vector<sf::Vector2f> junctionPoints{ roadSegmentJunction.getJunctionPoints(ROAD_WIDTH, ROAD_CROSSING_SEGMENT_LENGTH) };
-
-    states.texture = &crossingTexture;
-    renderJunctionCrossings(window, roadSegmentJunction, junctionPoints);
-    renderJunctionCenter(window, roadSegmentJunction, junctionPoints);
-}
-
-void RoadRenderer::renderJunctionCrossings(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction, const std::vector<sf::Vector2f> &junctionPoints) {
-
+    const std::vector<sf::Vector2f> &junctionPoints { roadSegmentJunction.getJunctionPoints() };
+	
     for (int i{ 0 }; i < junctionPoints.size(); i += 4) {
 
         junctionTriangle.setPoint(0, roadSegmentJunction.getPosition());
@@ -203,24 +181,27 @@ void RoadRenderer::renderJunctionCrossings(sf::RenderWindow& window, const RoadJ
 
         junctionTriangle.setPoint(1, junctionPoints[i]);
         junctionTriangle.setPoint(2, junctionPoints[(i + 5) % junctionPoints.size()]);
-        window.draw(junctionTriangle);
+        window.draw(junctionTriangle); // this triangle fills in the gaps between the triangles above
     }
 }
 
-void RoadRenderer::renderJunctionCenter(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction, const std::vector<sf::Vector2f> &junctionPoints) {
+void RoadRenderer::renderJunctionCrossings(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction) {
+    
+    states.texture = &crossingTexture;
+    const std::vector<sf::Vector2f> &junctionPoints { roadSegmentJunction.getJunctionPoints() };
 	
     for (int i{ 0 }; i < junctionPoints.size(); i += 4) {
 
-        //debugShape.setFillColor(sf::Color(0, 155, 155, 100));
+        //debugShape.setFillColor(sf::Color(255, 255, 0, 100)); // yellow
         //debugShape.setPosition(junctionPoints[i + 1]); // side intersection point
         //window.draw(debugShape);
-        //debugShape.setFillColor(sf::Color(155, 0, 155, 100));
+        //debugShape.setFillColor(sf::Color(0, 0, 255, 100)); // blue
         //debugShape.setPosition(junctionPoints[i]); // side intersection mirror point
         //window.draw(debugShape);
-        //debugShape.setFillColor(sf::Color::Red);
+        //debugShape.setFillColor(sf::Color(255, 0, 0, 100)); // red
         //debugShape.setPosition(junctionPoints[i + 2]); // road crossing point 1
         //window.draw(debugShape);
-        //debugShape.setFillColor(sf::Color::Green);
+        //debugShape.setFillColor(sf::Color(0, 255, 0, 100)); // green
         //debugShape.setPosition(junctionPoints[i + 3]); // road crossing point 2
         //window.draw(debugShape);
 
@@ -232,16 +213,16 @@ void RoadRenderer::renderJunctionCenter(sf::RenderWindow& window, const RoadJunc
         vertices[0].position = v0;
         vertices[1].position = v1;
         vertices[2].position = v2;
-        vertices[0].texCoords = { 0.f,   0.f };
-        vertices[1].texCoords = { 256.f,   0.f };
-        vertices[2].texCoords = { 256.f, 128.f };
+        vertices[0].texCoords = { 256.f,   0.f };
+        vertices[1].texCoords = { 0.f,     0.f };
+        vertices[2].texCoords = { 0.f,   128.f };
 
         vertices[3].position = v0;
         vertices[4].position = v2;
         vertices[5].position = v3;
-        vertices[3].texCoords = { 0.f,   0.f };
-        vertices[4].texCoords = { 256.f, 128.f };
-        vertices[5].texCoords = { 0.f, 128.f };
+        vertices[3].texCoords = { 256.f,   0.f };
+        vertices[4].texCoords = { 0.f,   128.f };
+        vertices[5].texCoords = { 256.f, 128.f };
 
         window.draw(vertices, states);
     }

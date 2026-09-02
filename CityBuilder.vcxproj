@@ -154,6 +154,7 @@
     </ClCompile>
     <ClCompile Include="RoadJunctionGeometry.cpp" />
     <ClCompile Include="EditorUI.cpp" />
+    <ClCompile Include="RoadNetworkLayout.cpp" />
     <ClCompile Include="RoadRenderer.cpp" />
     <ClCompile Include="RoadSegmentGeometry.cpp" />
     <ClCompile Include="CitizenSimulation.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="RoadJunctionGeometry.hpp" />
     <ClInclude Include="EditorUI.hpp" />
     <ClCompile Include="RoadNetwork.cpp" />
+    <ClInclude Include="RoadNetworkLayout.hpp" />
     <ClInclude Include="RoadNetwork.hpp" />
     <ClInclude Include="RoadSegmentGeometry.hpp" />
     <ClInclude Include="CitizenSimulation.hpp" />

@@ -4,37 +4,35 @@
 #pragma once
 #include <vector>
 #include "RoadGraphTypes.hpp"
-#include "RoadSegmentGeometry.hpp"
-#include <string>
-#include <optional>
 #include "SFML/System/Vector2.hpp"
 #include "RandomCycleFinder.hpp"
 #include <utility>
+#include "RoadNetworkLayout.hpp"
+#include "boost/graph/detail/adjacency_list.hpp"
+#include "Config.hpp"
 
 
 
 class RoadNetwork {
 
 	RoadGraph roadGraph;
+	RoadNetworkLayout roadNetworkLayout;
+
+
 
 	void addEdge(RoadVertexDescriptor source, RoadVertexDescriptor target);
 	RoadVertexDescriptor addVertex(sf::Vector2f pos);
 
+	void rebuildRoadLayout();
+
 public:
 	
-	RoadNetwork();
+	RoadNetwork(const ConfigGlobal &config);
 
-	const RoadGraph& getGraph() const;
-	const std::vector<RoadVertexDescriptor> getJunctions() const;
+	const RoadGraph& getGraph() const { return roadGraph; }
+	const RoadNetworkLayout &getLayout() const { return roadNetworkLayout; }
 
-	const std::optional<RoadEdgeDescriptor> findHoveredRoad(float roadWidth, sf::Vector2f cursorPos) const;
-	const std::optional<RoadVertexDescriptor> findJunctionNear(float snapRadius, sf::Vector2f position) const;
-	std::optional<sf::Vector2f> findJunctionPosNear(float snapRadius, sf::Vector2f position) const;
-
-	std::vector<RoadSegmentGeometry> getJunctionRoadsClockwise(RoadVertexDescriptor junctionVertex) const;
-
-	std::string getInformation() const;
-	int getJunctionCount() const;
+	const std::vector<RoadEdgeDescriptor> getVertexOutEdges(RoadVertexDescriptor junction) const;
 
 	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(RoadVertexDescriptor source, RoadVertexDescriptor target);
 	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(sf::Vector2f sourcePos, RoadVertexDescriptor target);
@@ -45,6 +43,16 @@ public:
 
 		return RandomCycleFinder::getRandomCycle(roadGraph);
 	}
+
+
+
+	struct RoadNetworkInfo {
+
+		unsigned long long vertexCount;
+		unsigned long long edgeCount;
+	};
+
+	RoadNetworkInfo getInformation() const { return { boost::num_vertices(roadGraph), boost::num_edges(roadGraph) }; }
 };
 
 

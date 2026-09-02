@@ -38,11 +38,11 @@ int main() {
     ConfigGlobal config {};
     float simulationSpeed { 1.f }; // 0 could be paused
 
-    RoadNetwork roadNetwork {};
+    RoadNetwork roadNetwork { config };
     CitizenSimulation citizenSimulation { roadNetwork };
     EditorUI editorUi { roadNetwork };
 
-    RoadRenderer roadRenderer {};
+    RoadRenderer roadRenderer { config };
     CitizenRenderer citizenRenderer {};
     UIRenderer uiRenderer { config };
     CityView cityView { CityView::Road };
@@ -95,11 +95,11 @@ int main() {
 
 
 
-        citizenSimulation.update(dt * simulationSpeed);
-
+		citizenSimulation.update(dt * simulationSpeed);
+        
         window.clear(sf::Color(0, 40, 0));
-        roadRenderer.render(window, roadNetwork, cityView);
-        uiRenderer.render(window, editorUi);
+        roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), cityView);
+        uiRenderer.render(window, editorUi, roadNetwork.getLayout());
         citizenRenderer.render(window, citizenSimulation);
         window.display();
     }
@@ -132,8 +132,8 @@ void debugCreateSampleRoadNetwork(RoadNetwork& roadNetwork) {
 void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer) {
 
     sf::Vector2f cursorPos{ sf::Vector2f(cursorPos2i) };
-    auto hoveredJunction{ roadNetwork.findJunctionNear(config.snapRadius, cursorPos) };
-    auto hoveredEdge { roadNetwork.findHoveredRoad(config.roadWidth, cursorPos) };
+    auto hoveredJunction{ roadNetwork.getLayout().findJunctionNear(config.snapRadius, cursorPos) };
+    auto hoveredEdge { roadNetwork.getLayout().findHoveredRoad(config.roadWidth, cursorPos) };
 
     uiRenderer.setCursorPos(cursorPos);
     editorUi.setHoveredRoadElement(hoveredJunction, hoveredEdge);
