@@ -44,6 +44,7 @@ class RoadRenderer {
     
     void renderJunctionCenter(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction);
     void renderJunctionCrossings(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction);
+    void renderDebugSPoints(sf::RenderWindow& window, const RoadJunctionGeometry &junction);
 
 public:
     RoadRenderer(const ConfigGlobal& config);

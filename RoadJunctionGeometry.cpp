@@ -75,6 +75,9 @@ void RoadJunctionGeometry::calculateJunctionPoints(const ConfigGlobal &config) {
 			junctionPoints.push_back(isBefore ? *closestLineIntersection : mirroredPoint);
 			junctionPoints.push_back(crossingPoint2);
 			junctionPoints.push_back(crossingPoint1);
+
+			sf::Vector2f midpoint = (mirroredPoint + *closestLineIntersection + crossingPoint1 + crossingPoint2) * 0.25f;
+			roadJunctionSValues.insert({ roads[i]->getId(), (midpoint - position).length() / road->length() });
 		}
 	}
 }

@@ -189,7 +189,7 @@ void RoadRenderer::renderJunctionCrossings(sf::RenderWindow& window, const RoadJ
     
     states.texture = &crossingTexture;
     const std::vector<sf::Vector2f> &junctionPoints { roadSegmentJunction.getJunctionPoints() };
-	
+
     for (int i{ 0 }; i < junctionPoints.size(); i += 4) {
 
         //debugShape.setFillColor(sf::Color(255, 255, 0, 100)); // yellow
@@ -225,6 +225,20 @@ void RoadRenderer::renderJunctionCrossings(sf::RenderWindow& window, const RoadJ
         vertices[5].texCoords = { 256.f, 128.f };
 
         window.draw(vertices, states);
+    }
+
+    renderDebugSPoints(window, roadSegmentJunction);
+}
+
+void RoadRenderer::renderDebugSPoints(sf::RenderWindow& window, const RoadJunctionGeometry& junction) {
+
+    auto junctionRoads{ junction.getConnectedRoads() };
+
+    for (int i{ 0 }; i < junctionRoads.size(); ++i) {
+
+        debugShape.setFillColor(sf::Color(255, 0, 255, 100)); // magenta
+        debugShape.setPosition(junction.getSPos(junctionRoads[i]));
+        window.draw(debugShape);
     }
 }
 

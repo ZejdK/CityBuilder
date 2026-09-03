@@ -50,6 +50,9 @@ public:
 
 	float length() const { return (end - start).length(); }
 
+	// gets direction from the other endpoint to the passed endpoint
+	sf::Vector2f getDirectionVector(sf::Vector2f endpoint) const;
+
 
 
 	void addEdge(RoadEdgeDescriptor edge) { edges.push_back(edge); }

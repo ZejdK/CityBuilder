@@ -140,4 +140,13 @@ bool RoadSegmentGeometry::isPointOnRoad(float roadWidth, const sf::Vector2f& poi
 	return (c0 == c1) && (c1 == c2) && (c2 == c3);
 }
 
+// gets direction from the other endpoint to the passed endpoint
+sf::Vector2f RoadSegmentGeometry::getDirectionVector(sf::Vector2f endpoint) const {
+
+	if (CB::Math::distance(end, endpoint) < CB::Math::epsilon)
+		return (start - end).normalized();
+	else
+		return (end - start).normalized();
+}
+
 
