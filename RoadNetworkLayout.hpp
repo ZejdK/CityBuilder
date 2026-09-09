@@ -37,6 +37,12 @@ public:
 
 	RoadNetworkLayout(const ConfigGlobal &config);
 
+	// should be a separate commit
+	RoadNetworkLayout(const RoadNetworkLayout&) = delete;
+	RoadNetworkLayout(RoadNetworkLayout&&) = default;
+	RoadNetworkLayout& operator = (const RoadNetworkLayout &) = delete;
+	RoadNetworkLayout& operator = (RoadNetworkLayout &&) = default;
+	
 	const RoadJunctionGeometry *getJunction(RoadVertexDescriptor vertex) const;
 	const RoadSegmentGeometry *getRoad(RoadEdgeDescriptor edge) const;
 
