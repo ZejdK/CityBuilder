@@ -145,7 +145,6 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Citizen.cpp" />
     <ClInclude Include="Citizen.hpp" />
     <ClCompile Include="CitizenRenderer.cpp" />
     <ClCompile Include="CityBuilder.cpp" />
@@ -159,13 +158,12 @@
     <ClCompile Include="RoadSegmentGeometry.cpp" />
     <ClCompile Include="CitizenSimulation.cpp" />
     <ClCompile Include="UIRenderer.cpp" />
-    <ClInclude Include="CitizenPosition.hpp" />
     <ClInclude Include="CitizenRenderer.hpp" />
     <ClInclude Include="CityView.hpp" />
     <ClInclude Include="Config.hpp" />
+    <ClInclude Include="findRandomEdgesCycle.hpp" />
     <ClInclude Include="MessageLog.hpp" />
     <ClInclude Include="PlacementState.hpp" />
-    <ClInclude Include="RandomCycleFinder.hpp" />
     <ClInclude Include="RoadGraphTypes.hpp" />
     <ClInclude Include="RoadJunctionGeometry.hpp" />
     <ClInclude Include="EditorUI.hpp" />
@@ -176,6 +174,7 @@
     <ClInclude Include="CitizenSimulation.hpp" />
     <ClInclude Include="UIMode.hpp" />
     <ClInclude Include="UIRenderer.hpp" />
+    <ClInclude Include="VehiclePath.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp" />

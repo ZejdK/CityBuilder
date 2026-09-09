@@ -5,11 +5,11 @@
 #include <vector>
 #include "RoadGraphTypes.hpp"
 #include "SFML/System/Vector2.hpp"
-#include "RandomCycleFinder.hpp"
 #include <utility>
 #include "RoadNetworkLayout.hpp"
 #include "boost/graph/detail/adjacency_list.hpp"
 #include "Config.hpp"
+#include "findRandomEdgesCycle.hpp"
 
 
 
@@ -33,15 +33,17 @@ public:
 	const RoadNetworkLayout &getLayout() const { return roadNetworkLayout; }
 
 	const std::vector<RoadEdgeDescriptor> getVertexOutEdges(RoadVertexDescriptor junction) const;
+	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> getEdgeVertices(RoadEdgeDescriptor edge) const;
 
 	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(RoadVertexDescriptor source, RoadVertexDescriptor target);
 	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(sf::Vector2f sourcePos, RoadVertexDescriptor target);
 	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(RoadVertexDescriptor source, sf::Vector2f targetPos);
 	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(sf::Vector2f sourcePos, sf::Vector2f targetPos);
 
-	std::vector<RoadVertexDescriptor> getRandomCycle() const {
+	std::vector<RoadEdgeDescriptor> getRandomCycle() const {
 
-		return RandomCycleFinder::getRandomCycle(roadGraph);
+		auto cycle = findRandomEdgesCycle(roadGraph);
+		return *cycle;
 	}
 
 

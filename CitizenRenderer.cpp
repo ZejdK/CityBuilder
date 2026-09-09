@@ -7,7 +7,6 @@
 #include "SFML/Graphics/Color.hpp"
 #include "SFML/System/Vector2.hpp"
 #include "Citizen.hpp"
-#include "CitizenPosition.hpp"
 #include <array>
 #include "SFML/Graphics/PrimitiveType.hpp"
 #include <string>
@@ -62,13 +61,11 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 
 	for (auto &citizen : citizenSimulation.getCitizens()) {
 
-		CitizenPosition posData { citizen.getPositionalData() };
-
-		sf::Vector2f fromPos { citizenSimulation.getVertexPos(posData.from) };
-		sf::Vector2f toPos { citizenSimulation.getVertexPos(posData.to) };
+		auto [fromPos, toPos] { citizenSimulation.getCitizenDirection(citizen.getId()) };
+		auto s{ citizen.getS() };
 
 		auto offset = laneOffset(fromPos, toPos);
-		auto citizenPos = lerp(fromPos + offset, toPos + offset, posData.s);
+		auto citizenPos = lerp(fromPos + offset, toPos + offset, s);
 
 		renderVehicle(window, citizenPos, toPos - fromPos, citizen.getColour());
 	}

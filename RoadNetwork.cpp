@@ -29,6 +29,10 @@ const std::vector<RoadEdgeDescriptor> RoadNetwork::getVertexOutEdges(RoadVertexD
 	return edges;
 }
 
+std::pair<RoadVertexDescriptor, RoadVertexDescriptor> RoadNetwork::getEdgeVertices(RoadEdgeDescriptor edge) const {
+
+	return { boost::source(edge, roadGraph), boost::target(edge, roadGraph) };
+}
 
 
 void RoadNetwork::addEdge(RoadVertexDescriptor source, RoadVertexDescriptor target) {

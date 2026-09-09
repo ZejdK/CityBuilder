@@ -63,9 +63,6 @@
     <ClCompile Include="CitizenSimulation.cpp">
       <Filter>Source Files\simulation</Filter>
     </ClCompile>
-    <ClCompile Include="Citizen.cpp">
-      <Filter>Source Files\simulation</Filter>
-    </ClCompile>
     <ClCompile Include="RoadRenderer.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
@@ -128,12 +125,6 @@
     <ClInclude Include="Citizen.hpp">
       <Filter>Header Files\simulation</Filter>
     </ClInclude>
-    <ClInclude Include="CitizenPosition.hpp">
-      <Filter>Header Files\simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="RandomCycleFinder.hpp">
-      <Filter>Header Files\roadnetwork</Filter>
-    </ClInclude>
     <ClInclude Include="RoadNetworkLayout.hpp">
       <Filter>Header Files\roadlayout</Filter>
     </ClInclude>
@@ -142,6 +133,12 @@
     </ClInclude>
     <ClInclude Include="RoadSegmentGeometry.hpp">
       <Filter>Header Files\roadlayout</Filter>
+    </ClInclude>
+    <ClInclude Include="findRandomEdgesCycle.hpp">
+      <Filter>Header Files\roadnetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="VehiclePath.hpp">
+      <Filter>Header Files\simulation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

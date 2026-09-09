@@ -3,32 +3,83 @@
 
 #pragma once
 #include "Citizen.hpp"
-#include <string>
 #include <vector>
 #include "RoadGraphTypes.hpp"
 #include "RoadNetwork.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "VehiclePath.hpp"
+#include <stdexcept>
+#include <utility>
+#include "RoadJunctionGeometry.hpp"
+#include "RoadSegmentGeometry.hpp"
 
 
 
 class CitizenSimulation
 {
-    std::vector<Citizen> citizens;
-    const RoadNetwork &roadNetwork;
-    bool enabled;
+	std::vector<Citizen> citizens;
+	RoadNetwork& roadNetwork;
+	bool enabled;
+
+	std::vector<VehiclePath> vehiclePaths;
+
+
+
+	struct CitizenLayoutContext {
+
+		const RoadSegmentGeometry* road;
+		const RoadSegmentGeometry* nextRoad;
+		const RoadJunctionGeometry* incomingJunction;
+		const RoadJunctionGeometry* outgoingJunction;
+		std::vector<const RoadSegmentGeometry*> incomingJunctionRoads;
+	};
+
+
+
+	bool onSameEdge(const Citizen& citizen, const Citizen& otherCitizen) const;
+	bool isTooCloseAheadOnTheSameEdge(const Citizen& citizen, const Citizen& otherCitizen, float edgeDistance) const;
+	bool isInsideJunction(const Citizen& citizen, const CitizenLayoutContext& layoutContext) const;
+	std::tuple<float, bool, bool> getNewValues(Citizen& citizen, const CitizenLayoutContext& layoutContext, VehiclePath* vehPath, float dt) const;
+
+	CitizenLayoutContext getCitizenLayoutContext(const Citizen& citizen) const;
+	std::pair<bool, bool> getMovementChecks(const Citizen& citizen, const CitizenLayoutContext& layoutContext) const;
+
+	static constexpr float ALLOWED_DISTANCE{ 50.f };
 
 public:
 
-    CitizenSimulation(const RoadNetwork& roadNetwork);
+	CitizenSimulation(RoadNetwork& roadNetwork)
+		: roadNetwork(roadNetwork), enabled(false) {
+	}
 
-    void addCitizen(int id, std::string name, std::string surname, std::vector<RoadVertexDescriptor> path, std::string colour);
+	const std::vector<Citizen>& getCitizens() const { return citizens; }
+	// NOTE: should simulation rely on getting data directly from graph?
+	sf::Vector2f getVertexPos(RoadVertexDescriptor vertex) const { return roadNetwork.getGraph()[vertex].position; }
+	std::pair<sf::Vector2f, sf::Vector2f> getCitizenDirection(int citizenId) const;
 
-    const std::vector<Citizen> &getCitizens() const;
-    sf::Vector2f getVertexPos(RoadVertexDescriptor vertex) const;
+	void enableTest();
 
-    void enableTest();
+	void update(float tNew);
+	void realUpdate(float dt); // scaffolding
 
-    void update(float tNew);
+
+
+	// vehicle path management
+	VehiclePath* getVehiclePath(int id) {
+
+		if (id < 0 || id >= vehiclePaths.size())
+			throw std::out_of_range("Vehicle path ID is out of range");
+
+		return &vehiclePaths[id];
+	}
+
+	const VehiclePath* getVehiclePath(int id) const {
+
+		if (id < 0 || id >= vehiclePaths.size())
+			throw std::out_of_range("Vehicle path ID is out of range");
+
+		return &vehiclePaths[id];
+	}
 };
 
 

@@ -2,35 +2,54 @@
 
 
 #pragma once
-#include "RoadGraphTypes.hpp"
 #include <string>
-#include <vector>
-#include "CitizenPosition.hpp"
+#include <optional>
 
 
+
+struct CitizenState {
+
+	int pathId;
+	bool insideJunction;
+	float s; // parameter showing distance progress along the edge
+};
 
 class Citizen {
 
+	// data
 	int id;
 	std::string name;
 	std::string surname;
 	std::string colour;
 
-	int currentVertexId;
-	std::vector<RoadVertexDescriptor> path;
-
-	float s; // parameter showing distance progress along the edge
-
-	bool onSameRoad(const Citizen &otherCitizen);
-	bool shouldStop(float edgeDistance, const std::vector<Citizen> &citizens, float allowedDistance);
+	std::optional<CitizenState> state;
 
 public:
-	Citizen(int id, std::string name, std::string surname, std::vector<RoadVertexDescriptor> path, std::string colour);
+	Citizen(int id, std::string name, std::string surname, std::string colour)
+		: id(id), name(name), surname(surname), colour(colour), state(std::nullopt) {}
 
-	bool update(float dt, float edgeDistance, const std::vector<Citizen> &citizens);
+	void activate(int pathId) {
 
-	CitizenPosition getPositionalData() const;
+		state = CitizenState(pathId, false, 0.f);
+	}
+
+	void update(float s, bool insideJunction) {
+
+		state->s = s;
+		state->insideJunction = insideJunction;
+	}
+
+
+
+	int getId() const { return id; }
 	std::string getColour() const { return colour; }
+
+
+
+	bool isActive() const { return state != std::nullopt; }
+	int getPathId() const { return state->pathId; }
+	bool isInsideJunction() const { return state->insideJunction; }
+	float getS() const { return state->s; }
 };
 
 

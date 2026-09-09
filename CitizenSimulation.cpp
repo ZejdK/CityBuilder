@@ -5,75 +5,183 @@
 #include <string>
 #include <vector>
 #include "Citizen.hpp"
-#include "RoadGraphTypes.hpp"
 #include "RoadNetwork.hpp"
-#include "SFML/System/Vector2.hpp"
-#include "CitizenPosition.hpp"
 #include <array>
+#include "VehiclePath.hpp"
+#include <optional>
+#include <cstdlib>
+#include "RoadJunctionGeometry.hpp"
+#include "RoadSegmentGeometry.hpp"
+#include <tuple>
+#include <utility>
+#include "SFML/System/Vector2.hpp"
 
 
-
-CitizenSimulation::CitizenSimulation(const RoadNetwork& roadNetwork)
-	: roadNetwork(roadNetwork) {
-
-	enabled = false;
-}
-
-void CitizenSimulation::addCitizen(int id, std::string name, std::string surname, std::vector<RoadVertexDescriptor> path, std::string colour) {
-
-	citizens.push_back(Citizen(id, name, surname, path, colour));
-}
-
-const std::vector<Citizen>& CitizenSimulation::getCitizens() const {
-	
-	return citizens;
-}
-
-sf::Vector2f CitizenSimulation::getVertexPos(RoadVertexDescriptor vertex) const {
-
-	return roadNetwork.getGraph()[vertex].position;
-}
 
 void CitizenSimulation::enableTest() {
 
-	auto path { roadNetwork.getRandomCycle() };
-
 	std::array<std::string, 5> colours { "b", "g", "w", "r", "o" };
 
-	for (int i { 0 }; i < 50; ++i)
-		addCitizen(i, "John", "Doe", roadNetwork.getRandomCycle(), colours[i % 5]);
+	for (int i { 0 }; i < 50; ++i) {
+
+		int id{ int(citizens.size()) };
+
+		citizens.push_back(Citizen{ id, i % 2 == 0 ? "John" : "Jane", "Doe", colours[i % 5]});
+		Citizen& citizen{ citizens.back() };
+
+		vehiclePaths.push_back(VehiclePath{ id, roadNetwork.getRandomCycle() });
+		VehiclePath &vehPath{ vehiclePaths.back() };
+		
+		citizen.activate(vehPath.getId());
+	}
+
+	enabled = true;
 }
 
 void CitizenSimulation::update(float dt) {
-
-	// temporary check for debugging/designing
+	
 	if (roadNetwork.getLayout().getInformation().junctionCount < 5)
 		return;
 
-	if (!enabled) {
-
+	if (!enabled)
 		enableTest();
-		enabled = true;
+	else
+		realUpdate(dt);
+}
+
+
+
+void CitizenSimulation::realUpdate(float dt) {
+
+	for (auto& citizen : citizens) {
+
+		// get
+		auto layoutContext{ getCitizenLayoutContext(citizen) };
+		auto vehPath{ getVehiclePath(citizen.getPathId()) };
+
+		// calculate values
+		auto [ newS, advanceEdge, insideJunction ] { getNewValues(citizen, layoutContext, vehPath, dt) };
+
+		// update
+		if (advanceEdge)
+			vehPath->advanceEdge();
+		citizen.update(newS, insideJunction);
+	}
+}
+
+
+
+CitizenSimulation::CitizenLayoutContext CitizenSimulation::getCitizenLayoutContext(const Citizen& citizen) const {
+
+	auto vehPath{ getVehiclePath(citizen.getPathId()) };
+
+	auto currentEdge{ vehPath->getCurrentEdge() };
+	auto nextEdge{ vehPath->getNextEdge() };
+
+	if (currentEdge == std::nullopt)
+		throw "error moving further: the path was completed";
+	if (nextEdge == std::nullopt)
+		throw "error moving further: bing bong";
+
+	auto [ tail, head ] { roadNetwork.getEdgeVertices(*currentEdge) };
+	auto &roadLayout{ roadNetwork.getLayout() };
+
+	return {
+		roadLayout.getRoad(*currentEdge),
+		roadLayout.getRoad(*nextEdge),
+		roadLayout.getJunction(head),
+		roadLayout.getJunction(tail),
+		roadLayout.getJunction(head)->getConnectedRoads()
+	};
+}
+
+
+
+std::pair<bool, bool> CitizenSimulation::getMovementChecks(const Citizen& citizen, const CitizenLayoutContext &layoutContext) const {
+
+	bool insideJunction = isInsideJunction(citizen, layoutContext);
+	bool carAhead{ false };
+	for (const auto& otherCitizen : citizens) {
+
+		if (!citizen.isActive() || !otherCitizen.isActive() || otherCitizen.getId() == citizen.getId())
+			continue;
+
+		carAhead = isTooCloseAheadOnTheSameEdge(citizen, otherCitizen, layoutContext.road->length());
+
+		if (carAhead)
+			break;
 	}
 
-	if (enabled) {
-		
-		for (auto &citizen : citizens) {
-			
-			// need to store the positional data in the citizen class and only update when the citizen moves to the next edge
-			CitizenPosition posData { citizen.getPositionalData() };
+	return { carAhead, insideJunction };
+}
 
-			sf::Vector2f fromPos { getVertexPos(posData.from) };
-			sf::Vector2f toPos { getVertexPos(posData.to) };
+std::tuple<float, bool, bool> CitizenSimulation::getNewValues(Citizen& citizen, const CitizenLayoutContext& layoutContext, VehiclePath *vehPath, float dt) const {
 
-			bool finished { citizen.update(dt, (toPos - fromPos).length(), citizens) };
-			if (finished) {
+	auto [ carAhead, insideJunction ]{ getMovementChecks(citizen, layoutContext) };
+	
+	const float speed{ 140.f };
+	float newS{ citizen.getS() };
+	bool advanceEdge{ false };
 
-				enabled = false;
-				break;
-			}
+	bool shouldWait{ carAhead };
+	if (!shouldWait) {
+
+		newS += (speed * dt) / layoutContext.road->length();
+		if (newS >= 1.f) {
+
+			advanceEdge = true;
+			newS = 0.f;
 		}
 	}
+
+	return { newS, advanceEdge, insideJunction };
+}
+
+
+
+// NOTE: I can get away with this check bc currently cars run in cycles, which have duplicate info in first and last vertex
+// TODO: this will break when vehicles get fixed paths
+// 
+// all of the checks assume that both citizen are active (and therefore have state) and that they are different
+bool CitizenSimulation::onSameEdge(const Citizen& citizen, const Citizen& otherCitizen) const {
+
+	const VehiclePath* vehPath = getVehiclePath(citizen.getPathId());
+	const VehiclePath* otherVehPath = getVehiclePath(otherCitizen.getPathId());
+
+	return vehPath->getCurrentEdge() == otherVehPath->getCurrentEdge();
+}
+
+bool CitizenSimulation::isTooCloseAheadOnTheSameEdge(const Citizen& citizen, const Citizen& otherCitizen, float edgeDistance) const {
+
+	if (!onSameEdge(citizen, otherCitizen))
+		return false;
+
+	float distance{ (otherCitizen.getS() - citizen.getS()) * edgeDistance};
+
+	if (otherCitizen.getS() > citizen.getS() && distance < ALLOWED_DISTANCE)
+		return true;
+
+	if (std::abs(otherCitizen.getS() - citizen.getS()) < 0.00001f && citizen.getId() > otherCitizen.getId())
+		return true;
+
+	return false;
+}
+
+bool CitizenSimulation::isInsideJunction(const Citizen &citizen, const CitizenLayoutContext &layoutContext) const {
+
+	return citizen.getS() <= layoutContext.incomingJunction->getS(layoutContext.road) ||
+		   citizen.getS() >= 1.f - layoutContext.incomingJunction->getS(layoutContext.nextRoad);
+}
+
+std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenDirection(int citizenId) const {
+
+	auto edge{ getVehiclePath(citizenId)->getCurrentEdge() };
+	auto [tail, head] { roadNetwork.getEdgeVertices(*edge) };
+
+	auto fromPos{ roadNetwork.getGraph()[tail].position };
+	auto toPos{ roadNetwork.getGraph()[head].position };
+
+	return { fromPos, toPos };
 }
 
 
