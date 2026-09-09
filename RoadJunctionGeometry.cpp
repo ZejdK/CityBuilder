@@ -53,6 +53,7 @@ RoadJunctionGeometry::RoadJunctionGeometry(int id, RoadVertexDescriptor vertex, 
 void RoadJunctionGeometry::calculateJunctionPoints(const ConfigGlobal &config) {
 
 	junctionPoints.clear();
+	roadJunctionSValues.clear();
 
 	for (int i{ 0 }; i < roads.size() ; ++i) {
 
