@@ -27,6 +27,14 @@ public:
 
 		this->roadSegments = roadSegments;
 	}
+
+	std::optional<RoadEdgeDescriptor> getPreviousEdge() const {
+
+		if (currentRoadIndex == 0)
+			return std::nullopt;
+
+		return roadSegments[currentRoadIndex - 1];
+	}
 	
 	std::optional<RoadEdgeDescriptor> getCurrentEdge() const {
 		

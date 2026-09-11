@@ -75,6 +75,7 @@ CitizenSimulation::CitizenLayoutContext CitizenSimulation::getCitizenLayoutConte
 
 	auto vehPath{ getVehiclePath(citizen.getPathId()) };
 
+	auto previousEdge{ vehPath->getPreviousEdge() };
 	auto currentEdge{ vehPath->getCurrentEdge() };
 	auto nextEdge{ vehPath->getNextEdge() };
 

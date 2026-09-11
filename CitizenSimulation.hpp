@@ -27,6 +27,7 @@ class CitizenSimulation
 
 	struct CitizenLayoutContext {
 
+		const RoadSegmentGeometry* previousRoad;
 		const RoadSegmentGeometry* road;
 		const RoadSegmentGeometry* nextRoad;
 		const RoadJunctionGeometry* incomingJunction;
