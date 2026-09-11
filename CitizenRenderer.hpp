@@ -13,6 +13,7 @@
 #include "SFML/Graphics/VertexArray.hpp"
 #include <string>
 #include <unordered_map>
+#include "CitizenJunctionCurve.hpp"
 
 
 
@@ -33,7 +34,8 @@ class CitizenRenderer {
     sf::Vector2f lerp(sf::Vector2f A, sf::Vector2f B, float t) const;
     sf::Vector2f laneOffset(sf::Vector2f fromPos, sf::Vector2f toPos) const;
 
-	void renderVehicle(sf::RenderWindow& window, sf::Vector2f pos, sf::Vector2f dir, std::string colour);
+    void renderVehicle(sf::RenderWindow& window, sf::Vector2f pos, sf::Vector2f dir, std::string colour);
+    void debugRenderJunctionCurveData(sf::RenderWindow& window, const CitizenJunctionCurve &curve, sf::Vector2f citizenPos);
 
 public:
 

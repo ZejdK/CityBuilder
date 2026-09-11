@@ -181,4 +181,25 @@ std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenDirection(int
 	return { fromPos, toPos };
 }
 
+std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenPathDirection(int citizenId, bool next) const {
+
+	auto edge{ getVehiclePath(citizenId)->getCurrentEdge() };
+	if (next)
+		edge = getVehiclePath(citizenId)->getNextEdge();
+
+	auto [ tail, head ] { roadNetwork.getEdgeVertices(*edge) };
+
+	auto fromPos{ roadNetwork.getGraph()[tail].position };
+	auto toPos{ roadNetwork.getGraph()[head].position };
+
+	return { fromPos, toPos };
+}
+
+bool CitizenSimulation::isCitizenOnFirstOrLastEdge(int citizenId) const
+{
+	auto vehPath{ getVehiclePath(citizenId) };
+
+	return vehPath->getPreviousEdge() == std::nullopt || vehPath->getNextEdge() == std::nullopt;
+}
+
 

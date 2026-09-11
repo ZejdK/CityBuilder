@@ -12,6 +12,7 @@
 #include <string>
 #include "SFML/Graphics/Texture.hpp"
 #include "Math.hpp"
+#include "CitizenJunctionCurve.hpp"
 
 
 
@@ -61,13 +62,24 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 
 	for (auto &citizen : citizenSimulation.getCitizens()) {
 
-		auto [fromPos, toPos] { citizenSimulation.getCitizenDirection(citizen.getId()) };
+		auto layoutContext{ citizenSimulation.getCitizenLayoutContext(citizen) };
 		auto s{ citizen.getS() };
 
-		auto offset = laneOffset(fromPos, toPos);
-		auto citizenPos = lerp(fromPos + offset, toPos + offset, s);
+		if (!citizenSimulation.isCitizenOnFirstOrLastEdge(citizen.getId()) && citizen.isInsideJunction()) {
 
-		renderVehicle(window, citizenPos, toPos - fromPos, citizen.getColour());
+			auto curve{ CitizenJunctionCurve{ s, layoutContext } };
+			auto [ citizenPos, citizenDir ] { curve.getCitizenPosAndDir(s) };
+
+			renderVehicle(window, citizenPos, citizenDir, citizen.getColour());
+			// debugRenderJunctionCurveData(window, curve, citizenPos);
+		}
+		else {
+
+			auto [ fromPos, toPos ] { citizenSimulation.getCitizenDirection(citizen.getId()) };
+			auto offset = laneOffset(fromPos, toPos);
+			auto citizenPos = lerp(fromPos + offset, toPos + offset, s);
+			renderVehicle(window, citizenPos, toPos - fromPos, citizen.getColour());
+		}
 	}
 }
 
@@ -98,6 +110,29 @@ void CitizenRenderer::renderVehicle(sf::RenderWindow& window, sf::Vector2f pos, 
 	vehicleVertices[5].texCoords = { 0.f, 0.f };
 
 	window.draw(vehicleVertices, states);
+}
+
+void CitizenRenderer::debugRenderJunctionCurveData(sf::RenderWindow& window, const CitizenJunctionCurve &curve, sf::Vector2f citizenPos) {
+
+	vehicleShape.setPosition(curve.entryPos);
+	vehicleShape.setFillColor(sf::Color(255, 0, 255, 100));
+	window.draw(vehicleShape);
+
+	vehicleShape.setPosition(curve.entryControlPos);
+	vehicleShape.setFillColor(sf::Color(255, 0, 255, 100));
+	window.draw(vehicleShape);
+
+	vehicleShape.setPosition(curve.exitPos);
+	vehicleShape.setFillColor(sf::Color(0, 0, 255, 100));
+	window.draw(vehicleShape);
+
+	vehicleShape.setPosition(curve.exitControlPos);
+	vehicleShape.setFillColor(sf::Color(0, 0, 255, 100));
+	window.draw(vehicleShape);
+
+	vehicleShape.setPosition(citizenPos);
+	vehicleShape.setFillColor(sf::Color(255, 0, 180));
+	window.draw(vehicleShape);
 }
 
 

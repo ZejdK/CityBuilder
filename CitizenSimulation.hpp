@@ -17,14 +17,7 @@
 
 class CitizenSimulation
 {
-	std::vector<Citizen> citizens;
-	RoadNetwork& roadNetwork;
-	bool enabled;
-
-	std::vector<VehiclePath> vehiclePaths;
-
-
-
+public:
 	struct CitizenLayoutContext {
 
 		const RoadSegmentGeometry* previousRoad;
@@ -35,6 +28,13 @@ class CitizenSimulation
 		std::vector<const RoadSegmentGeometry*> incomingJunctionRoads;
 	};
 
+private:
+	std::vector<Citizen> citizens;
+	RoadNetwork& roadNetwork;
+	bool enabled;
+
+	std::vector<VehiclePath> vehiclePaths;
+
 
 
 	bool onSameEdge(const Citizen& citizen, const Citizen& otherCitizen) const;
@@ -42,7 +42,6 @@ class CitizenSimulation
 	bool isInsideJunction(const Citizen& citizen, const CitizenLayoutContext& layoutContext) const;
 	std::tuple<float, bool, bool> getNewValues(Citizen& citizen, const CitizenLayoutContext& layoutContext, VehiclePath* vehPath, float dt) const;
 
-	CitizenLayoutContext getCitizenLayoutContext(const Citizen& citizen) const;
 	std::pair<bool, bool> getMovementChecks(const Citizen& citizen, const CitizenLayoutContext& layoutContext) const;
 
 	static constexpr float ALLOWED_DISTANCE{ 50.f };
@@ -54,9 +53,12 @@ public:
 	}
 
 	const std::vector<Citizen>& getCitizens() const { return citizens; }
+	CitizenLayoutContext getCitizenLayoutContext(const Citizen& citizen) const;
 	// NOTE: should simulation rely on getting data directly from graph?
 	sf::Vector2f getVertexPos(RoadVertexDescriptor vertex) const { return roadNetwork.getGraph()[vertex].position; }
 	std::pair<sf::Vector2f, sf::Vector2f> getCitizenDirection(int citizenId) const;
+	std::pair<sf::Vector2f, sf::Vector2f> getCitizenPathDirection(int citizenId, bool next = false) const;
+	bool isCitizenOnFirstOrLastEdge(int citizenId) const;
 
 	void enableTest();
 

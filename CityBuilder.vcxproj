@@ -158,6 +158,7 @@
     <ClCompile Include="RoadSegmentGeometry.cpp" />
     <ClCompile Include="CitizenSimulation.cpp" />
     <ClCompile Include="UIRenderer.cpp" />
+    <ClInclude Include="CitizenJunctionCurve.hpp" />
     <ClInclude Include="CitizenRenderer.hpp" />
     <ClInclude Include="CityView.hpp" />
     <ClInclude Include="Config.hpp" />

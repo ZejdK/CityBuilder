@@ -7,6 +7,7 @@
 #include <optional>
 #include "RoadGraphTypes.hpp"
 #include <vector>
+#include "Math.hpp"
 
 
 
@@ -29,7 +30,7 @@ class RoadSegmentGeometry {
 
 
 	std::array<sf::Vector2f, 4> getVerticesInternal(sf::Vector2f start, sf::Vector2f end, float roadWidth) const;
-	
+
 public:
 
 	RoadSegmentGeometry(int id, RoadVertexDescriptor startVertex, RoadVertexDescriptor endVertex, sf::Vector2f start, sf::Vector2f end);
@@ -64,6 +65,8 @@ public:
 	sf::Vector2f getStart() const { return start; }
 	sf::Vector2f getEnd() const { return end; }
 
+	// gets the endpoint that is further away from the passed endpoint
+	sf::Vector2f getOtherEndpoint(sf::Vector2f endpoint) const { return CB::Math::distance(endpoint, start) < CB::Math::distance(endpoint, end) ? end : start; }
 	
 
 	int getId() const { return id; }

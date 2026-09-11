@@ -140,6 +140,9 @@
     <ClInclude Include="VehiclePath.hpp">
       <Filter>Header Files\simulation</Filter>
     </ClInclude>
+    <ClInclude Include="CitizenJunctionCurve.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Progress log.txt">
