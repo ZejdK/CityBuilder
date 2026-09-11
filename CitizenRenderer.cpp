@@ -13,6 +13,7 @@
 #include "SFML/Graphics/Texture.hpp"
 #include "Math.hpp"
 #include "CitizenJunctionCurve.hpp"
+#include "RoadSegmentGeometry.hpp"
 
 
 
@@ -36,17 +37,6 @@ sf::Vector2f CitizenRenderer::lerp(sf::Vector2f A, sf::Vector2f B, float t) cons
 	return A + (B - A) * t;
 }
 
-sf::Vector2f CitizenRenderer::laneOffset(sf::Vector2f fromPos, sf::Vector2f toPos) const {
-
-	float offset { 20.f }; /// SHOULD BE ROAD_WIDTH / 2
-
-	// assumes points will not overlap
-	auto dir = (toPos - fromPos).normalized();
-	auto normal = sf::Vector2f(-dir.y, dir.x);
-
-	return normal * offset;
-}
-
 
 
 CitizenRenderer::CitizenRenderer()
@@ -58,7 +48,7 @@ CitizenRenderer::CitizenRenderer()
 	vehicleShape.setFillColor(sf::Color(0, 155, 155, 155));
 }
 
-void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& citizenSimulation) {
+void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& citizenSimulation, float roadWidth) {
 
 	for (auto &citizen : citizenSimulation.getCitizens()) {
 
@@ -67,7 +57,7 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 
 		if (!citizenSimulation.isCitizenOnFirstOrLastEdge(citizen.getId()) && citizen.isInsideJunction()) {
 
-			auto curve{ CitizenJunctionCurve{ s, layoutContext } };
+			auto curve{ CitizenJunctionCurve{ s, layoutContext, roadWidth } };
 			auto [ citizenPos, citizenDir ] { curve.getCitizenPosAndDir(s) };
 
 			renderVehicle(window, citizenPos, citizenDir, citizen.getColour());
@@ -76,7 +66,7 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 		else {
 
 			auto [ fromPos, toPos ] { citizenSimulation.getCitizenDirection(citizen.getId()) };
-			auto offset = laneOffset(fromPos, toPos);
+			auto offset = RoadSegmentGeometry::getLaneOffset(fromPos, toPos, roadWidth);
 			auto citizenPos = lerp(fromPos + offset, toPos + offset, s);
 			renderVehicle(window, citizenPos, toPos - fromPos, citizen.getColour());
 		}

@@ -67,7 +67,7 @@ public:
 
 	// gets the endpoint that is further away from the passed endpoint
 	sf::Vector2f getOtherEndpoint(sf::Vector2f endpoint) const { return CB::Math::distance(endpoint, start) < CB::Math::distance(endpoint, end) ? end : start; }
-	
+	static sf::Vector2f getLaneOffset(sf::Vector2f fromPos, sf::Vector2f toPos, float roadWidth);
 
 	int getId() const { return id; }
 };

@@ -12,16 +12,6 @@
 
 
 
-static sf::Vector2f laneOffset(sf::Vector2f fromPos, sf::Vector2f toPos) {
-
-	float offset{ 20.f }; /// SHOULD BE ROAD_WIDTH / 2
-
-	auto dir = (toPos - fromPos).normalized();
-	auto normal = sf::Vector2f(-dir.y, dir.x);
-
-	return normal * offset;
-}
-
 struct CitizenJunctionCurve {
 
 	sf::Vector2f entryPos;
@@ -39,7 +29,7 @@ struct CitizenJunctionCurve {
 
 
 	// NOTE: won't be called if the citizen is on the first or final edge
-	CitizenJunctionCurve(float s, const CitizenSimulation::CitizenLayoutContext& layoutContext) {
+	CitizenJunctionCurve(float s, const CitizenSimulation::CitizenLayoutContext& layoutContext, float roadWidth) {
 
 		// when the citizen is inside a junction, this class is created every frame to calculate the position and direction of the citizen along the junction curve
 		// reason why these need to order is because in the midpoint, citizen will advance its current edge and therefore its layout context
@@ -49,8 +39,8 @@ struct CitizenJunctionCurve {
 		auto startPos{ road->getOtherEndpoint(junctionPos) };
 		auto endPos{ nextRoad->getOtherEndpoint(junctionPos) };
 
-		entryPos = junction->getSPos(road) + laneOffset(startPos, junctionPos);
-		exitPos = junction->getSPos(nextRoad) + laneOffset(junctionPos, endPos);
+		entryPos = junction->getSPos(road) + RoadSegmentGeometry::getLaneOffset(startPos, junctionPos, roadWidth);
+		exitPos = junction->getSPos(nextRoad) + RoadSegmentGeometry::getLaneOffset(junctionPos, endPos, roadWidth);
 		sJunIn = junction->getS(road);
 		sJunOut = junction->getS(nextRoad);
 

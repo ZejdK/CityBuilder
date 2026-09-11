@@ -149,4 +149,14 @@ sf::Vector2f RoadSegmentGeometry::getDirectionVector(sf::Vector2f endpoint) cons
 		return (end - start).normalized();
 }
 
+sf::Vector2f RoadSegmentGeometry::getLaneOffset(sf::Vector2f fromPos, sf::Vector2f toPos, float roadWidth) {
+	
+	float offset{ roadWidth / 2 };
+
+	auto dir = (toPos - fromPos).normalized();
+	auto normal = sf::Vector2f(-dir.y, dir.x);
+
+	return normal * offset;
+}
+
 

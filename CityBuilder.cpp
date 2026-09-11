@@ -100,7 +100,7 @@ int main() {
         window.clear(sf::Color(0, 40, 0));
         roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), cityView);
         uiRenderer.render(window, editorUi, roadNetwork.getLayout());
-        citizenRenderer.render(window, citizenSimulation);
+        citizenRenderer.render(window, citizenSimulation, config.roadWidth);
         window.display();
     }
 }
