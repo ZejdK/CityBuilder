@@ -79,17 +79,13 @@ CitizenSimulation::CitizenLayoutContext CitizenSimulation::getCitizenLayoutConte
 	auto currentEdge{ vehPath->getCurrentEdge() };
 	auto nextEdge{ vehPath->getNextEdge() };
 
-	if (currentEdge == std::nullopt)
-		throw "error moving further: the path was completed";
-	if (nextEdge == std::nullopt)
-		throw "error moving further: bing bong";
-
 	auto [ tail, head ] { roadNetwork.getEdgeVertices(*currentEdge) };
 	auto &roadLayout{ roadNetwork.getLayout() };
 
 	return {
-		roadLayout.getRoad(*currentEdge),
-		roadLayout.getRoad(*nextEdge),
+		previousEdge ? roadLayout.getRoad(*previousEdge) : nullptr,
+		currentEdge ? roadLayout.getRoad(*currentEdge) : nullptr,
+		nextEdge ? roadLayout.getRoad(*nextEdge) : nullptr,
 		roadLayout.getJunction(head),
 		roadLayout.getJunction(tail),
 		roadLayout.getJunction(head)->getConnectedRoads()
