@@ -27,6 +27,7 @@ class RoadJunctionGeometry {
 	void sortJunctionRoadsClockwise(std::vector<const RoadSegmentGeometry*> &roads, sf::Vector2f junctionPos);
 	void calculateJunctionPoints(const ConfigGlobal &config);
 	std::optional<sf::Vector2f> getFurthestClosestIntersection(const RoadSegmentGeometry& road, const RoadSegmentGeometry& roadBefore, const RoadSegmentGeometry& roadAfter, float roadWidth, bool& isBefore) const;
+	const RoadSegmentGeometry* findRoad(int roadId) const;
 
 	std::unordered_map<int, float> roadJunctionSValues; // indexed with RoadSegmentGeometry::getId()
 
@@ -37,6 +38,9 @@ public:
 	// returns vector packed with these four points: side intersection point, side intersection mirror point, road crossing point 1, road crossing point 2
 	const std::vector<sf::Vector2f> &getJunctionPoints() const { return junctionPoints; }
 	const std::vector<const RoadSegmentGeometry*>& getConnectedRoads() const { return roads; }
+	
+	enum class NextTurn { Left, Right, Straight };
+	NextTurn getNextTurnDirection(int roadIdBefore, int roadIdAfter) const;
 	
 	sf::Vector2f getPosition() const { return position; }
 	RoadVertexDescriptor getVertex() const { return vertex; }

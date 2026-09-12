@@ -37,15 +37,28 @@ sf::Vector2f CitizenRenderer::lerp(sf::Vector2f A, sf::Vector2f B, float t) cons
 	return A + (B - A) * t;
 }
 
+std::array<sf::Vector2f, 4> CitizenRenderer::getVehicleVertices(sf::Vector2f pos, sf::Vector2f dir) {
+
+	return {
+
+	   pos + CB::Math::rotateInDirection(sf::Vector2f(20.f, 10.f), dir),   // top right
+	   pos + CB::Math::rotateInDirection(sf::Vector2f(20.f, -10.f), dir),  // bottom right
+	   pos + CB::Math::rotateInDirection(sf::Vector2f(-20.f, -10.f), dir), // bottom left
+	   pos + CB::Math::rotateInDirection(sf::Vector2f(-20.f, 10.f), dir),  // top left
+	};
+}
+
 
 
 CitizenRenderer::CitizenRenderer()
-		: font("assetstemp/arial.ttf"), text(font), vehicleShape(10.f), vehicleVertices(sf::PrimitiveType::Triangles, 6), states() {
+		: font("assetstemp/arial.ttf"), text(font), vehicleShape(10.f), indicatorShape(5.f), vehicleVertices(sf::PrimitiveType::Triangles, 6), states() {
 
 	loadVehicleTextures();
 
 	vehicleShape.setOrigin(sf::Vector2f(10.f, 10.f));
 	vehicleShape.setFillColor(sf::Color(0, 155, 155, 155));
+	indicatorShape.setOrigin(sf::Vector2f(5.f, 5.f));
+	indicatorShape.setFillColor(sf::Color(255, 165, 0, 155));
 }
 
 void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& citizenSimulation, float roadWidth) {
@@ -61,6 +74,7 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 			auto [ citizenPos, citizenDir ] { curve.getCitizenPosAndDir(s) };
 
 			renderVehicle(window, citizenPos, citizenDir, citizen.getColour());
+			renderIndicators(window, citizen, layoutContext, citizenPos, citizenDir);
 			// debugRenderJunctionCurveData(window, curve, citizenPos);
 		}
 		else {
@@ -69,7 +83,28 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 			auto offset = RoadSegmentGeometry::getLaneOffset(fromPos, toPos, roadWidth);
 			auto citizenPos = lerp(fromPos + offset, toPos + offset, s);
 			renderVehicle(window, citizenPos, toPos - fromPos, citizen.getColour());
+			renderIndicators(window, citizen, layoutContext, citizenPos, toPos - fromPos);
 		}
+	}
+}
+
+void CitizenRenderer::renderIndicators(sf::RenderWindow &window, const Citizen &citizen, const CitizenSimulation::CitizenLayoutContext& layoutContext, sf::Vector2f pos, sf::Vector2f dir) {
+
+	auto v { getVehicleVertices(pos, dir) };
+
+	if (citizen.isIndicatingLeft()) {
+
+		indicatorShape.setPosition(v[1]);
+		window.draw(indicatorShape);
+		indicatorShape.setPosition(v[2]);
+		window.draw(indicatorShape);
+	}
+	else if (citizen.isIndicatingRight()) {
+
+		indicatorShape.setPosition(v[3]);
+		window.draw(indicatorShape);
+		indicatorShape.setPosition(v[0]);
+		window.draw(indicatorShape);
 	}
 }
 
@@ -77,13 +112,7 @@ void CitizenRenderer::renderVehicle(sf::RenderWindow& window, sf::Vector2f pos, 
 
 	states.texture = &vehicleTextures[colour];
 
-	std::array<sf::Vector2f, 4> v {
-
-		pos + CB::Math::rotateInDirection(sf::Vector2f(20.f, 10.f), dir),   // top right
-		pos + CB::Math::rotateInDirection(sf::Vector2f(20.f, -10.f), dir),  // bottom right
-		pos + CB::Math::rotateInDirection(sf::Vector2f(-20.f, -10.f), dir), // bottom left
-		pos + CB::Math::rotateInDirection(sf::Vector2f(-20.f, 10.f), dir),  // top left
-	};
+	auto v{ getVehicleVertices(pos, dir) };
 
 	vehicleVertices[0].position = v[0];
 	vehicleVertices[1].position = v[1];

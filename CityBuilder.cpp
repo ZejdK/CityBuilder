@@ -47,6 +47,7 @@ int main() {
     UIRenderer uiRenderer { config };
     CityView cityView { CityView::Road };
 
+    double totalTime{ 0.0 };
     sf::Clock clock;
 
 	debugCreateSampleRoadNetwork(roadNetwork);
@@ -54,6 +55,7 @@ int main() {
     while (window.isOpen())
     {
         float dt = clock.restart().asSeconds();
+        totalTime += dt;
 
         while (const std::optional event = window.pollEvent()) {
 
@@ -95,7 +97,7 @@ int main() {
 
 
 
-		citizenSimulation.update(dt * simulationSpeed);
+		citizenSimulation.update(totalTime, dt * simulationSpeed);
         
         window.clear(sf::Color(0, 40, 0));
         roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), cityView);

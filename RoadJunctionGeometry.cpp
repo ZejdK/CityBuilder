@@ -41,11 +41,35 @@ std::optional<sf::Vector2f> RoadJunctionGeometry::getFurthestClosestIntersection
 	return std::nullopt;
 }
 
+const RoadSegmentGeometry* RoadJunctionGeometry::findRoad(int roadId) const {
+	
+	for (const auto& road : roads)
+		if (road->getId() == roadId)
+			return road;
+
+	return nullptr;
+}
+
+
+
 RoadJunctionGeometry::RoadJunctionGeometry(int id, RoadVertexDescriptor vertex, sf::Vector2f position, const std::vector<const RoadSegmentGeometry *> junctionRoads, const ConfigGlobal &config)
 	: id(id), vertex(vertex), position(position), roads(junctionRoads) {
 
 	sortJunctionRoadsClockwise(roads, position);
 	calculateJunctionPoints(config);
+}
+
+RoadJunctionGeometry::NextTurn RoadJunctionGeometry::getNextTurnDirection(int roadIdBefore, int roadIdAfter) const {
+
+	auto dirBefore{ (position - findRoad(roadIdBefore)->getOtherEndpoint(position)).normalized() };
+	auto dirAfter{ (findRoad(roadIdAfter)->getOtherEndpoint(position) - position).normalized() };
+
+	auto cross = dirBefore.cross(dirAfter);
+	
+	// sin(10 deg) ~ 0.1736
+	if (cross > 0.1736f) return NextTurn::Right;
+	else if (cross < -0.1736f) return NextTurn::Left;
+	else return NextTurn::Straight;
 }
 
 // calculates its road shoulders intersection points and road crossing points

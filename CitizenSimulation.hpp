@@ -40,8 +40,9 @@ private:
 	bool onSameEdge(const Citizen& citizen, const Citizen& otherCitizen) const;
 	bool isTooCloseAheadOnTheSameEdge(const Citizen& citizen, const Citizen& otherCitizen, float edgeDistance) const;
 	bool isInsideJunction(const Citizen& citizen, const CitizenLayoutContext& layoutContext) const;
-	std::tuple<float, bool, bool> getNewValues(Citizen& citizen, const CitizenLayoutContext& layoutContext, VehiclePath* vehPath, float dt) const;
+	std::pair<CitizenState, bool> getNewValues(Citizen& citizen, const CitizenLayoutContext& layoutContext, VehiclePath* vehPath, float totalTime, float dt) const;
 
+	std::pair<bool, bool> getIndicators(const Citizen& citizen, float newS, float time, const CitizenSimulation::CitizenLayoutContext& layoutContext) const;
 	std::pair<bool, bool> getMovementChecks(const Citizen& citizen, const CitizenLayoutContext& layoutContext) const;
 
 	static constexpr float ALLOWED_DISTANCE{ 50.f };
@@ -62,8 +63,8 @@ public:
 
 	void enableTest();
 
-	void update(float tNew);
-	void realUpdate(float dt); // scaffolding
+	void update(float totalTime, float dt);
+	void realUpdate(float totalTime, float dt); // scaffolding
 
 
 

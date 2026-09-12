@@ -12,6 +12,8 @@ struct CitizenState {
 	int pathId;
 	bool insideJunction;
 	float s; // parameter showing distance progress along the edge
+	bool indicateRight;
+	bool indicateLeft;
 };
 
 class Citizen {
@@ -33,10 +35,9 @@ public:
 		state = CitizenState(pathId, false, 0.f);
 	}
 
-	void update(float s, bool insideJunction) {
+	void update(const CitizenState &newState) {
 
-		state->s = s;
-		state->insideJunction = insideJunction;
+		state = newState;
 	}
 
 
@@ -50,6 +51,8 @@ public:
 	int getPathId() const { return state->pathId; }
 	bool isInsideJunction() const { return state->insideJunction; }
 	float getS() const { return state->s; }
+	bool isIndicatingRight() const { return state->indicateRight; }
+	bool isIndicatingLeft() const { return state->indicateLeft; }
 };
 
 

@@ -12,9 +12,10 @@
 #include <cstdlib>
 #include "RoadJunctionGeometry.hpp"
 #include "RoadSegmentGeometry.hpp"
-#include <tuple>
 #include <utility>
 #include "SFML/System/Vector2.hpp"
+#include <cmath>
+#include <numbers>
 
 
 
@@ -38,7 +39,7 @@ void CitizenSimulation::enableTest() {
 	enabled = true;
 }
 
-void CitizenSimulation::update(float dt) {
+void CitizenSimulation::update(float totalTime, float dt) {
 	
 	if (roadNetwork.getLayout().getInformation().junctionCount < 5)
 		return;
@@ -46,12 +47,12 @@ void CitizenSimulation::update(float dt) {
 	if (!enabled)
 		enableTest();
 	else
-		realUpdate(dt);
+		realUpdate(totalTime, dt);
 }
 
 
 
-void CitizenSimulation::realUpdate(float dt) {
+void CitizenSimulation::realUpdate(float totalTime, float dt) {
 
 	for (auto& citizen : citizens) {
 
@@ -60,12 +61,12 @@ void CitizenSimulation::realUpdate(float dt) {
 		auto vehPath{ getVehiclePath(citizen.getPathId()) };
 
 		// calculate values
-		auto [ newS, advanceEdge, insideJunction ] { getNewValues(citizen, layoutContext, vehPath, dt) };
+		auto [ newState, advanceEdge ] { getNewValues(citizen, layoutContext, vehPath, totalTime, dt) };
 
 		// update
 		if (advanceEdge)
 			vehPath->advanceEdge();
-		citizen.update(newS, insideJunction);
+		citizen.update(newState);
 	}
 }
 
@@ -112,7 +113,7 @@ std::pair<bool, bool> CitizenSimulation::getMovementChecks(const Citizen& citize
 	return { carAhead, insideJunction };
 }
 
-std::tuple<float, bool, bool> CitizenSimulation::getNewValues(Citizen& citizen, const CitizenLayoutContext& layoutContext, VehiclePath *vehPath, float dt) const {
+std::pair<CitizenState, bool> CitizenSimulation::getNewValues(Citizen& citizen, const CitizenLayoutContext& layoutContext, VehiclePath *vehPath, float totalTime, float dt) const {
 
 	auto [ carAhead, insideJunction ]{ getMovementChecks(citizen, layoutContext) };
 	
@@ -131,7 +132,37 @@ std::tuple<float, bool, bool> CitizenSimulation::getNewValues(Citizen& citizen, 
 		}
 	}
 
-	return { newS, advanceEdge, insideJunction };
+
+	auto [ indRight, indLeft ] { getIndicators(citizen, newS, totalTime, layoutContext) };
+
+	CitizenState newState{ citizen.getPathId(), insideJunction, newS, indRight, indLeft };
+	return { newState, advanceEdge };
+}
+
+std::pair<bool, bool> CitizenSimulation::getIndicators(const Citizen& citizen, float newS, float totalTime, const CitizenSimulation::CitizenLayoutContext& layoutContext) const {
+
+	const float INDICATOR_DISTANCE{ 200.f };
+
+	if (layoutContext.incomingJunction->getConnectedCount() < 3 || (1 - newS) * layoutContext.road->length() > INDICATOR_DISTANCE)
+		return { false, false };
+
+	
+	float phaseRandomness { citizen.getId() % 7 * 0.47f };
+	bool blinkOn{ std::sin(4 * std::numbers::pi * totalTime + phaseRandomness) < 0 };
+
+	RoadJunctionGeometry::NextTurn nextTurn{ layoutContext.incomingJunction->getNextTurnDirection(layoutContext.road->getId(), layoutContext.nextRoad->getId()) };
+
+	switch (nextTurn) {
+	case RoadJunctionGeometry::NextTurn::Left:
+		return { false, blinkOn };
+		break;
+
+	case RoadJunctionGeometry::NextTurn::Right:
+		return { blinkOn, false };
+		break;
+	}
+
+	return { false, false };
 }
 
 
