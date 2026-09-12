@@ -3,6 +3,10 @@
 
 Starting point for a game that lets you create your own little city.
 
+### Video demo
+
+https://youtu.be/KsoSLZVNgiU
+
 ### Goals
 
 Currently, focus is on implementing junction functionalities and smooth driving through them.
@@ -14,5 +18,6 @@ Currently, focus is on implementing junction functionalities and smooth driving 
 - C++ 20
 - SFML 3.1.0
 - Boost graph library 1.91.0
-
+- ImGui 1.91.9
+- ImGui-SFML 3.0 bindings
 
