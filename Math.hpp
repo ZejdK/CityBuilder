@@ -68,6 +68,11 @@ namespace CB { namespace Math {
         return sf::Vector2f(v.x * c - v.y * s, v.x * s + v.y * c);
     }
 
+    inline sf::Vector2f lerp(sf::Vector2f A, sf::Vector2f B, float t) {
+
+        return A + (B - A) * t;
+    }
+
 	constexpr float epsilon = 1e-5f;
 }
 }

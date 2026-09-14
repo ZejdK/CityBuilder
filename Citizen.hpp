@@ -4,6 +4,8 @@
 #pragma once
 #include <string>
 #include <optional>
+#include "SFML/System/Vector2.hpp"
+#include "CitizenJunctionCurve.hpp"
 
 
 
@@ -14,6 +16,9 @@ struct CitizenState {
 	float s; // parameter showing distance progress along the edge
 	bool indicateRight;
 	bool indicateLeft;
+	sf::Vector2f position;
+	sf::Vector2f direction;
+	std::optional<CitizenJunctionCurve> curve;
 };
 
 class Citizen {
@@ -53,6 +58,9 @@ public:
 	float getS() const { return state->s; }
 	bool isIndicatingRight() const { return state->indicateRight; }
 	bool isIndicatingLeft() const { return state->indicateLeft; }
+	sf::Vector2f getPosition() const { return state->position; }
+	sf::Vector2f getDirection() const { return state->direction; }
+	std::optional<CitizenJunctionCurve> getJunctionCurve() const { return state->curve; }
 };
 
 

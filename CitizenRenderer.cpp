@@ -33,11 +33,6 @@ void CitizenRenderer::loadVehicleTextures() {
 	}
 }
 
-sf::Vector2f CitizenRenderer::lerp(sf::Vector2f A, sf::Vector2f B, float t) const {
-	
-	return A + (B - A) * t;
-}
-
 std::array<sf::Vector2f, 4> CitizenRenderer::getVehicleVertices(sf::Vector2f pos, sf::Vector2f dir) {
 
 	return {
@@ -66,26 +61,13 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 
 	for (auto &citizen : citizenSimulation.getCitizens()) {
 
+		auto citizenPos{ citizen.getPosition() };
+		auto citizenDir{ citizen.getDirection() };
 		auto layoutContext{ citizenSimulation.getCitizenLayoutContext(citizen) };
-		auto s{ citizen.getS() };
 
-		if (!citizenSimulation.isCitizenOnFirstOrLastEdge(citizen.getId()) && citizen.isInsideJunction()) {
-
-			auto curve{ CitizenJunctionCurve{ s, layoutContext, roadWidth } };
-			auto [ citizenPos, citizenDir ] { curve.getCitizenPosAndDir(s) };
-
-			renderVehicle(window, citizenPos, citizenDir, citizen.getColour());
-			renderIndicators(window, citizen, layoutContext, citizenPos, citizenDir);
-			// debugRenderJunctionCurveData(window, curve, citizenPos);
-		}
-		else {
-
-			auto [ fromPos, toPos ] { citizenSimulation.getCitizenDirection(citizen.getId()) };
-			auto offset = RoadSegmentGeometry::getLaneOffset(fromPos, toPos, roadWidth);
-			auto citizenPos = lerp(fromPos + offset, toPos + offset, s);
-			renderVehicle(window, citizenPos, toPos - fromPos, citizen.getColour());
-			renderIndicators(window, citizen, layoutContext, citizenPos, toPos - fromPos);
-		}
+		renderVehicle(window, citizenPos, citizenDir, citizen.getColour());
+		renderIndicators(window, citizen, layoutContext, citizenPos, citizenDir);
+		// debugRenderJunctionCurveData(window, citizen.getJunctionCurve(layoutContext), citizenPos); // NOTE: 
 	}
 }
 

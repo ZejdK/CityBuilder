@@ -48,7 +48,7 @@ int main() {
     float simulationSpeed { 1.f }; // 0 could be paused
 
     RoadNetwork roadNetwork { config };
-    CitizenSimulation citizenSimulation { roadNetwork };
+    CitizenSimulation citizenSimulation { roadNetwork, config };
     EditorUI editorUi { roadNetwork };
 
     RoadRenderer roadRenderer { config };

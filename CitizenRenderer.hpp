@@ -35,7 +35,6 @@ class CitizenRenderer {
 
 	void loadVehicleTextures();
 
-    sf::Vector2f lerp(sf::Vector2f A, sf::Vector2f B, float t) const;
     std::array<sf::Vector2f, 4> getVehicleVertices(sf::Vector2f pos, sf::Vector2f dir);
 
     void renderVehicle(sf::RenderWindow& window, sf::Vector2f pos, sf::Vector2f dir, std::string colour);

@@ -13,6 +13,10 @@
 #include "CitizenLayoutContext.hpp"
 #include "RoadJunctionGeometry.hpp"
 #include "RoadSegmentGeometry.hpp"
+#include <optional>
+#include "CitizenJunctionCurve.hpp"
+#include "Config.hpp"
+#include <tuple>
 
 
 
@@ -21,6 +25,7 @@ class CitizenSimulation
 	std::vector<Citizen> citizens;
 	RoadNetwork& roadNetwork;
 	bool enabled;
+	ConfigGlobal config;
 
 	std::vector<VehiclePath> vehiclePaths;
 
@@ -31,15 +36,15 @@ class CitizenSimulation
 	bool isInsideJunction(const Citizen& citizen, const CitizenLayoutContext& layoutContext) const;
 	std::pair<CitizenState, bool> getNewValues(Citizen& citizen, const CitizenLayoutContext& layoutContext, VehiclePath* vehPath, float totalTime, float dt) const;
 
-	std::pair<bool, bool> getIndicators(const Citizen& citizen, float newS, float time, const CitizenSimulation::CitizenLayoutContext& layoutContext) const;
+	std::pair<bool, bool> getIndicators(const Citizen& citizen, float newS, float time, const CitizenLayoutContext& layoutContext) const;
 	std::pair<bool, bool> getMovementChecks(const Citizen& citizen, const CitizenLayoutContext& layoutContext) const;
 
 	static constexpr float ALLOWED_DISTANCE{ 50.f };
 
 public:
 
-	CitizenSimulation(RoadNetwork& roadNetwork)
-		: roadNetwork(roadNetwork), enabled(false) {
+	CitizenSimulation(RoadNetwork& roadNetwork, ConfigGlobal config)
+		: roadNetwork(roadNetwork), config(config), enabled(false) {
 	}
 
 	const std::vector<Citizen>& getCitizens() const { return citizens; }
@@ -48,6 +53,7 @@ public:
 	sf::Vector2f getVertexPos(RoadVertexDescriptor vertex) const { return roadNetwork.getGraph()[vertex].position; }
 	std::pair<sf::Vector2f, sf::Vector2f> getCitizenDirection(int citizenId) const;
 	std::pair<sf::Vector2f, sf::Vector2f> getCitizenPathDirection(int citizenId, bool next = false) const;
+	std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> getNewPositionAndDirection(const Citizen& citizen) const;
 	bool isCitizenOnFirstOrLastEdge(int citizenId) const;
 
 	void enableTest();

@@ -17,6 +17,9 @@
 #include "SFML/System/Vector2.hpp"
 #include <cmath>
 #include <numbers>
+#include "CitizenJunctionCurve.hpp"
+#include <tuple>
+#include "Math.hpp"
 
 
 
@@ -133,10 +136,10 @@ std::pair<CitizenState, bool> CitizenSimulation::getNewValues(Citizen& citizen, 
 		}
 	}
 
-
+	auto [ position, direction, curve ] { getNewPositionAndDirection(citizen) };
 	auto [ indRight, indLeft ] { getIndicators(citizen, newS, totalTime, layoutContext) };
 
-	CitizenState newState{ citizen.getPathId(), insideJunction, newS, indRight, indLeft };
+	CitizenState newState{ citizen.getPathId(), insideJunction, newS, indRight, indLeft, position, direction, curve };
 	return { newState, advanceEdge };
 }
 
@@ -164,6 +167,29 @@ std::pair<bool, bool> CitizenSimulation::getIndicators(const Citizen& citizen, f
 	}
 
 	return { false, false };
+}
+
+std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> CitizenSimulation::getNewPositionAndDirection(const Citizen& citizen) const {
+
+	auto layoutContext{ getCitizenLayoutContext(citizen) };
+
+	if (!isCitizenOnFirstOrLastEdge(citizen.getId()) && citizen.isInsideJunction()) {
+
+		CitizenJunctionCurve curve{ citizen.getS(), layoutContext, config.roadWidth };
+		auto [ pos, dir ] { curve.getCitizenPosAndDir(citizen.getS()) };
+
+		return { pos, dir, curve };
+	}
+	else {
+
+		auto [ fromPos, toPos ] { getCitizenDirection(citizen.getId()) };
+		auto offset = RoadSegmentGeometry::getLaneOffset(fromPos, toPos, config.roadWidth);
+
+		auto pos = CB::Math::lerp(fromPos + offset, toPos + offset, citizen.getS());
+		auto dir = toPos - fromPos;
+
+		return { pos, dir, std::nullopt };
+	}
 }
 
 
