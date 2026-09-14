@@ -166,6 +166,7 @@
     <ClCompile Include="UIRenderer.cpp" />
     <ClInclude Include="CitizenJunctionCurve.hpp" />
     <ClInclude Include="CitizenRenderer.hpp" />
+    <ClInclude Include="CitizenLayoutContext.hpp" />
     <ClInclude Include="CityView.hpp" />
     <ClInclude Include="Config.hpp" />
     <ClInclude Include="findRandomEdgesCycle.hpp" />

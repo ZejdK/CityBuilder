@@ -16,6 +16,7 @@
 #include "CitizenJunctionCurve.hpp"
 #include <array>
 #include "Citizen.hpp"
+#include "CitizenLayoutContext.hpp"
 
 
 
@@ -38,7 +39,7 @@ class CitizenRenderer {
     std::array<sf::Vector2f, 4> getVehicleVertices(sf::Vector2f pos, sf::Vector2f dir);
 
     void renderVehicle(sf::RenderWindow& window, sf::Vector2f pos, sf::Vector2f dir, std::string colour);
-    void renderIndicators(sf::RenderWindow& window, const Citizen &citizen, const CitizenSimulation::CitizenLayoutContext& layoutContext, sf::Vector2f pos, sf::Vector2f dir);
+    void renderIndicators(sf::RenderWindow& window, const Citizen &citizen, const CitizenLayoutContext& layoutContext, sf::Vector2f pos, sf::Vector2f dir);
     void debugRenderJunctionCurveData(sf::RenderWindow& window, const CitizenJunctionCurve &curve, sf::Vector2f citizenPos);
 
 public:

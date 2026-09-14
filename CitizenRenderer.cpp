@@ -14,6 +14,7 @@
 #include "Math.hpp"
 #include "CitizenJunctionCurve.hpp"
 #include "RoadSegmentGeometry.hpp"
+#include "CitizenLayoutContext.hpp"
 
 
 
@@ -88,7 +89,7 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 	}
 }
 
-void CitizenRenderer::renderIndicators(sf::RenderWindow &window, const Citizen &citizen, const CitizenSimulation::CitizenLayoutContext& layoutContext, sf::Vector2f pos, sf::Vector2f dir) {
+void CitizenRenderer::renderIndicators(sf::RenderWindow &window, const Citizen &citizen, const CitizenLayoutContext& layoutContext, sf::Vector2f pos, sf::Vector2f dir) {
 
 	auto v { getVehicleVertices(pos, dir) };
 

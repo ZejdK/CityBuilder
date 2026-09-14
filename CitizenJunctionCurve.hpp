@@ -3,11 +3,11 @@
 
 #pragma once
 #include <SFML/System/Vector2.hpp>
-#include "CitizenSimulation.hpp"
 #include "RoadJunctionGeometry.hpp"
 #include "RoadSegmentGeometry.hpp"
 #include <tuple>
 #include <utility>
+#include "CitizenLayoutContext.hpp"
 
 
 
@@ -29,7 +29,7 @@ struct CitizenJunctionCurve {
 
 
 	// NOTE: won't be called if the citizen is on the first or final edge
-	CitizenJunctionCurve(float s, const CitizenSimulation::CitizenLayoutContext& layoutContext, float roadWidth) {
+	CitizenJunctionCurve(float s, const CitizenLayoutContext& layoutContext, float roadWidth) {
 
 		// when the citizen is inside a junction, this class is created every frame to calculate the position and direction of the citizen along the junction curve
 		// reason why these need to order is because in the midpoint, citizen will advance its current edge and therefore its layout context
@@ -55,7 +55,7 @@ struct CitizenJunctionCurve {
 	}
 
 	// makes sure they're in order startPos - junction - endPos
-	std::tuple<const RoadSegmentGeometry*, const RoadJunctionGeometry*, const RoadSegmentGeometry*> ensureLayoutOrder(float s, const CitizenSimulation::CitizenLayoutContext& layoutContext) const {
+	std::tuple<const RoadSegmentGeometry*, const RoadJunctionGeometry*, const RoadSegmentGeometry*> ensureLayoutOrder(float s, const CitizenLayoutContext& layoutContext) const {
 
 		if (isBeforeJunctionCenter(s))
 			return { layoutContext.previousRoad, layoutContext.outgoingJunction, layoutContext.road     }; // citizen is on the edge after the junction - s in [0, sJunOut]

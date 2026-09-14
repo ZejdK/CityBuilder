@@ -10,6 +10,7 @@
 #include "VehiclePath.hpp"
 #include <stdexcept>
 #include <utility>
+#include "CitizenLayoutContext.hpp"
 #include "RoadJunctionGeometry.hpp"
 #include "RoadSegmentGeometry.hpp"
 
@@ -17,18 +18,6 @@
 
 class CitizenSimulation
 {
-public:
-	struct CitizenLayoutContext {
-
-		const RoadSegmentGeometry* previousRoad;
-		const RoadSegmentGeometry* road;
-		const RoadSegmentGeometry* nextRoad;
-		const RoadJunctionGeometry* incomingJunction;
-		const RoadJunctionGeometry* outgoingJunction;
-		std::vector<const RoadSegmentGeometry*> incomingJunctionRoads;
-	};
-
-private:
 	std::vector<Citizen> citizens;
 	RoadNetwork& roadNetwork;
 	bool enabled;

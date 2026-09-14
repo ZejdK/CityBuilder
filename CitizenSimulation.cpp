@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include "RoadJunctionGeometry.hpp"
 #include "RoadSegmentGeometry.hpp"
+#include "CitizenLayoutContext.hpp"
 #include <utility>
 #include "SFML/System/Vector2.hpp"
 #include <cmath>
@@ -72,7 +73,7 @@ void CitizenSimulation::realUpdate(float totalTime, float dt) {
 
 
 
-CitizenSimulation::CitizenLayoutContext CitizenSimulation::getCitizenLayoutContext(const Citizen& citizen) const {
+CitizenLayoutContext CitizenSimulation::getCitizenLayoutContext(const Citizen& citizen) const {
 
 	auto vehPath{ getVehiclePath(citizen.getPathId()) };
 
@@ -139,7 +140,7 @@ std::pair<CitizenState, bool> CitizenSimulation::getNewValues(Citizen& citizen, 
 	return { newState, advanceEdge };
 }
 
-std::pair<bool, bool> CitizenSimulation::getIndicators(const Citizen& citizen, float newS, float totalTime, const CitizenSimulation::CitizenLayoutContext& layoutContext) const {
+std::pair<bool, bool> CitizenSimulation::getIndicators(const Citizen& citizen, float newS, float totalTime, const CitizenLayoutContext& layoutContext) const {
 
 	const float INDICATOR_DISTANCE{ 200.f };
 
@@ -226,6 +227,9 @@ std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenPathDirection
 	return { fromPos, toPos };
 }
 
+
+
+// VehiclePath
 bool CitizenSimulation::isCitizenOnFirstOrLastEdge(int citizenId) const
 {
 	auto vehPath{ getVehiclePath(citizenId) };
