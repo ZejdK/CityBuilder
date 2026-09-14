@@ -10,6 +10,9 @@
 #include "Config.hpp"
 #include "SFML/Graphics/VertexArray.hpp"
 #include "RoadNetworkLayout.hpp"
+#include "imgui.h"
+#include "RoadJunctionGeometry.hpp"
+#include "RoadSegmentGeometry.hpp"
 
 
 
@@ -41,6 +44,8 @@ public:
 	void setCursorPos(const sf::Vector2f& pos);
 
 	void render(sf::RenderWindow& window, const EditorUI &editorUi, const RoadNetworkLayout &roadLayout);
+	void renderRoadElementInfoImgui(const EditorUI& editorUi, ImVec2 defaultPos) const;
+	void renderRoadSegmentInfoImgui(const RoadSegmentGeometry* road, const RoadJunctionGeometry* roadJunction) const;
 };
 
 

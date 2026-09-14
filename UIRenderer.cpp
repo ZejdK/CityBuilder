@@ -1,6 +1,8 @@
 
 
 
+#include "imgui.h"
+#include "imgui-SFML.h"
 #include "UIRenderer.hpp"
 #include "Math.hpp"
 #include <array>
@@ -17,6 +19,8 @@
 #include "PlacementState.hpp"
 #include "UIMode.hpp"
 #include "RoadNetworkLayout.hpp"
+#include "RoadSegmentGeometry.hpp"
+#include "RoadJunctionGeometry.hpp"
 
 
 
@@ -72,6 +76,44 @@ void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi, cons
 
     logger.render(window);
     logger.clear();
+}
+
+void UIRenderer::renderRoadElementInfoImgui(const EditorUI& editorUi, ImVec2 defaultPos) const {
+
+    if (editorUi.getMode() != UIMode::Select)
+        return;
+
+    ImGui::SetNextWindowPos(cursorPos, ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar;
+
+    if (auto roadJunction { editorUi.getHoveredJunction() }) {
+
+        ImGui::Begin("Road junction", nullptr, flags);
+		
+        ImGui::Text("Junction ID: %d | Vertex descriptor: %d", roadJunction->getId(), roadJunction->getVertex());
+		ImGui::Text("Position: (%.2f, %.2f)", roadJunction->getPosition().x, roadJunction->getPosition().y);
+		
+        ImGui::Text("Connected roads: %zu", roadJunction->getConnectedCount()); // %zu is for size_t
+        // NOTE: roads are already sorted clockwise during the junction creation
+        for (const auto& road : roadJunction->getConnectedRoads())
+			renderRoadSegmentInfoImgui(road, roadJunction);
+
+        ImGui::End();
+    }
+    else if (auto roadSegment { editorUi.getHoveredRoad() }) {
+
+        ImGui::Begin("Road segment");
+        renderRoadSegmentInfoImgui(roadSegment, nullptr);
+        ImGui::End();
+    }
+}
+
+void UIRenderer::renderRoadSegmentInfoImgui(const RoadSegmentGeometry* road, const RoadJunctionGeometry* roadJunction) const {
+
+    ImGui::Text("   - ID: %d, len: %.2f, s: %.6f", road->getId(), road->length(), roadJunction == nullptr ? 0.0f : roadJunction->getS(road));
+    ImGui::Text("      Vertices: %d, %d", road->getVertexA(), road->getVertexB());
+    ImGui::Text("      Pos: (%.1f, %.1f), (%.1f, %.1f)", road->getStart().x, road->getStart().y, road->getEnd().x, road->getEnd().y);
 }
 
 

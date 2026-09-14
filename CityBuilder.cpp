@@ -31,6 +31,7 @@ void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& 
 
 int main() {
 
+    ImVec2 roadInfoDefaultPos{ 1300.f ,100.f };
     sf::RenderWindow window(sf::VideoMode({ 1800, 1000 }), "Zejd's City Builder - alpha ver"); // , sf::Style::Default, sf::State::Fullscreen);
     window.setFramerateLimit(60); // call it once after creating the window // these two don't mix
     // window.setKeyRepeatEnabled(false); smooth movement with events - boolean set on KeyPressed and clear on KeyReleased, easier solution is sf::Keyboard
@@ -38,8 +39,8 @@ int main() {
     if (!ImGui::SFML::Init(window))
         return -1;
 
-    ImGui::GetIO().FontGlobalScale = 2.f;
-    ImGui::GetStyle().ScaleAllSizes(2.f);
+    ImGui::GetIO().FontGlobalScale = 1.f;
+    ImGui::GetStyle().ScaleAllSizes(1.f);
 
 
 
@@ -108,15 +109,9 @@ int main() {
 
         ImGui::SFML::Update(window, time);
 
-        ImGui::ShowDemoWindow();
-
-        ImGui::Begin("Hello, world!");
-        ImGui::Button("Look at this pretty button");
-        ImGui::End();
-        
-
-
 		citizenSimulation.update(float(totalTime), dt * simulationSpeed);
+
+        uiRenderer.renderRoadElementInfoImgui(editorUi, roadInfoDefaultPos);
         
         window.clear(sf::Color(0, 40, 0));
         roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), cityView);
