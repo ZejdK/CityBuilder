@@ -1,6 +1,8 @@
 
 
 
+#include "imgui.h"
+#include "imgui-SFML.h"
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "RoadNetwork.hpp"
@@ -33,6 +35,12 @@ int main() {
     window.setFramerateLimit(60); // call it once after creating the window // these two don't mix
     // window.setKeyRepeatEnabled(false); smooth movement with events - boolean set on KeyPressed and clear on KeyReleased, easier solution is sf::Keyboard
 
+    if (!ImGui::SFML::Init(window))
+        return -1;
+
+    ImGui::GetIO().FontGlobalScale = 2.f;
+    ImGui::GetStyle().ScaleAllSizes(2.f);
+
 
 
     ConfigGlobal config {};
@@ -54,10 +62,13 @@ int main() {
 
     while (window.isOpen())
     {
-        float dt = clock.restart().asSeconds();
+		auto time{ clock.restart() };
+        float dt = time.asSeconds();
         totalTime += dt;
 
         while (const std::optional event = window.pollEvent()) {
+
+            ImGui::SFML::ProcessEvent(window, *event);
 
             if (event->is<sf::Event::Closed>()) {
 
@@ -95,16 +106,28 @@ int main() {
                 findAndSetHoveredRoadElement(mouseMoved->position, config, roadNetwork, editorUi, uiRenderer);
         }
 
+        ImGui::SFML::Update(window, time);
+
+        ImGui::ShowDemoWindow();
+
+        ImGui::Begin("Hello, world!");
+        ImGui::Button("Look at this pretty button");
+        ImGui::End();
+        
 
 
-		citizenSimulation.update(totalTime, dt * simulationSpeed);
+		citizenSimulation.update(float(totalTime), dt * simulationSpeed);
         
         window.clear(sf::Color(0, 40, 0));
         roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), cityView);
         uiRenderer.render(window, editorUi, roadNetwork.getLayout());
         citizenRenderer.render(window, citizenSimulation, config.roadWidth);
+
+        ImGui::SFML::Render(window);
         window.display();
     }
+
+    ImGui::SFML::Shutdown();
 }
 
 

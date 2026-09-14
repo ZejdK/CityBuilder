@@ -46,6 +46,9 @@
     <Filter Include="Source Files\roadlayout">
       <UniqueIdentifier>{ccc65d6c-8212-46a4-af87-30ac285fda78}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ext">
+      <UniqueIdentifier>{ac775d5b-0204-421e-a694-ba08c55ebe59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CityBuilderSFMLold.cpp">
@@ -80,6 +83,24 @@
     </ClCompile>
     <ClCompile Include="RoadJunctionGeometry.cpp">
       <Filter>Source Files\roadlayout</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-SFML.cpp">
+      <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>Source Files\ext</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
