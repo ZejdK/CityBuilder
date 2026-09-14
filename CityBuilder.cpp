@@ -96,7 +96,7 @@ int main() {
             }
             else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
 
-                if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
+                if (!ImGui::GetIO().WantCaptureMouse && mouseButtonPressed->button == sf::Mouse::Button::Left) {
 
                     editorUi.selectJunctionOrPos(sf::Vector2f(mouseButtonPressed->position));
                     findAndSetHoveredRoadElement(mouseButtonPressed->position, config, roadNetwork, editorUi, uiRenderer); // prevents no vertex being hovered after a new vertex is added and mouse is not moved
