@@ -92,8 +92,7 @@ CitizenLayoutContext CitizenSimulation::getCitizenLayoutContext(const Citizen& c
 		currentEdge ? roadLayout.getRoad(*currentEdge) : nullptr,
 		nextEdge ? roadLayout.getRoad(*nextEdge) : nullptr,
 		roadLayout.getJunction(head),
-		roadLayout.getJunction(tail),
-		roadLayout.getJunction(head)->getConnectedRoads()
+		roadLayout.getJunction(tail)
 	};
 }
 

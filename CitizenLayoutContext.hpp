@@ -15,7 +15,6 @@ struct CitizenLayoutContext {
 	const RoadSegmentGeometry* nextRoad;
 	const RoadJunctionGeometry* incomingJunction;
 	const RoadJunctionGeometry* outgoingJunction;
-	std::vector<const RoadSegmentGeometry*> incomingJunctionRoads;
 };
 
 
