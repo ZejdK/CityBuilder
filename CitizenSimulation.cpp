@@ -74,6 +74,15 @@ void CitizenSimulation::realUpdate(float totalTime, float dt) {
 	}
 }
 
+const Citizen* CitizenSimulation::findCitizen(sf::Vector2f position) const {
+	
+	for (const auto& citizen : citizens)
+		if (citizen.isActive() && CB::Math::distance(citizen.getPosition(), position) < config.vehicleSnapRadius)
+			return &citizen;
+
+	return nullptr;
+}
+
 
 
 CitizenLayoutContext CitizenSimulation::getCitizenLayoutContext(const Citizen& citizen) const {

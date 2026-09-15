@@ -25,7 +25,7 @@
 
 
 void debugCreateSampleRoadNetwork(RoadNetwork &roadNetwork);
-void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer);
+void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, const CitizenSimulation& citizenSimulation, EditorUI& editorUi, UIRenderer& uiRenderer);
 
 
 
@@ -100,23 +100,25 @@ int main() {
                 if (!ImGui::GetIO().WantCaptureMouse && mouseButtonPressed->button == sf::Mouse::Button::Left) {
 
                     editorUi.selectJunctionOrPos(sf::Vector2f(mouseButtonPressed->position));
-                    findAndSetHoveredRoadElement(mouseButtonPressed->position, config, roadNetwork, editorUi, uiRenderer); // prevents no vertex being hovered after a new vertex is added and mouse is not moved
+                    findAndSetHoveredRoadElement(mouseButtonPressed->position, config, roadNetwork, citizenSimulation, editorUi, uiRenderer); // prevents no vertex being hovered after a new vertex is added and mouse is not moved
                 }
             }
             else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>()) 
-                findAndSetHoveredRoadElement(mouseMoved->position, config, roadNetwork, editorUi, uiRenderer);
+                findAndSetHoveredRoadElement(mouseMoved->position, config, roadNetwork, citizenSimulation, editorUi, uiRenderer);
         }
 
         ImGui::SFML::Update(window, time);
 
 		citizenSimulation.update(float(totalTime), dt * simulationSpeed);
-
-        uiRenderer.renderRoadElementInfoImgui(editorUi, roadInfoDefaultPos);
+        
+        bool renderedVehicle{ uiRenderer.renderCitizenInfoImgui(editorUi) };
+        if (!renderedVehicle)
+            uiRenderer.renderRoadElementInfoImgui(editorUi, roadInfoDefaultPos);
         
         window.clear(sf::Color(0, 40, 0));
         roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), cityView);
-        uiRenderer.render(window, editorUi, roadNetwork.getLayout());
         citizenRenderer.render(window, citizenSimulation, config.roadWidth);
+        uiRenderer.render(window, editorUi, roadNetwork.getLayout());
 
         ImGui::SFML::Render(window);
         window.display();
@@ -149,9 +151,13 @@ void debugCreateSampleRoadNetwork(RoadNetwork& roadNetwork) {
     roadNetwork.add(v10, v7);
 }
 
-void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, EditorUI& editorUi, UIRenderer& uiRenderer) {
+void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, const CitizenSimulation &citizenSimulation, EditorUI& editorUi, UIRenderer& uiRenderer) {
 
     sf::Vector2f cursorPos{ sf::Vector2f(cursorPos2i) };
+
+    auto hoveredVehicle{ citizenSimulation.findCitizen(cursorPos) };
+    editorUi.setHoveredVehicle(hoveredVehicle);
+
     auto hoveredJunction{ roadNetwork.getLayout().findJunctionNear(config.snapRadius, cursorPos) };
     auto hoveredEdge { roadNetwork.getLayout().findHoveredRoad(config.roadWidth, cursorPos) };
 

@@ -49,6 +49,7 @@ public:
 
 	int getId() const { return id; }
 	std::string getColour() const { return colour; }
+	std::string getFullName() const { return name + " " + surname; }
 
 
 

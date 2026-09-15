@@ -13,6 +13,7 @@
 #include "imgui.h"
 #include "RoadJunctionGeometry.hpp"
 #include "RoadSegmentGeometry.hpp"
+#include <array>
 
 
 
@@ -36,7 +37,9 @@ class UIRenderer {
 	void renderAddRoadPlaceStage(sf::RenderWindow &window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout);
 
 	void renderRoadSelector(sf::RenderWindow& window, const EditorUI& editorUi);
-
+	void renderVehicleSelector(sf::RenderWindow& window, const EditorUI& editorUi);
+	std::array<sf::Vector2f, 4> getVehicleVertices(sf::Vector2f pos, sf::Vector2f dir);
+	
 public:
 
 	UIRenderer(ConfigGlobal config);
@@ -46,6 +49,7 @@ public:
 	void render(sf::RenderWindow& window, const EditorUI &editorUi, const RoadNetworkLayout &roadLayout);
 	void renderRoadElementInfoImgui(const EditorUI& editorUi, ImVec2 defaultPos) const;
 	void renderRoadSegmentInfoImgui(const RoadSegmentGeometry* road, const RoadJunctionGeometry* roadJunction) const;
+	bool renderCitizenInfoImgui(const EditorUI &editor) const;
 };
 
 

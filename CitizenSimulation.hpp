@@ -61,6 +61,8 @@ public:
 	void update(float totalTime, float dt);
 	void realUpdate(float totalTime, float dt); // scaffolding
 
+	const Citizen* findCitizen(sf::Vector2f position) const;
+
 
 
 	// vehicle path management

@@ -10,6 +10,7 @@
 #include <string>
 #include "RoadSegmentGeometry.hpp"
 #include "RoadJunctionGeometry.hpp"
+#include "Citizen.hpp"
 
 
 
@@ -20,6 +21,8 @@ class EditorUI {
 	const RoadJunctionGeometry *hoveredJunction = nullptr;
 	const RoadJunctionGeometry *selectedJunction = nullptr;
 	const RoadSegmentGeometry *hoveredRoad = nullptr;
+	const Citizen *hoveredVehicle = nullptr;
+	const Citizen *selectedVehicle = nullptr;
 
 	UIMode uiMode = UIMode::AddRoad; // default mode should be View
 
@@ -44,6 +47,9 @@ public:
 	void deselectRoadElement();
 	std::optional<sf::Vector2f> getSelectedPos() const;
 	const RoadJunctionGeometry* getSelectedJunction() const { return selectedJunction; }
+
+	void setHoveredVehicle(const Citizen* citizen) { hoveredVehicle = citizen; }
+	const Citizen *getHoveredVehicle() const { return hoveredVehicle; }
 
 	UIMode getMode() const { return uiMode; }
 	PlacementState getPlacementState() const { return roadPlacementState; }

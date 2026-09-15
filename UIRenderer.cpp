@@ -21,6 +21,7 @@
 #include "RoadNetworkLayout.hpp"
 #include "RoadSegmentGeometry.hpp"
 #include "RoadJunctionGeometry.hpp"
+#include "Citizen.hpp"
 
 
 
@@ -64,6 +65,7 @@ void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi, cons
 		renderAddRoad(window, editorUi, roadLayout);
 		break;
 	case UIMode::Select:
+        renderVehicleSelector(window, editorUi);
         renderRoadSelector(window, editorUi);
 		break;
 	case UIMode::AddLocation:
@@ -114,6 +116,34 @@ void UIRenderer::renderRoadSegmentInfoImgui(const RoadSegmentGeometry* road, con
     ImGui::Text("   - ID: %d, len: %.2f, s: %.6f", road->getId(), road->length(), roadJunction == nullptr ? 0.0f : roadJunction->getS(road));
     ImGui::Text("      Vertices: %d, %d", road->getVertexA(), road->getVertexB());
     ImGui::Text("      Pos: (%.1f, %.1f), (%.1f, %.1f)", road->getStart().x, road->getStart().y, road->getEnd().x, road->getEnd().y);
+}
+
+bool UIRenderer::renderCitizenInfoImgui(const EditorUI &editorUi) const {
+
+    auto citizen{ editorUi.getHoveredVehicle() };
+
+    if (editorUi.getMode() != UIMode::Select || citizen == nullptr)
+        return false;
+
+    ImGui::SetNextWindowPos(citizen->getPosition(), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar;
+
+    ImGui::Begin("Citizen info", nullptr, flags);
+	
+    ImGui::Text("Citizen ID: %d, Veh colour: %s", citizen->getId(), citizen->getColour().c_str());
+	ImGui::Text("Name: %s", citizen->getFullName().c_str());
+	ImGui::Text("------------");
+
+	ImGui::Text("Active: %s", citizen->isActive() ? "true" : "false");
+    ImGui::Text("Path id: %d | s: %.6f", citizen->getPathId(), citizen->getS());
+    ImGui::Text("Inside jun: %s", citizen->isInsideJunction() ? "true" : "false");
+    ImGui::Text("Indicating: L: %s | R: %s", citizen->isIndicatingLeft() ? "1" : "0", citizen->isIndicatingRight() ? "1" : "0");
+
+    ImGui::End();
+
+    return true;
 }
 
 
@@ -194,6 +224,9 @@ void UIRenderer::renderAddRoadPlaceStage(sf::RenderWindow& window, const EditorU
 
 void UIRenderer::renderRoadSelector(sf::RenderWindow& window, const EditorUI& editorUi) {
 
+    if (editorUi.getHoveredVehicle())
+        return;
+
     auto roadJunction { editorUi.getHoveredJunction() };
     auto roadSegment { editorUi.getHoveredRoad() };
     
@@ -223,6 +256,48 @@ void UIRenderer::renderRoadSelector(sf::RenderWindow& window, const EditorUI& ed
 
 		logger.add("Road selector - Hovered road segment ");
     }
+}
+
+void UIRenderer::renderVehicleSelector(sf::RenderWindow& window, const EditorUI& editorUi) {
+
+    if (auto hoveredVehicle{ editorUi.getHoveredVehicle() }) {
+
+        auto vehiclePos{ hoveredVehicle->getPosition() };
+        auto vehicleDir{ hoveredVehicle->getDirection() };
+
+        auto vertices = getVehicleVertices(vehiclePos, vehicleDir);
+
+        roadSelector[0].position = vertices[0];
+        roadSelector[1].position = vertices[1];
+        roadSelector[2].position = vertices[2];
+        roadSelector[3].position = vertices[0];
+        roadSelector[4].position = vertices[2];
+        roadSelector[5].position = vertices[3];
+
+        for (int i{ 0 }; i < 6; ++i)
+            roadSelector[i].color = sf::Color(0, 255, 0, 100);
+
+        window.draw(roadSelector);
+
+        intesersectPointer.setPosition(vehiclePos);
+        window.draw(intesersectPointer);
+        logger.add("Vehicle hovered");
+    }
+    else {
+
+        logger.add("Vehicle not hovered");
+    }
+}
+
+std::array<sf::Vector2f, 4> UIRenderer::getVehicleVertices(sf::Vector2f pos, sf::Vector2f dir) {
+
+    return {
+
+       pos + CB::Math::rotateInDirection(1.5f * sf::Vector2f(20.f, 10.f), dir),   // top right
+       pos + CB::Math::rotateInDirection(1.5f * sf::Vector2f(20.f, -10.f), dir),  // bottom right
+       pos + CB::Math::rotateInDirection(1.5f * sf::Vector2f(-20.f, -10.f), dir), // bottom left
+       pos + CB::Math::rotateInDirection(1.5f * sf::Vector2f(-20.f, 10.f), dir),  // top left
+    };
 }
 
 
