@@ -47,19 +47,12 @@ public:
 	std::optional<RoadEdgeDescriptor> getNextEdge() const {
 		
 		if (completed() || currentRoadIndex + 1 >= roadSegments.size())
-			// return std::nullopt;
-			// TEMPORARY DEBUG
-			return roadSegments[0];
+			return std::nullopt;
 
 		return roadSegments[currentRoadIndex + 1];
 	}
 
-	void advanceEdge() { ++currentRoadIndex;
-	
-		// TEMPORARY DEBUG WHILE VEHICLE PATHS ARE CYCLES
-		if (currentRoadIndex >= roadSegments.size())
-			currentRoadIndex = 0;
-	}
+	void advanceEdge() { ++currentRoadIndex; }
 
 	void invalidate() { invalidated = true; }
 

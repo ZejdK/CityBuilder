@@ -23,38 +23,7 @@
 
 
 
-void CitizenSimulation::enableTest() {
-
-	std::array<std::string, 5> colours { "b", "g", "w", "r", "o" };
-
-	for (int i { 0 }; i < 50; ++i) {
-
-		int id{ int(citizens.size()) };
-
-		citizens.push_back(Citizen{ id, i % 2 == 0 ? "John" : "Jane", "Doe", colours[i % 5]});
-		Citizen& citizen{ citizens.back() };
-
-		vehiclePaths.push_back(VehiclePath{ id, roadNetwork.getRandomCycle() });
-		VehiclePath &vehPath{ vehiclePaths.back() };
-		
-		citizen.activate(vehPath.getId());
-	}
-
-	enabled = true;
-}
-
 void CitizenSimulation::update(float totalTime, float dt) {
-	
-	if (roadNetwork.getLayout().getInformation().junctionCount < 5)
-		return;
-
-	if (!enabled)
-		enableTest();
-	else
-		realUpdate(totalTime, dt);
-}
-
-
 
 void CitizenSimulation::realUpdate(float totalTime, float dt) {
 
@@ -155,7 +124,9 @@ std::pair<bool, bool> CitizenSimulation::getIndicators(const Citizen& citizen, f
 
 	const float INDICATOR_DISTANCE{ 200.f };
 
-	if (layoutContext.incomingJunction->getConnectedCount() < 3 || (1 - newS) * layoutContext.road->length() > INDICATOR_DISTANCE)
+	if (isCitizenOnFirstOrLastEdge(citizen)
+		|| layoutContext.incomingJunction->getConnectedCount() < 3
+		|| (1 - newS) * layoutContext.road->length() > INDICATOR_DISTANCE)
 		return { false, false };
 
 	
@@ -232,6 +203,9 @@ bool CitizenSimulation::isTooCloseAheadOnTheSameEdge(const Citizen& citizen, con
 
 bool CitizenSimulation::isInsideJunction(const Citizen &citizen, const CitizenLayoutContext &layoutContext) const {
 
+	if (isCitizenOnFirstOrLastEdge(citizen))
+		return false;
+	
 	return citizen.getS() <= layoutContext.incomingJunction->getS(layoutContext.road) ||
 		   citizen.getS() >= 1.f - layoutContext.incomingJunction->getS(layoutContext.nextRoad);
 }
