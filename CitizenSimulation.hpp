@@ -51,10 +51,10 @@ public:
 	CitizenLayoutContext getCitizenLayoutContext(const Citizen& citizen) const;
 	// NOTE: should simulation rely on getting data directly from graph?
 	sf::Vector2f getVertexPos(RoadVertexDescriptor vertex) const { return roadNetwork.getGraph()[vertex].position; }
-	std::pair<sf::Vector2f, sf::Vector2f> getCitizenDirection(int citizenId) const;
-	std::pair<sf::Vector2f, sf::Vector2f> getCitizenPathDirection(int citizenId, bool next = false) const;
+	std::pair<sf::Vector2f, sf::Vector2f> getCitizenDirection(const Citizen& citizen) const;
+	std::pair<sf::Vector2f, sf::Vector2f> getCitizenPathDirection(const Citizen& citizen, bool next = false) const;
 	std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> getNewPositionAndDirection(const Citizen& citizen) const;
-	bool isCitizenOnFirstOrLastEdge(int citizenId) const;
+	bool isCitizenOnFirstOrLastEdge(const Citizen& citizen) const;
 
 	void enableTest();
 

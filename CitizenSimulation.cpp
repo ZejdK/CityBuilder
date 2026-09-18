@@ -152,7 +152,7 @@ std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> Citi
 
 	auto layoutContext{ getCitizenLayoutContext(citizen) };
 
-	if (!isCitizenOnFirstOrLastEdge(citizen.getId()) && citizen.isInsideJunction()) {
+	if (!isCitizenOnFirstOrLastEdge(citizen) && citizen.isInsideJunction()) {
 
 		CitizenJunctionCurve curve{ citizen.getS(), layoutContext, config.roadWidth };
 		auto [ pos, dir ] { curve.getCitizenPosAndDir(citizen.getS()) };
@@ -161,7 +161,7 @@ std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> Citi
 	}
 	else {
 
-		auto [ fromPos, toPos ] { getCitizenDirection(citizen.getId()) };
+		auto [ fromPos, toPos ] { getCitizenDirection(citizen) };
 		auto offset = RoadSegmentGeometry::getLaneOffset(fromPos, toPos, config.roadWidth);
 
 		auto pos = CB::Math::lerp(fromPos + offset, toPos + offset, citizen.getS());
@@ -210,9 +210,9 @@ bool CitizenSimulation::isInsideJunction(const Citizen &citizen, const CitizenLa
 		   citizen.getS() >= 1.f - layoutContext.incomingJunction->getS(layoutContext.nextRoad);
 }
 
-std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenDirection(int citizenId) const {
+std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenDirection(const Citizen& citizen) const {
 
-	auto edge{ getVehiclePath(citizenId)->getCurrentEdge() };
+	auto edge{ getVehiclePath(citizen.getPathId())->getCurrentEdge() };
 	auto [tail, head] { roadNetwork.getEdgeVertices(*edge) };
 
 	auto fromPos{ roadNetwork.getGraph()[tail].position };
@@ -221,11 +221,11 @@ std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenDirection(int
 	return { fromPos, toPos };
 }
 
-std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenPathDirection(int citizenId, bool next) const {
+std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenPathDirection(const Citizen& citizen, bool next) const {
 
-	auto edge{ getVehiclePath(citizenId)->getCurrentEdge() };
+	auto edge{ getVehiclePath(citizen.getPathId())->getCurrentEdge() };
 	if (next)
-		edge = getVehiclePath(citizenId)->getNextEdge();
+		edge = getVehiclePath(citizen.getPathId())->getNextEdge();
 
 	auto [ tail, head ] { roadNetwork.getEdgeVertices(*edge) };
 
@@ -238,9 +238,9 @@ std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenPathDirection
 
 
 // VehiclePath
-bool CitizenSimulation::isCitizenOnFirstOrLastEdge(int citizenId) const
+bool CitizenSimulation::isCitizenOnFirstOrLastEdge(const Citizen& citizen) const
 {
-	auto vehPath{ getVehiclePath(citizenId) };
+	auto vehPath{ getVehiclePath(citizen.getPathId()) };
 
 	return vehPath->getPreviousEdge() == std::nullopt || vehPath->getNextEdge() == std::nullopt;
 }
