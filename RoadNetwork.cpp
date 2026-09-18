@@ -10,6 +10,12 @@
 #include "RoadGraphTypes.hpp"
 #include <utility>
 #include "Config.hpp"
+#include "boost/property_map/property_map.hpp"
+#include "boost/graph/properties.hpp"
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <algorithm>
+#include "boost/graph/named_function_params.hpp"
+#include <stdexcept>
 
 
 
@@ -87,6 +93,39 @@ std::pair<RoadVertexDescriptor, RoadVertexDescriptor> RoadNetwork::add(sf::Vecto
 	addEdge(sourceNew, targetNew);
 	
 	return { sourceNew, targetNew };
+}
+
+std::vector<RoadEdgeDescriptor> RoadNetwork::getShortestPath(RoadVertexDescriptor source, RoadVertexDescriptor target) const {
+
+	const auto vertexCount = boost::num_vertices(roadGraph);
+	std::vector<float> distances(vertexCount);
+	std::vector<RoadVertexDescriptor> predecessors(vertexCount);
+
+	auto indexMap = boost::get(boost::vertex_index, roadGraph);
+	auto distanceMap = boost::make_iterator_property_map(distances.begin(), indexMap);
+	auto predecessorMap = boost::make_iterator_property_map(predecessors.begin(), indexMap);
+
+	boost::dijkstra_shortest_paths(roadGraph, source, boost::weight_map(boost::get(&RoadEdgeData::length, roadGraph))
+																.distance_map(distanceMap)
+																.predecessor_map(predecessorMap));
+	std::vector<RoadEdgeDescriptor> path;
+
+	auto current = target;
+	while (current != source) {
+
+		auto previous = predecessors[current];
+		auto [ edge, found ] = boost::edge(previous, current, roadGraph);
+
+		if (!found)
+			throw std::runtime_error("Error reconstructing dijkstra path!");
+
+		path.push_back(edge);
+		current = previous;
+	}
+
+	std::reverse(path.begin(), path.end());
+
+	return path;
 }
 
 

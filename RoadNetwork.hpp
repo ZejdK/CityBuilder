@@ -10,6 +10,7 @@
 #include "boost/graph/detail/adjacency_list.hpp"
 #include "Config.hpp"
 #include "findRandomEdgesCycle.hpp"
+#include "boost/graph/adjacency_list.hpp"
 
 
 
@@ -45,6 +46,9 @@ public:
 		auto cycle = findRandomEdgesCycle(roadGraph);
 		return *cycle;
 	}
+
+	std::vector<RoadEdgeDescriptor> getShortestPath(RoadVertexDescriptor source, RoadVertexDescriptor target) const;
+
 
 
 
