@@ -28,6 +28,7 @@ class CitizenRenderer {
     sf::CircleShape vehicleShape;
     sf::CircleShape indicatorShape;
     sf::VertexArray vehicleVertices;
+    sf::CircleShape vehicleSourceSinkShape;
 	std::unordered_map<std::string, sf::Texture> vehicleTextures;
     sf::RenderStates states;
 

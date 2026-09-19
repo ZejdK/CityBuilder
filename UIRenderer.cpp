@@ -16,12 +16,13 @@
 #include <optional>
 #include <string>
 #include "SFML/Graphics/PrimitiveType.hpp"
-#include "PlacementState.hpp"
+#include "UIStates.hpp"
 #include "UIMode.hpp"
 #include "RoadNetworkLayout.hpp"
 #include "RoadSegmentGeometry.hpp"
 #include "RoadJunctionGeometry.hpp"
 #include "Citizen.hpp"
+#include "CitizenSimulation.hpp"
 
 
 
@@ -55,7 +56,7 @@ void UIRenderer::setCursorPos(const sf::Vector2f& pos) {
 
 
 
-void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout) {
+void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout, const CitizenSimulation& citizenSimulation) {
     
     logger.add(std::string("Roads information: ") + editorUi.getRoadInfoDisplay());
     logger.add(std::string("UI mode: ") + std::string(to_string(editorUi.getMode())) + " (Press Q)");
@@ -69,7 +70,8 @@ void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi, cons
         renderRoadSelector(window, editorUi);
 		break;
 	case UIMode::AddLocation:
-		// render add location UI
+
+		renderAddLocation(window, editorUi, roadLayout, citizenSimulation);
 		break;
 	case UIMode::View:
 		// render view UI
@@ -218,6 +220,52 @@ void UIRenderer::renderAddRoadPlaceStage(sf::RenderWindow& window, const EditorU
     sf::Vertex v2 { sf::Vector2f { snapPosition ? *snapPosition : cursorPos } };
     std::array temp = { v1, v2 };
     window.draw(temp.data(), temp.size(), sf::PrimitiveType::Lines);
+}
+
+
+
+void UIRenderer::renderAddLocation(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout& roadLayout, const CitizenSimulation &citizenSimulation) {
+
+    logger.add("Add location - type, state: " + std::to_string(int(editorUi.getAddLocationType())) + " " + std::to_string(int(editorUi.getAddLocationPlacementState())));
+    
+	if (editorUi.getAddLocationType() == AddLocationType::SourceSinkShortestPath)
+        renderAddLocationSourceSink(window, editorUi, roadLayout, citizenSimulation);
+}
+
+void UIRenderer::renderAddLocationSourceSink(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout& roadLayout, const CitizenSimulation& citizenSimulation) {
+
+    if (editorUi.getAddLocationPlacementState() == AddLocationPlacementState::PlacingSource) {
+        
+        auto hoveredJunction{ editorUi.getHoveredJunction() };
+        if (!hoveredJunction) {
+
+            logger.add("add location snap pos: none");
+            pointer.setPosition(cursorPos);
+            window.draw(pointer);
+        }
+        else {
+
+            auto snapPosition{ hoveredJunction->getPosition() };
+            logger.add("add location snap pos: " + std::to_string(snapPosition.x) + std::string(", ") + std::to_string(snapPosition.y));
+            snapPointer.setPosition(snapPosition);
+            window.draw(snapPointer);
+        }
+    }
+	else if (editorUi.getAddLocationPlacementState() == AddLocationPlacementState::PlacingSink) {
+
+		auto hoveredJunction{ editorUi.getHoveredJunction() };
+		if (!hoveredJunction) {
+			logger.add("add location snap pos: none");
+			pointer.setPosition(cursorPos);
+			window.draw(pointer);
+		}
+		else {
+			auto snapPosition{ hoveredJunction->getPosition() };
+			logger.add("add location snap pos: " + std::to_string(snapPosition.x) + std::string(", ") + std::to_string(snapPosition.y));
+			snapPointer.setPosition(snapPosition);
+			window.draw(snapPointer);
+		}
+	}
 }
 
 

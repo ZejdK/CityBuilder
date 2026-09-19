@@ -47,7 +47,7 @@ std::array<sf::Vector2f, 4> CitizenRenderer::getVehicleVertices(sf::Vector2f pos
 
 
 CitizenRenderer::CitizenRenderer()
-		: font("assetstemp/arial.ttf"), text(font), vehicleShape(10.f), indicatorShape(5.f), vehicleVertices(sf::PrimitiveType::Triangles, 6), states() {
+		: font("assetstemp/arial.ttf"), text(font), vehicleShape(10.f), indicatorShape(5.f), vehicleSourceSinkShape(50.f), vehicleVertices(sf::PrimitiveType::Triangles, 6), states() {
 
 	loadVehicleTextures();
 
@@ -55,11 +55,16 @@ CitizenRenderer::CitizenRenderer()
 	vehicleShape.setFillColor(sf::Color(0, 155, 155, 155));
 	indicatorShape.setOrigin(sf::Vector2f(5.f, 5.f));
 	indicatorShape.setFillColor(sf::Color(255, 165, 0, 155));
+	vehicleSourceSinkShape.setOrigin(sf::Vector2f(50.f, 50.f));
+	vehicleSourceSinkShape.setFillColor(sf::Color(0, 0, 0, 80));
 }
 
 void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& citizenSimulation, float roadWidth) {
 
 	for (auto &citizen : citizenSimulation.getCitizens()) {
+
+		if (!citizen.isActive())
+			continue;
 
 		auto citizenPos{ citizen.getPosition() };
 		auto citizenDir{ citizen.getDirection() };
@@ -68,6 +73,14 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 		renderVehicle(window, citizenPos, citizenDir, citizen.getColour());
 		renderIndicators(window, citizen, layoutContext, citizenPos, citizenDir);
 		// debugRenderJunctionCurveData(window, citizen.getJunctionCurve(layoutContext), citizenPos); // NOTE: 
+	}
+
+	for (auto& vehSourceSink : citizenSimulation.getVehicleSourceSinks()) {
+
+		vehicleSourceSinkShape.setPosition(vehSourceSink.getSourcePos());
+		window.draw(vehicleSourceSinkShape);
+		vehicleSourceSinkShape.setPosition(vehSourceSink.getSinkPos());
+		window.draw(vehicleSourceSinkShape);
 	}
 }
 

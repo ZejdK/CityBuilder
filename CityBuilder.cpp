@@ -118,7 +118,7 @@ int main() {
         window.clear(sf::Color(0, 40, 0));
         roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), cityView);
         citizenRenderer.render(window, citizenSimulation, config.roadWidth);
-        uiRenderer.render(window, editorUi, roadNetwork.getLayout());
+        uiRenderer.render(window, editorUi, roadNetwork.getLayout(), citizenSimulation);
 
         ImGui::SFML::Render(window);
         window.display();

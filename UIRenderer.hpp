@@ -14,6 +14,7 @@
 #include "RoadJunctionGeometry.hpp"
 #include "RoadSegmentGeometry.hpp"
 #include <array>
+#include "CitizenSimulation.hpp"
 
 
 
@@ -36,6 +37,9 @@ class UIRenderer {
 	void renderAddRoadIdleStage(sf::RenderWindow &window, const EditorUI& editorUi);
 	void renderAddRoadPlaceStage(sf::RenderWindow &window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout);
 
+	void renderAddLocation(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout& roadLayout, const CitizenSimulation& citizenSimulation);
+	void renderAddLocationSourceSink(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout& roadLayout, const CitizenSimulation& citizenSimulation);
+	
 	void renderRoadSelector(sf::RenderWindow& window, const EditorUI& editorUi);
 	void renderVehicleSelector(sf::RenderWindow& window, const EditorUI& editorUi);
 	std::array<sf::Vector2f, 4> getVehicleVertices(sf::Vector2f pos, sf::Vector2f dir);
@@ -46,7 +50,7 @@ public:
 
 	void setCursorPos(const sf::Vector2f& pos);
 
-	void render(sf::RenderWindow& window, const EditorUI &editorUi, const RoadNetworkLayout &roadLayout);
+	void render(sf::RenderWindow& window, const EditorUI &editorUi, const RoadNetworkLayout &roadLayout, const CitizenSimulation& citizenSimulation);
 	void renderRoadElementInfoImgui(const EditorUI& editorUi, ImVec2 defaultPos) const;
 	void renderRoadSegmentInfoImgui(const RoadSegmentGeometry* road, const RoadJunctionGeometry* roadJunction) const;
 	bool renderCitizenInfoImgui(const EditorUI &editor) const;
