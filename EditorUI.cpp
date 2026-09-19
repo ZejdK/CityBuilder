@@ -5,18 +5,21 @@
 #include <iostream>
 #include <optional>
 #include "SFML/System/Vector2.hpp"
-#include "PlacementState.hpp"
 #include "UIMode.hpp"
 #include <string>
 #include <format>
 #include "RoadSegmentGeometry.hpp"
 #include "RoadJunctionGeometry.hpp"
+#include "UIStates.hpp"
+#include "RoadNetwork.hpp"
+#include "CitizenSimulation.hpp"
 
 
 
-EditorUI::EditorUI(RoadNetwork& roadNetwork)
+EditorUI::EditorUI(RoadNetwork& roadNetwork, CitizenSimulation& citizenSimulation)
     : hoveredJunction(nullptr), selectedJunction(nullptr), hoveredRoad(nullptr),
-      roadNetwork(roadNetwork), uiMode(UIMode::AddRoad), roadPlacementState(PlacementState::Idle) {}
+      roadNetwork(roadNetwork), citizenSimulation(citizenSimulation),
+      uiMode(UIMode::AddRoad), roadPlacementState(PlacementState::Idle) {}
 
 
 
@@ -63,6 +66,27 @@ void EditorUI::selectJunctionOrPos(sf::Vector2f cursorPos) {
             roadPlacementState = PlacementState::Idle;
         }
         break;
+
+    case UIMode::AddLocation:
+
+        if (addLocationType == AddLocationType::SourceSinkShortestPath) {
+
+            if (addLocationPlacementState == AddLocationPlacementState::PlacingSource) {
+
+                selectedJunction = hoveredJunction;
+				addLocationPlacementState = AddLocationPlacementState::PlacingSink;
+            }
+            else if (addLocationPlacementState == AddLocationPlacementState::PlacingSink) {
+
+                ++vehicleSinkSourceColourCounter;
+                citizenSimulation.addVehicleSourceSinkShortest(selectedJunction, hoveredJunction, vehicleSinkSourceColours[vehicleSinkSourceColourCounter % 4] );
+                
+                deselectRoadElement();
+                addLocationPlacementState = AddLocationPlacementState::PlacingSource;
+            }
+        }
+        break;
+
     case UIMode::Select:
         
         // 
@@ -115,6 +139,12 @@ void EditorUI::setMode(UIMode newMode) {
         roadPlacementState = PlacementState::Idle;
         deselectRoadElement();
         break;
+    case UIMode::AddLocation:
+
+		addLocationPlacementState = AddLocationPlacementState::PlacingSource;
+		addLocationType = AddLocationType::SourceSinkShortestPath;
+		deselectRoadElement();
+		break;
     case UIMode::Select:
         //
         break;

@@ -49,7 +49,7 @@ int main() {
 
     RoadNetwork roadNetwork { config };
     CitizenSimulation citizenSimulation { roadNetwork, config };
-    EditorUI editorUi { roadNetwork };
+    EditorUI editorUi { roadNetwork, citizenSimulation };
 
     RoadRenderer roadRenderer { config };
     CitizenRenderer citizenRenderer {};

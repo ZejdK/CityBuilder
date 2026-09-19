@@ -113,7 +113,7 @@
     <ClInclude Include="RoadRenderer.hpp">
       <Filter>Header Files\rendering</Filter>
     </ClInclude>
-    <ClInclude Include="PlacementState.hpp">
+    <ClInclude Include="UIStates.hpp">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
     <ClInclude Include="EditorUI.hpp">

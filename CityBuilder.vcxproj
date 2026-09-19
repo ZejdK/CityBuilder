@@ -171,7 +171,7 @@
     <ClInclude Include="Config.hpp" />
     <ClInclude Include="findRandomEdgesCycle.hpp" />
     <ClInclude Include="MessageLog.hpp" />
-    <ClInclude Include="PlacementState.hpp" />
+    <ClInclude Include="UIStates.hpp" />
     <ClInclude Include="RoadGraphTypes.hpp" />
     <ClInclude Include="RoadJunctionGeometry.hpp" />
     <ClInclude Include="EditorUI.hpp" />

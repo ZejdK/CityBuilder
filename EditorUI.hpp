@@ -4,19 +4,22 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
 #include "RoadNetwork.hpp"
-#include "PlacementState.hpp"
 #include "UIMode.hpp"
 #include <optional>
 #include <string>
 #include "RoadSegmentGeometry.hpp"
 #include "RoadJunctionGeometry.hpp"
 #include "Citizen.hpp"
+#include "UIStates.hpp"
+#include "CitizenSimulation.hpp"
+#include <vector>
 
 
 
 class EditorUI {
 
 	RoadNetwork &roadNetwork;
+	CitizenSimulation& citizenSimulation;
 
 	const RoadJunctionGeometry *hoveredJunction = nullptr;
 	const RoadJunctionGeometry *selectedJunction = nullptr;
@@ -32,9 +35,16 @@ class EditorUI {
 	// it exists if there is no selectedJunction, to select a new position to add to the road network
 	std::optional<sf::Vector2f> selectedPos;
 
+
+	// UIMode::AddLocation
+	AddLocationType addLocationType = AddLocationType::SourceSinkShortestPath;
+	AddLocationPlacementState addLocationPlacementState = AddLocationPlacementState::PlacingSource;
+	int vehicleSinkSourceColourCounter = 0;
+	std::vector<std::string> vehicleSinkSourceColours = { "b", "g", "o", "r", "w" };
+
 public:
 
-	EditorUI(RoadNetwork &roadNetwork);
+	EditorUI(RoadNetwork &roadNetwork, CitizenSimulation& citizenSimulation);
 	
 	void setMode(UIMode newMode);
 	void cycleMode();
@@ -53,6 +63,9 @@ public:
 
 	UIMode getMode() const { return uiMode; }
 	PlacementState getPlacementState() const { return roadPlacementState; }
+
+	AddLocationType getAddLocationType() const { return addLocationType; }
+	AddLocationPlacementState getAddLocationPlacementState() const { return addLocationPlacementState; }
 
 	std::string getRoadInfoDisplay() const;
 };
