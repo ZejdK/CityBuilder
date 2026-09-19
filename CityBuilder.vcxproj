@@ -183,6 +183,7 @@
     <ClInclude Include="UIMode.hpp" />
     <ClInclude Include="UIRenderer.hpp" />
     <ClInclude Include="VehiclePath.hpp" />
+    <ClInclude Include="VehicleSourceSink.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp" />

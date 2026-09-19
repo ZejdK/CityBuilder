@@ -25,9 +25,18 @@
 
 void CitizenSimulation::update(float totalTime, float dt) {
 
-void CitizenSimulation::realUpdate(float totalTime, float dt) {
+	this->totalTime = totalTime;
+
+	updateCitizens(totalTime, dt);
+	updateVehicleSourceSinks(totalTime, dt);
+}
+
+void CitizenSimulation::updateCitizens(float totalTime, float dt) {
 
 	for (auto& citizen : citizens) {
+
+		if (!citizen.isActive())
+			continue;
 
 		// get
 		auto layoutContext{ getCitizenLayoutContext(citizen) };
@@ -39,8 +48,38 @@ void CitizenSimulation::realUpdate(float totalTime, float dt) {
 		// update
 		if (advanceEdge)
 			vehPath->advanceEdge();
-		citizen.update(newState);
+
+		if (vehPath->completed())
+			citizen.disable();
+		else
+			citizen.update(newState);
 	}
+}
+
+void CitizenSimulation::updateVehicleSourceSinks(float totalTime, float dt) {
+	
+	for (auto& vehSourceSink : vehicleSourceSinks) {
+
+		if (vehSourceSink.isActive() && totalTime - vehSourceSink.getLastUpdate() > vehSourceSink.getPeriod()) {
+
+			auto newPath{ copyVehiclePath(vehSourceSink.getPathId()) };
+
+			createNewCitizen("Place", "Holder", vehSourceSink.getVehicleColour())
+				.activate(newPath->getId());
+
+			vehSourceSink.update(totalTime);
+		}
+	}
+}
+
+
+
+Citizen &CitizenSimulation::createNewCitizen(const std::string& name, const std::string& surname, const std::string& colour) {
+
+	int id{ int(citizens.size()) };
+	citizens.push_back(Citizen{ id, name, surname, colour });
+
+	return citizens.back();
 }
 
 const Citizen* CitizenSimulation::findCitizen(sf::Vector2f position) const {

@@ -167,6 +167,9 @@
     <ClInclude Include="CitizenLayoutContext.hpp">
       <Filter>Header Files\simulation</Filter>
     </ClInclude>
+    <ClInclude Include="VehicleSourceSink.hpp">
+      <Filter>Header Files\simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Progress log.txt">

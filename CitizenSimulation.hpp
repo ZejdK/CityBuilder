@@ -17,6 +17,8 @@
 #include "CitizenJunctionCurve.hpp"
 #include "Config.hpp"
 #include <tuple>
+#include "VehicleSourceSink.hpp"
+#include <string>
 
 
 
@@ -26,8 +28,10 @@ class CitizenSimulation
 	RoadNetwork& roadNetwork;
 	bool enabled;
 	ConfigGlobal config;
+	float totalTime = 0.f; // totalTime from main loop, cached in here
 
 	std::vector<VehiclePath> vehiclePaths;
+	std::vector<VehicleSourceSink> vehicleSourceSinks;
 
 
 
@@ -56,10 +60,11 @@ public:
 	std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> getNewPositionAndDirection(const Citizen& citizen) const;
 	bool isCitizenOnFirstOrLastEdge(const Citizen& citizen) const;
 
-	void enableTest();
-
 	void update(float totalTime, float dt);
+	void updateCitizens(float totalTime, float dt);
+	void updateVehicleSourceSinks(float totalTime, float dt);
 
+	Citizen& createNewCitizen(const std::string& name, const std::string& surname, const std::string& colour);
 	const Citizen* findCitizen(sf::Vector2f position) const;
 
 
@@ -79,6 +84,36 @@ public:
 			throw std::out_of_range("Vehicle path ID is out of range");
 
 		return &vehiclePaths[id];
+	}
+
+	const VehiclePath* copyVehiclePath(int id) {
+
+		if (id < 0 || id >= vehiclePaths.size())
+			throw std::out_of_range("Vehicle path ID is out of range");
+		
+		auto newId{ int(vehiclePaths.size()) };
+		auto vehPath{ vehiclePaths[id] };
+
+		vehiclePaths.push_back(VehiclePath{ newId, vehPath.getPath() });
+		VehiclePath& newVehPath{ vehiclePaths.back() };
+		
+		return &newVehPath;
+	}
+
+	// Vehicle source sinks
+	const std::vector<VehicleSourceSink> &getVehicleSourceSinks() const { return vehicleSourceSinks; }
+	void addVehicleSourceSinkShortest(const RoadJunctionGeometry* startJunction, const RoadJunctionGeometry* endJunction, std::string colour) {
+
+		auto shortestPath{ roadNetwork.getShortestPath(startJunction->getVertex(), endJunction->getVertex()) };
+
+		int newVehPathId{ int(vehiclePaths.size()) };
+		vehiclePaths.push_back(VehiclePath{ newVehPathId, shortestPath });
+		VehiclePath& vehPath{ vehiclePaths.back() };
+
+		constexpr float DEFAULT_PERIOD{ 1.f }; // default period is in seconds
+		
+		vehicleSourceSinks.push_back(VehicleSourceSink{ std::string("placeholder label"), DEFAULT_PERIOD, newVehPathId, colour, startJunction->getPosition(), endJunction->getPosition() });
+		vehicleSourceSinks.back().setActive(true, totalTime);
 	}
 };
 

@@ -45,7 +45,7 @@ public:
 		state = newState;
 	}
 
-
+	void disable() { state = std::nullopt; }
 
 	int getId() const { return id; }
 	std::string getColour() const { return colour; }

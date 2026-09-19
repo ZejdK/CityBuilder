@@ -59,6 +59,7 @@ public:
 	bool completed() const { return currentRoadIndex >= roadSegments.size(); }
 	int getId() const { return id; }
 	bool isInvalidated() const { return invalidated; }
+	std::vector<RoadEdgeDescriptor> getPath() const { return roadSegments; }
 };
 
 
