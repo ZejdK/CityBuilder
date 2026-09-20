@@ -163,7 +163,7 @@ std::pair<bool, bool> CitizenSimulation::getIndicators(const Citizen& citizen, f
 
 	const float INDICATOR_DISTANCE{ 200.f };
 
-	if (isCitizenOnFirstOrLastEdge(citizen)
+	if (isCitizenOnLastEdge(citizen)
 		|| layoutContext.incomingJunction->getConnectedCount() < 3
 		|| (1 - newS) * layoutContext.road->length() > INDICATOR_DISTANCE)
 		return { false, false };
@@ -191,7 +191,7 @@ std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> Citi
 
 	auto layoutContext{ getCitizenLayoutContext(citizen) };
 
-	if (!isCitizenOnFirstOrLastEdge(citizen) && citizen.isInsideJunction()) {
+	if (!isCitizenStartingPath(citizen) && citizen.isInsideJunction()) {
 
 		CitizenJunctionCurve curve{ citizen.getS(), layoutContext, config.roadWidth };
 		auto [ pos, dir ] { curve.getCitizenPosAndDir(citizen.getS()) };
@@ -241,12 +241,12 @@ bool CitizenSimulation::isTooCloseAheadOnTheSameEdge(const Citizen& citizen, con
 }
 
 bool CitizenSimulation::isInsideJunction(const Citizen &citizen, const CitizenLayoutContext &layoutContext) const {
-
-	if (isCitizenOnFirstOrLastEdge(citizen))
-		return false;
 	
-	return citizen.getS() <= layoutContext.incomingJunction->getS(layoutContext.road) ||
-		   citizen.getS() >= 1.f - layoutContext.incomingJunction->getS(layoutContext.nextRoad);
+	bool insideNextJunction{ citizen.getS() <= layoutContext.incomingJunction->getS(layoutContext.road) };
+	bool nextRoadExists{ layoutContext.nextRoad != nullptr };
+	bool insidePrevJunction{ nextRoadExists && citizen.getS() >= 1.f - layoutContext.incomingJunction->getS(layoutContext.nextRoad) };
+	
+	return insideNextJunction || insidePrevJunction;
 }
 
 std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenDirection(const Citizen& citizen) const {
@@ -282,6 +282,27 @@ bool CitizenSimulation::isCitizenOnFirstOrLastEdge(const Citizen& citizen) const
 	auto vehPath{ getVehiclePath(citizen.getPathId()) };
 
 	return vehPath->getPreviousEdge() == std::nullopt || vehPath->getNextEdge() == std::nullopt;
+}
+
+bool CitizenSimulation::isCitizenOnLastEdge(const Citizen& citizen) const
+{
+	auto vehPath{ getVehiclePath(citizen.getPathId()) };
+
+	return vehPath->getNextEdge() == std::nullopt;
+}
+
+bool CitizenSimulation::isCitizenStartingPath(const Citizen& citizen) const
+{
+	auto vehPath{ getVehiclePath(citizen.getPathId()) };
+
+	return vehPath->getPreviousEdge() == std::nullopt && citizen.getS() < 0.5f;
+}
+
+bool CitizenSimulation::isCitizenFinishingPath(const Citizen& citizen) const
+{
+	auto vehPath{ getVehiclePath(citizen.getPathId()) };
+
+	return vehPath->getNextEdge() == std::nullopt && citizen.getS() > 0.5f;
 }
 
 

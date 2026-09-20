@@ -59,6 +59,9 @@ public:
 	std::pair<sf::Vector2f, sf::Vector2f> getCitizenPathDirection(const Citizen& citizen, bool next = false) const;
 	std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> getNewPositionAndDirection(const Citizen& citizen) const;
 	bool isCitizenOnFirstOrLastEdge(const Citizen& citizen) const;
+	bool isCitizenOnLastEdge(const Citizen& citizen) const;
+	bool isCitizenStartingPath(const Citizen& citizen) const;
+	bool isCitizenFinishingPath(const Citizen& citizen) const;
 
 	void update(float totalTime, float dt);
 	void updateCitizens(float totalTime, float dt);
