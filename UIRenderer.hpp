@@ -54,6 +54,8 @@ public:
 	void renderRoadElementInfoImgui(const EditorUI& editorUi, ImVec2 defaultPos) const;
 	void renderRoadSegmentInfoImgui(const RoadSegmentGeometry* road, const RoadJunctionGeometry* roadJunction) const;
 	bool renderCitizenInfoImgui(const EditorUI &editor) const;
+
+	void renderVehicleSourceSinkPopupImgui(EditorUI& editorUi, const CitizenSimulation& citizenSimulation);
 };
 
 

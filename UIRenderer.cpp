@@ -148,6 +148,43 @@ bool UIRenderer::renderCitizenInfoImgui(const EditorUI &editorUi) const {
     return true;
 }
 
+void UIRenderer::renderVehicleSourceSinkPopupImgui(EditorUI& editorUi, const CitizenSimulation& citizenSimulation) {
+
+    auto& popup = editorUi.getVehicleSourceSinkPopupState();
+
+    if (popup.requestOpen) {
+
+        ImGui::OpenPopup("vehicle_source_sink");
+        popup.requestOpen = false;
+    }
+
+    if (!ImGui::BeginPopup("vehicle_source_sink"))
+        return;
+
+    constexpr const char* options[] = { "b", "g", "o", "r", "w" };
+    ImGui::InputText("Label", popup.label.data(), popup.label.size());
+    ImGui::InputFloat("Period", &popup.period);
+    ImGui::Combo("Option", &popup.option, options, 5);
+    ImGui::Checkbox("Active", &popup.active);
+    ImGui::Separator();
+
+    if (ImGui::Button("Apply"))
+    {
+        editorUi.applyVehicleSourceSinkSettings();
+        ImGui::CloseCurrentPopup();
+    }
+
+    ImGui::SameLine(); // places the same widget horizontally on the same line
+
+    if (ImGui::Button("Cancel")) {
+
+        editorUi.cancelVehicleSourceSinkPopup();
+        ImGui::CloseCurrentPopup();
+    }
+
+    ImGui::EndPopup();
+}
+
 
 
 void UIRenderer::renderAddRoad(sf::RenderWindow& window, const EditorUI& editorUi, const RoadNetworkLayout &roadLayout) {

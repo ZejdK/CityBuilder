@@ -118,6 +118,35 @@ public:
 		vehicleSourceSinks.push_back(VehicleSourceSink{ std::string("placeholder label"), DEFAULT_PERIOD, newVehPathId, colour, startJunction, endJunction });
 		vehicleSourceSinks.back().setActive(true, totalTime);
 	}
+
+	const VehicleSourceSink* getVehicleSourceSinkAt(const RoadJunctionGeometry *junction) const {
+
+		if (junction == nullptr)
+			return nullptr;
+
+		for (const auto& vss : vehicleSourceSinks)
+			if (junction->getId() == vss.getSourceJunction()->getId() || junction->getId() == vss.getSinkJunction()->getId())
+				return &vss;
+
+		return nullptr;
+	}
+
+	bool configureVehicleSourceSink(int junctionId, const std::string& label, float period, bool active, int option) {
+
+		for (auto& vss : vehicleSourceSinks) {
+
+			if (junctionId == vss.getSourceJunction()->getId() || junctionId == vss.getSinkJunction()->getId()) {
+
+				vss.setLabel(label);
+				vss.setPeriod(period);
+				vss.setActive(active, totalTime);
+				vss.setVehicleColour(option);
+				return true;
+			}
+		}
+
+		return false;
+	}
 };
 
 

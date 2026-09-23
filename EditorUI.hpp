@@ -13,6 +13,21 @@
 #include "UIStates.hpp"
 #include "CitizenSimulation.hpp"
 #include <vector>
+#include "VehicleSourceSink.hpp"
+
+
+
+struct VehicleSourceSinkPopupState {
+
+	bool requestOpen = false;
+
+	std::optional<int> junctionId = std::nullopt;
+	
+	std::string label = "Placeholder label";
+	float period = 1.0f;
+	int option = 4;
+	bool active = true;
+};
 
 
 
@@ -42,6 +57,8 @@ class EditorUI {
 	int vehicleSinkSourceColourCounter = 0;
 	std::vector<std::string> vehicleSinkSourceColours = { "b", "g", "o", "r", "w" };
 
+	VehicleSourceSinkPopupState vehicleSourceSinkPopup;
+
 public:
 
 	EditorUI(RoadNetwork &roadNetwork, CitizenSimulation& citizenSimulation);
@@ -68,6 +85,40 @@ public:
 	AddLocationPlacementState getAddLocationPlacementState() const { return addLocationPlacementState; }
 
 	std::string getRoadInfoDisplay() const;
+
+
+
+	VehicleSourceSinkPopupState &getVehicleSourceSinkPopupState() {
+		
+		return vehicleSourceSinkPopup;
+	}
+
+	void requestVehicleSourceSinkPopup(const RoadJunctionGeometry* junction, const VehicleSourceSink* vss) {
+
+		if (hoveredJunction == nullptr || vss == nullptr)
+			return;
+
+		vehicleSourceSinkPopup.requestOpen = true;
+		vehicleSourceSinkPopup.junctionId = junction->getId();
+		vehicleSourceSinkPopup.label = vss->getLabel();
+		vehicleSourceSinkPopup.period = vss->getPeriod();
+		vehicleSourceSinkPopup.active = vss->isActive();
+		vehicleSourceSinkPopup.option = vss->getVehicleColourInt();
+	}
+
+	void cancelVehicleSourceSinkPopup() {
+		
+		vehicleSourceSinkPopup.requestOpen = false;
+		vehicleSourceSinkPopup.junctionId = std::nullopt;
+	}
+
+	void applyVehicleSourceSinkSettings() {
+
+		if (!vehicleSourceSinkPopup.junctionId)
+			throw "No junction id selected!";
+
+		citizenSimulation.configureVehicleSourceSink(*vehicleSourceSinkPopup.junctionId, vehicleSourceSinkPopup.label, vehicleSourceSinkPopup.period, vehicleSourceSinkPopup.active, vehicleSourceSinkPopup.option);
+	}
 };
 
 

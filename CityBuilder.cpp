@@ -102,6 +102,13 @@ int main() {
                     editorUi.selectJunctionOrPos(sf::Vector2f(mouseButtonPressed->position));
                     findAndSetHoveredRoadElement(mouseButtonPressed->position, config, roadNetwork, citizenSimulation, editorUi, uiRenderer); // prevents no vertex being hovered after a new vertex is added and mouse is not moved
                 }
+                if (mouseButtonPressed->button == sf::Mouse::Button::Right) {
+
+                    auto hoveredJunction{ editorUi.getHoveredJunction() };
+                    auto vss{ citizenSimulation.getVehicleSourceSinkAt(hoveredJunction) };
+
+                    editorUi.requestVehicleSourceSinkPopup(hoveredJunction, vss);
+                }
             }
             else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>()) 
                 findAndSetHoveredRoadElement(mouseMoved->position, config, roadNetwork, citizenSimulation, editorUi, uiRenderer);
@@ -119,6 +126,7 @@ int main() {
         roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), cityView);
         citizenRenderer.render(window, citizenSimulation, config.roadWidth);
         uiRenderer.render(window, editorUi, roadNetwork.getLayout(), citizenSimulation);
+        uiRenderer.renderVehicleSourceSinkPopupImgui(editorUi, citizenSimulation);
 
         ImGui::SFML::Render(window);
         window.display();
