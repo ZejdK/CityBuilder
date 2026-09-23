@@ -15,8 +15,8 @@ class VehicleSourceSink {
 	float lastUpdate = 0.f;
 	std::string vehicleColour;
 
-	sf::Vector2f sourcePos;
-	sf::Vector2f sinkPos;
+	const RoadJunctionGeometry* source;
+	const RoadJunctionGeometry* sink;
 
 	int pathId;
 
@@ -39,8 +39,8 @@ public:
 	std::string getLabel() const { return label; }
 	std::string getVehicleColour() const { return vehicleColour; }
 
-	sf::Vector2f getSourcePos() const { return sourcePos; }
-	sf::Vector2f getSinkPos() const { return sinkPos; }
+	const RoadJunctionGeometry* getSourceJunction() const { return source; }
+	const RoadJunctionGeometry* getSinkJunction() const { return sink; }
 };
 
 

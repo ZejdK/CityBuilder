@@ -77,9 +77,9 @@ void CitizenRenderer::render(sf::RenderWindow& window, const CitizenSimulation& 
 
 	for (auto& vehSourceSink : citizenSimulation.getVehicleSourceSinks()) {
 
-		vehicleSourceSinkShape.setPosition(vehSourceSink.getSourcePos());
+		vehicleSourceSinkShape.setPosition(vehSourceSink.getSourceJunction()->getPosition());
 		window.draw(vehicleSourceSinkShape);
-		vehicleSourceSinkShape.setPosition(vehSourceSink.getSinkPos());
+		vehicleSourceSinkShape.setPosition(vehSourceSink.getSinkJunction()->getPosition());
 		window.draw(vehicleSourceSinkShape);
 	}
 }

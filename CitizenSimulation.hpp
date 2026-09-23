@@ -115,7 +115,7 @@ public:
 
 		constexpr float DEFAULT_PERIOD{ 1.f }; // default period is in seconds
 		
-		vehicleSourceSinks.push_back(VehicleSourceSink{ std::string("placeholder label"), DEFAULT_PERIOD, newVehPathId, colour, startJunction->getPosition(), endJunction->getPosition() });
+		vehicleSourceSinks.push_back(VehicleSourceSink{ std::string("placeholder label"), DEFAULT_PERIOD, newVehPathId, colour, startJunction, endJunction });
 		vehicleSourceSinks.back().setActive(true, totalTime);
 	}
 };
