@@ -60,6 +60,7 @@ void UIRenderer::render(sf::RenderWindow& window, const EditorUI& editorUi, cons
     
     logger.add(std::string("Roads information: ") + editorUi.getRoadInfoDisplay());
     logger.add(std::string("UI mode: ") + std::string(to_string(editorUi.getMode())) + " (Press Q)");
+    logger.add(std::format("{} Citizens, {} are active", citizenSimulation.getCitizenCount(), citizenSimulation.getActiveCitizenCount()));
 
     switch (editorUi.getMode()) {
 	case UIMode::AddRoad:

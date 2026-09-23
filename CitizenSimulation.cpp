@@ -33,10 +33,14 @@ void CitizenSimulation::update(float totalTime, float dt) {
 
 void CitizenSimulation::updateCitizens(float totalTime, float dt) {
 
+	activeCitizenCount = 0;
+
 	for (auto& citizen : citizens) {
 
 		if (!citizen.isActive())
 			continue;
+
+		++activeCitizenCount;
 
 		// get
 		auto layoutContext{ getCitizenLayoutContext(citizen) };

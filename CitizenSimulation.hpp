@@ -24,6 +24,7 @@
 
 class CitizenSimulation
 {
+	int activeCitizenCount = 0;
 	std::vector<Citizen> citizens;
 	RoadNetwork& roadNetwork;
 	bool enabled;
@@ -67,6 +68,8 @@ public:
 	void updateCitizens(float totalTime, float dt);
 	void updateVehicleSourceSinks(float totalTime, float dt);
 
+	int getCitizenCount() const { return int(citizens.size()); }
+	int getActiveCitizenCount() const { return activeCitizenCount; }
 	Citizen& createNewCitizen(const std::string& name, const std::string& surname, const std::string& colour);
 	const Citizen* findCitizen(sf::Vector2f position) const;
 
