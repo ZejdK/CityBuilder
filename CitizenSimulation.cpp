@@ -242,8 +242,10 @@ bool CitizenSimulation::isTooCloseAheadOnTheSameEdge(const Citizen& citizen, con
 
 bool CitizenSimulation::isInsideJunction(const Citizen &citizen, const CitizenLayoutContext &layoutContext) const {
 	
-	bool insideNextJunction{ citizen.getS() <= layoutContext.incomingJunction->getS(layoutContext.road) };
+	bool nextJunctionExists{ layoutContext.incomingJunction->getConnectedCount() > 1 };
 	bool nextRoadExists{ layoutContext.nextRoad != nullptr };
+
+	bool insideNextJunction{ nextJunctionExists && citizen.getS() <= layoutContext.incomingJunction->getS(layoutContext.road) };
 	bool insidePrevJunction{ nextRoadExists && citizen.getS() >= 1.f - layoutContext.incomingJunction->getS(layoutContext.nextRoad) };
 	
 	return insideNextJunction || insidePrevJunction;
