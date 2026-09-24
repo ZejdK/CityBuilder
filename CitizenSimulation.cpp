@@ -67,9 +67,12 @@ void CitizenSimulation::updateVehicleSourceSinks(float totalTime, float dt) {
 		if (vehSourceSink.isActive() && totalTime - vehSourceSink.getLastUpdate() > vehSourceSink.getPeriod()) {
 
 			auto newPath{ copyVehiclePath(vehSourceSink.getPathId()) };
+			auto &newCitizen{ createNewCitizen("Place", "Holder", vehSourceSink.getVehicleColour()) };
+			
+			auto [ initPos, initDir ] { getPathInitialPosDir(newPath) };
+			auto laneOffset{ RoadSegmentGeometry::getLaneOffset(initPos, initPos + initDir, config.roadWidth) };
 
-			createNewCitizen("Place", "Holder", vehSourceSink.getVehicleColour())
-				.activate(newPath->getId());
+			newCitizen.activate(newPath->getId(), initPos + laneOffset, initDir);
 
 			vehSourceSink.update(totalTime);
 		}

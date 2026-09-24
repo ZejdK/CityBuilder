@@ -35,6 +35,7 @@ public:
 
 	const std::vector<RoadEdgeDescriptor> getVertexOutEdges(RoadVertexDescriptor junction) const;
 	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> getEdgeVertices(RoadEdgeDescriptor edge) const;
+	std::pair<sf::Vector2f, sf::Vector2f> getEdgeInitialPosDir(RoadEdgeDescriptor edge) const;
 
 	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(RoadVertexDescriptor source, RoadVertexDescriptor target);
 	std::pair<RoadVertexDescriptor, RoadVertexDescriptor> add(sf::Vector2f sourcePos, RoadVertexDescriptor target);

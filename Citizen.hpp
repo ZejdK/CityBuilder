@@ -35,9 +35,9 @@ public:
 	Citizen(int id, std::string name, std::string surname, std::string colour)
 		: id(id), name(name), surname(surname), colour(colour), state(std::nullopt) {}
 
-	void activate(int pathId) {
+	void activate(int pathId, sf::Vector2f initPos, sf::Vector2f initDir) {
 
-		state = CitizenState(pathId, false, 0.f);
+		state = CitizenState(pathId, false, 0.f, false, false, initPos, initDir, std::nullopt);
 	}
 
 	void update(const CitizenState &newState) {

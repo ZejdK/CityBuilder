@@ -40,6 +40,17 @@ std::pair<RoadVertexDescriptor, RoadVertexDescriptor> RoadNetwork::getEdgeVertic
 	return { boost::source(edge, roadGraph), boost::target(edge, roadGraph) };
 }
 
+// these should return RoadNodeData pair
+std::pair<sf::Vector2f, sf::Vector2f> RoadNetwork::getEdgeInitialPosDir(RoadEdgeDescriptor edge) const {
+
+	auto [ source, target ] { getEdgeVertices(edge) };
+
+	auto initPos{ roadGraph[source].position };
+	auto initDir{ (roadGraph[target].position - roadGraph[source].position).normalized() };
+
+	return { initPos, initDir };
+}
+
 
 void RoadNetwork::addEdge(RoadVertexDescriptor source, RoadVertexDescriptor target) {
 

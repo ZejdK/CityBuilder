@@ -106,6 +106,11 @@ public:
 		return &newVehPath;
 	}
 
+	std::pair<sf::Vector2f, sf::Vector2f> getPathInitialPosDir(const VehiclePath *vehPath) const {
+
+		return roadNetwork.getEdgeInitialPosDir(vehPath->getPath()[0]);
+	}
+
 	// Vehicle source sinks
 	const std::vector<VehicleSourceSink> &getVehicleSourceSinks() const { return vehicleSourceSinks; }
 	void addVehicleSourceSinkShortest(const RoadJunctionGeometry* startJunction, const RoadJunctionGeometry* endJunction, std::string colour) {
