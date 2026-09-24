@@ -261,26 +261,7 @@ bool CitizenSimulation::isInsideJunction(const Citizen &citizen, const CitizenLa
 std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenDirection(const Citizen& citizen) const {
 
 	auto edge{ getVehiclePath(citizen.getPathId())->getCurrentEdge() };
-	auto [tail, head] { roadNetwork.getEdgeVertices(*edge) };
-
-	auto fromPos{ roadNetwork.getGraph()[tail].position };
-	auto toPos{ roadNetwork.getGraph()[head].position };
-
-	return { fromPos, toPos };
-}
-
-std::pair<sf::Vector2f, sf::Vector2f> CitizenSimulation::getCitizenPathDirection(const Citizen& citizen, bool next) const {
-
-	auto edge{ getVehiclePath(citizen.getPathId())->getCurrentEdge() };
-	if (next)
-		edge = getVehiclePath(citizen.getPathId())->getNextEdge();
-
-	auto [ tail, head ] { roadNetwork.getEdgeVertices(*edge) };
-
-	auto fromPos{ roadNetwork.getGraph()[tail].position };
-	auto toPos{ roadNetwork.getGraph()[head].position };
-
-	return { fromPos, toPos };
+	return roadNetwork.getEdgeVerticesPositions(*edge);
 }
 
 

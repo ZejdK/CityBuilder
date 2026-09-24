@@ -4,7 +4,6 @@
 #pragma once
 #include "Citizen.hpp"
 #include <vector>
-#include "RoadGraphTypes.hpp"
 #include "RoadNetwork.hpp"
 #include "SFML/System/Vector2.hpp"
 #include "VehiclePath.hpp"
@@ -55,7 +54,6 @@ public:
 	const std::vector<Citizen>& getCitizens() const { return citizens; }
 	CitizenLayoutContext getCitizenLayoutContext(const Citizen& citizen) const;
 	std::pair<sf::Vector2f, sf::Vector2f> getCitizenDirection(const Citizen& citizen) const;
-	std::pair<sf::Vector2f, sf::Vector2f> getCitizenPathDirection(const Citizen& citizen, bool next = false) const;
 	std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> getNewPositionAndDirection(const Citizen& citizen) const;
 	bool isCitizenOnFirstOrLastEdge(const Citizen& citizen) const;
 	bool isCitizenOnLastEdge(const Citizen& citizen) const;

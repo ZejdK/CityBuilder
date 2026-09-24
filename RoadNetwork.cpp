@@ -51,6 +51,13 @@ std::pair<sf::Vector2f, sf::Vector2f> RoadNetwork::getEdgeInitialPosDir(RoadEdge
 	return { initPos, initDir };
 }
 
+std::pair<sf::Vector2f, sf::Vector2f> RoadNetwork::getEdgeVerticesPositions(RoadEdgeDescriptor edge) const {
+
+	auto [ source, target ] { getEdgeVertices(edge) };
+	
+	return { roadGraph[source].position, roadGraph[target].position };
+}
+
 
 void RoadNetwork::addEdge(RoadVertexDescriptor source, RoadVertexDescriptor target) {
 
