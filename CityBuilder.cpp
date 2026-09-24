@@ -27,6 +27,8 @@
 void debugCreateSampleRoadNetwork(RoadNetwork &roadNetwork);
 void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& config, const RoadNetwork& roadNetwork, const CitizenSimulation& citizenSimulation, EditorUI& editorUi, UIRenderer& uiRenderer);
 
+void renderVehiclePaths(EditorUI& editorUi, CitizenRenderer& citizenRenderer, sf::RenderWindow& window, RoadNetwork& roadNetwork, CitizenSimulation& citizenSimulation);
+
 
 
 int main() {
@@ -125,6 +127,7 @@ int main() {
         window.clear(sf::Color(0, 40, 0));
         roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), citizenSimulation.getVehicleSourceSinks(), cityView);
         citizenRenderer.render(window, citizenSimulation, config.roadWidth);
+        renderVehiclePaths(editorUi, citizenRenderer, window, roadNetwork, citizenSimulation);
         uiRenderer.render(window, editorUi, roadNetwork.getLayout(), citizenSimulation);
         uiRenderer.renderVehicleSourceSinkPopupImgui(editorUi, citizenSimulation);
 
@@ -171,6 +174,18 @@ void findAndSetHoveredRoadElement(sf::Vector2i cursorPos2i, const ConfigGlobal& 
 
     uiRenderer.setCursorPos(cursorPos);
     editorUi.setHoveredRoadElement(hoveredJunction, hoveredEdge);
+}
+
+void renderVehiclePaths(EditorUI& editorUi, CitizenRenderer& citizenRenderer, sf::RenderWindow& window, RoadNetwork& roadNetwork, CitizenSimulation& citizenSimulation) {
+
+    auto selectedVehicle{ editorUi.getHoveredVehicle() };
+    if (selectedVehicle)
+        citizenRenderer.renderVehiclePath(window, roadNetwork, citizenSimulation, selectedVehicle->getPathId());
+
+    auto hoveredJunction{ editorUi.getHoveredJunction() };
+    auto vss{ citizenSimulation.getVehicleSourceSinkAt(hoveredJunction) };
+    if (hoveredJunction && vss)
+        citizenRenderer.renderVehiclePath(window, roadNetwork, citizenSimulation, vss->getPathId());
 }
 
 

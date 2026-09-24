@@ -15,6 +15,8 @@
 #include "CitizenJunctionCurve.hpp"
 #include "RoadSegmentGeometry.hpp"
 #include "CitizenLayoutContext.hpp"
+#include "RoadNetwork.hpp"
+#include "SFML/Graphics/Vertex.hpp"
 
 
 
@@ -148,6 +150,20 @@ void CitizenRenderer::debugRenderJunctionCurveData(sf::RenderWindow& window, con
 	vehicleShape.setPosition(citizenPos);
 	vehicleShape.setFillColor(sf::Color(255, 0, 180));
 	window.draw(vehicleShape);
+}
+
+void CitizenRenderer::renderVehiclePath(sf::RenderWindow& window, const RoadNetwork& roadNetwork, const CitizenSimulation& citizenSimulation, int pathId) {
+
+	auto vehPath{ citizenSimulation.getVehiclePath(pathId) };
+
+	for (const auto& edge : vehPath->getPath()) {
+
+		auto [ fromPos, toPos ] { roadNetwork.getEdgeVerticesPositions(edge) };
+		auto colour{ sf::Color(255, 255, 0) };
+
+		std::array line{ sf::Vertex(fromPos, colour), sf::Vertex(toPos, colour) };
+		window.draw(line.data(), line.size(), sf::PrimitiveType::Lines);
+	}
 }
 
 

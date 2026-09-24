@@ -17,6 +17,7 @@
 #include <array>
 #include "Citizen.hpp"
 #include "CitizenLayoutContext.hpp"
+#include "RoadNetwork.hpp"
 
 
 
@@ -47,6 +48,7 @@ public:
     CitizenRenderer();
 
     void render(sf::RenderWindow& window, const CitizenSimulation &citizenSimulation, float roadWidth);
+    void renderVehiclePath(sf::RenderWindow& window, const RoadNetwork& roadNetwork, const CitizenSimulation& citizenSimulation, int pathId);
 };
 
 
