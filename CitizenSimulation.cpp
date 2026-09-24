@@ -195,7 +195,7 @@ std::tuple<sf::Vector2f, sf::Vector2f, std::optional<CitizenJunctionCurve>> Citi
 
 	auto layoutContext{ getCitizenLayoutContext(citizen) };
 
-	if (!isCitizenStartingPath(citizen) && citizen.isInsideJunction()) {
+	if (!(isCitizenStartingPath(citizen) || isCitizenFinishingPath(citizen)) && citizen.isInsideJunction()) {
 
 		CitizenJunctionCurve curve{ citizen.getS(), layoutContext, config.roadWidth };
 		auto [ pos, dir ] { curve.getCitizenPosAndDir(citizen.getS()) };
