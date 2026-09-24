@@ -116,7 +116,9 @@ void UIRenderer::renderRoadElementInfoImgui(const EditorUI& editorUi, ImVec2 def
 
 void UIRenderer::renderRoadSegmentInfoImgui(const RoadSegmentGeometry* road, const RoadJunctionGeometry* roadJunction) const {
 
-    ImGui::Text("   - ID: %d, len: %.2f, s: %.6f", road->getId(), road->length(), roadJunction == nullptr ? 0.0f : roadJunction->getS(road));
+    bool sExists { roadJunction != nullptr && roadJunction->getConnectedCount() > 1 };
+
+    ImGui::Text("   - ID: %d, len: %.2f, s: %.6f", road->getId(), road->length(), !sExists ? 0.0f : roadJunction->getS(road));
     ImGui::Text("      Vertices: %d, %d", road->getVertexA(), road->getVertexB());
     ImGui::Text("      Pos: (%.1f, %.1f), (%.1f, %.1f)", road->getStart().x, road->getStart().y, road->getEnd().x, road->getEnd().y);
 }
