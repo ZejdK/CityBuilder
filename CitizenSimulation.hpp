@@ -109,17 +109,15 @@ public:
 
 	// Vehicle source sinks
 	const std::vector<VehicleSourceSink> &getVehicleSourceSinks() const { return vehicleSourceSinks; }
-	void addVehicleSourceSinkShortest(const RoadJunctionGeometry* startJunction, const RoadJunctionGeometry* endJunction, std::string colour) {
+	void addVehicleSourceSinkShortest(const RoadJunctionGeometry* startJunction, const RoadJunctionGeometry* endJunction, std::string colour, float defaultPeriod = 1.f) { // default period is in seconds
 
 		auto shortestPath{ roadNetwork.getShortestPath(startJunction->getVertex(), endJunction->getVertex()) };
 
 		int newVehPathId{ int(vehiclePaths.size()) };
 		vehiclePaths.push_back(VehiclePath{ newVehPathId, shortestPath });
 		VehiclePath& vehPath{ vehiclePaths.back() };
-
-		constexpr float DEFAULT_PERIOD{ 1.f }; // default period is in seconds
 		
-		vehicleSourceSinks.push_back(VehicleSourceSink{ std::string("placeholder label"), DEFAULT_PERIOD, newVehPathId, colour, startJunction, endJunction });
+		vehicleSourceSinks.push_back(VehicleSourceSink{ std::string("placeholder label"), defaultPeriod, newVehPathId, colour, startJunction, endJunction });
 		vehicleSourceSinks.back().setActive(true, totalTime);
 	}
 
