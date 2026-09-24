@@ -17,6 +17,9 @@
 #include "SFML/System/Vector2.hpp"
 #include "RoadNetworkLayout.hpp"
 #include "RoadSegmentGeometry.hpp"
+#include <array>
+#include <vector>
+#include "VehicleSourceSink.hpp"
 
 
 
@@ -33,6 +36,8 @@ class RoadRenderer {
     sf::Texture texture;
     sf::Texture texturePlain;
     sf::Texture crossingTexture;
+    sf::Texture vehSourceTexture;
+    sf::Texture vehSinkTexture;
     sf::VertexArray vertices;
     sf::RenderStates states;
 
@@ -46,6 +51,12 @@ class RoadRenderer {
     void renderJunctionCrossings(sf::RenderWindow& window, const RoadJunctionGeometry& roadSegmentJunction);
     void renderDebugSPoints(sf::RenderWindow& window, const RoadJunctionGeometry &junction);
 
+    void renderVehicleSourceSinks(sf::RenderWindow& window, const std::vector<VehicleSourceSink>& vehicleSourceSinks);
+	void renderVehicleSourceSink(sf::RenderWindow& window, const RoadJunctionGeometry* junction, sf::Texture* texture);
+
+    std::array<sf::Vector2f, 4> getRectangleTextures(sf::Vector2f pos, sf::Vector2f dir, float width, float length);
+    void renderRectangle(sf::RenderWindow& window, std::array<sf::Vector2f, 4> vertices, sf::Texture* texture);
+
 public:
     RoadRenderer(const ConfigGlobal& config);
 
@@ -53,7 +64,7 @@ public:
     void renderRoads(sf::RenderWindow& window, const RoadNetworkLayout &roadLayout);
     void renderJunctions(sf::RenderWindow& window, const RoadNetworkLayout &roadLayout);
 
-    void render(sf::RenderWindow& window, const RoadNetworkLayout &roadLayout, const RoadGraph &roadGraph, CityView cityView);
+    void render(sf::RenderWindow& window, const RoadNetworkLayout &roadLayout, const RoadGraph &roadGraph, const std::vector<VehicleSourceSink> &vehicleSourceSinks, CityView cityView);
 };
 
 

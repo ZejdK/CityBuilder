@@ -123,7 +123,7 @@ int main() {
             uiRenderer.renderRoadElementInfoImgui(editorUi, roadInfoDefaultPos);
         
         window.clear(sf::Color(0, 40, 0));
-        roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), cityView);
+        roadRenderer.render(window, roadNetwork.getLayout(), roadNetwork.getGraph(), citizenSimulation.getVehicleSourceSinks(), cityView);
         citizenRenderer.render(window, citizenSimulation, config.roadWidth);
         uiRenderer.render(window, editorUi, roadNetwork.getLayout(), citizenSimulation);
         uiRenderer.renderVehicleSourceSinkPopupImgui(editorUi, citizenSimulation);

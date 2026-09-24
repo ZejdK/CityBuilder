@@ -18,6 +18,8 @@
 #include "RoadSegmentGeometry.hpp"
 #include "Config.hpp"
 #include "RoadNetworkLayout.hpp"
+#include "VehicleSourceSink.hpp"
+#include "Math.hpp"
 
 
 
@@ -32,6 +34,12 @@ RoadRenderer::RoadRenderer(const ConfigGlobal &config)
 
 	if (!crossingTexture.loadFromFile("assets/crossing.png"))
 		throw "Unable to load the texture: crossing.png";
+
+    if (!vehSourceTexture.loadFromFile("assets/road_vehsource.png"))
+        throw "Unable to load vehicle source texture!";
+
+    if (!vehSinkTexture.loadFromFile("assets/road_vehsink.png"))
+        throw "Unable to load vehicle sink texture!";
 
     texture.setRepeated(true);
     crossingTexture.setRepeated(true);
@@ -51,13 +59,14 @@ RoadRenderer::RoadRenderer(const ConfigGlobal &config)
     junctionTriangle.setFillColor(sf::Color(91, 91, 91)); // textures are (71, 71, 71)
 }
 
-void RoadRenderer::render(sf::RenderWindow& window, const RoadNetworkLayout &roadLayout, const RoadGraph &roadGraph, CityView cityView) {
+void RoadRenderer::render(sf::RenderWindow& window, const RoadNetworkLayout &roadLayout, const RoadGraph &roadGraph, const std::vector<VehicleSourceSink> &vehicleSourceSinks, CityView cityView) {
 
     switch (cityView) {
 
     case CityView::Road:
         renderRoads(window, roadLayout);
         renderJunctions(window, roadLayout);
+        renderVehicleSourceSinks(window, vehicleSourceSinks);
         break;
     case CityView::Graph:
         renderGraph(window, roadGraph);
@@ -68,6 +77,7 @@ void RoadRenderer::render(sf::RenderWindow& window, const RoadNetworkLayout &roa
     case CityView::RoadLineGraph:
         renderRoads(window, roadLayout);
         renderJunctions(window, roadLayout);
+        renderVehicleSourceSinks(window, vehicleSourceSinks);
         renderGraph(window, roadGraph);
         break;
     }
@@ -240,6 +250,65 @@ void RoadRenderer::renderDebugSPoints(sf::RenderWindow& window, const RoadJuncti
         debugShape.setPosition(junction.getSPos(junctionRoads[i]));
         window.draw(debugShape);
     }
+}
+
+
+
+void RoadRenderer::renderVehicleSourceSinks(sf::RenderWindow& window, const std::vector<VehicleSourceSink>& vehicleSourceSinks) {
+
+    for (const auto& vss : vehicleSourceSinks) {
+
+        renderVehicleSourceSink(window, vss.getSourceJunction(), &vehSourceTexture);
+        renderVehicleSourceSink(window, vss.getSinkJunction(), &vehSinkTexture);
+    }
+}
+
+void RoadRenderer::renderVehicleSourceSink(sf::RenderWindow &window, const RoadJunctionGeometry* junction, sf::Texture *texture) {
+
+    if (junction->getConnectedCount() != 1)
+        return;
+
+    auto road{ junction->getConnectedRoads()[0] };
+
+    auto pos{ junction->getPosition() };
+    auto dir{ junction->getPosition() - road->getOtherEndpoint(pos) };
+    dir = dir.normalized();
+
+    auto vertices{ getRectangleTextures(pos, dir, config.roadWidth, config.roadWidth) };
+
+    renderRectangle(window, vertices, texture);
+}
+
+std::array<sf::Vector2f, 4> RoadRenderer::getRectangleTextures(sf::Vector2f pos, sf::Vector2f dir, float width, float length) {
+
+    return {
+
+       pos + CB::Math::rotateInDirection(sf::Vector2f(width, length), dir),   // top right
+       pos + CB::Math::rotateInDirection(sf::Vector2f(width, -length), dir),  // bottom right
+       pos + CB::Math::rotateInDirection(sf::Vector2f(-width, -length), dir), // bottom left
+       pos + CB::Math::rotateInDirection(sf::Vector2f(-width, length), dir),  // top left
+    };
+}
+
+void RoadRenderer::renderRectangle(sf::RenderWindow& window, std::array<sf::Vector2f, 4> v, sf::Texture* texture) {
+
+    states.texture = texture;
+
+    vertices[0].position = v[0];
+    vertices[1].position = v[1];
+    vertices[2].position = v[2];
+    vertices[0].texCoords = { 0.f, 256.f };
+    vertices[1].texCoords = { 256.f, 256.f };
+    vertices[2].texCoords = { 256.f, 0.f };
+
+    vertices[3].position = v[0];
+    vertices[4].position = v[2];
+    vertices[5].position = v[3];
+    vertices[3].texCoords = { 0.f, 256.f };
+    vertices[4].texCoords = { 256.f, 0.f };
+    vertices[5].texCoords = { 0.f, 0.f };
+
+    window.draw(vertices, states);
 }
 
 
